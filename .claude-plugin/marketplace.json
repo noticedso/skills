@@ -1,0 +1,26 @@
+{
+  "name": "noticed-skills",
+  "owner": {
+    "name": "noticed",
+    "url": "https://noticed.so"
+  },
+  "metadata": {
+    "description": "the skills that make your agent fluent in noticed",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "noticed-skills",
+      "description": "five skills for working with the noticed mcp: interview-me, search-network, remember-person, event-debrief, research-person",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/interview-me",
+        "./skills/search-network",
+        "./skills/remember-person",
+        "./skills/event-debrief",
+        "./skills/research-person"
+      ]
+    }
+  ]
+}
