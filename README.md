@@ -54,7 +54,3 @@ See **[TESTING.md](./TESTING.md)** for suggested prompts to exercise each skill 
 ## updates
 
 Updates are manual for now. Reinstall to get the latest.
-
-## notes
-
-Design notes and per-skill detail live in the Notion workspace under **🤹 mcp: skill ideas**. These skills were revised and tightened during NY Tech Week 2026 against the live MCP learnings; product gaps that surface during use go to the **🔧 NYTW: mcp learnings** page.
