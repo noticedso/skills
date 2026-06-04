@@ -15,6 +15,23 @@ Go to **[noticed.so/onboarding](https://www.noticed.so/onboarding)** and pick yo
 /plugin install noticed-skills@noticed-skills
 ```
 
+## install (claude.ai)
+
+Requires a Pro, Max, Team, or Enterprise plan with code execution enabled (Settings → Capabilities).
+
+1. Open **Customize → Plugins** and click **+ → Add marketplace**.
+2. Sync from this GitHub repo: `noticedso/skills`.
+3. From the synced marketplace, install **noticed-skills**. All six skills land in one shot.
+
+## install (ChatGPT)
+
+ChatGPT has no GitHub marketplace install, so each skill goes in by hand.
+
+1. Open **Skills → New skill → Upload from your computer**.
+2. Upload each `skills/<name>/` folder from this repo as its own skill (zip the folder first if ChatGPT asks for a single file). Repeat for all six.
+
+Workspace admins: confirm **Enable skills** and **Enable skill uploading** are on under Permissions & roles.
+
 ## the skills
 
 | skill | what it does | writes? |
