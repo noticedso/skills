@@ -11,15 +11,16 @@
   "plugins": [
     {
       "name": "noticed-skills",
-      "description": "five skills for working with the noticed mcp: interview-me, search-network, remember-person, event-debrief, research-person",
+      "description": "six skills for the noticed mcp: remember-person, event-debrief, research-person, follow-up, search-network, interview-me",
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/interview-me",
-        "./skills/search-network",
         "./skills/remember-person",
         "./skills/event-debrief",
-        "./skills/research-person"
+        "./skills/research-person",
+        "./skills/follow-up",
+        "./skills/search-network",
+        "./skills/interview-me"
       ]
     }
   ]
