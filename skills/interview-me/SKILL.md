@@ -67,7 +67,22 @@ Whatever doesn't fit above — who you're trying to meet, specific goals, contex
 
 ## pre-fill rules
 
-- **Q1 (role):** match `my_profile.role` against the chip options. Strong signal → pre-select + confirm. Thin signal → soft-guess.
+- **Q1 (role):** match `my_profile.role` against the chip options. Strong signal → pre-select + confirm. Thin signal → soft-guess. Chip ↔ MCP `role` enum mapping (used by search-network and any downstream filter):
+
+  | interview-me chip | MCP enum |
+  |---|---|
+  | Founder | `founder` |
+  | Product & Engineering | `engineer`, `product` |
+  | Sales & Growth | `gtm` |
+  | Marketing & Brand | `gtm` |
+  | Partnerships & BizDev | `gtm` |
+  | Customer Success | `other` |
+  | Operations | `other` |
+  | Investing | `investor` |
+  | Recruiting | `recruiter` |
+  | Other | `other` |
+
+  Store the chip text as-is in `my_profile.role`; translate at query time, not at save time.
 - **Q2 (location):** match `my_profile.location` to one of NYC / SF / LA / London / Lisbon / Berlin / Remote (case-insensitive; aliases ok: "New York" → NYC, "San Francisco" → SF). Confirm if clean; ask if ambiguous.
 - **Q3 (building):** if `my_profile` or `get_person('me').default_notes` mentions a company/project, draft a one-liner and offer to edit: "Looks like you're building noticed — a personal networking agent. Refine?"
 - **Q4 – Q7:** no pre-fill. Always ask.
