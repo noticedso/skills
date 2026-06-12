@@ -41,7 +41,7 @@ Workspace admins: confirm **Enable skills** and **Enable skill uploading** are o
 | **research-person** | Deep-dive one person before a meeting; render a dossier from noticed + the web; offer to save it back. | only on save |
 | **follow-up** | Draft a follow-up message to someone you just met, in your voice, with something actionable in it. | logs the touchpoint only after you confirm it went out |
 | **search-network** | Natural-language search across your network; returns a tight table; drills into anyone. | read-only |
-| **interview-me** | Onboarding questionnaire that captures your identity, goals, and current tools. | yes (to your own record) |
+| **onboard** | Onboards you to noticed: a short questionnaire that captures your identity, goals, and current tools, saved in one `save_onboarding` call. | yes (to your own record) |
 
 ## how they fit together
 
@@ -52,7 +52,7 @@ remember-person  →  event-debrief
    (during)            (after)
 ```
 
-`research-person` and `follow-up` support any contact at any time. `search-network` is the read path over everything you've captured. `interview-me` is first-run setup.
+`research-person` and `follow-up` support any contact at any time. `search-network` is the read path over everything you've captured. `onboard` is first-run setup.
 
 ## shared conventions
 
