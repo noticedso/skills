@@ -29,16 +29,16 @@ Person resolution is shared with `remember-person` — same own → ask order. N
 
 5. **Draft:**
    - **In the user's voice** — the agent knows how the user writes; match it, don't impose a house style.
-   - Short. DMs under ~80 words; email body under ~150; LinkedIn connection note **300-char hard cap**.
-   - Reference the meeting context naturally.
-   - **Always include something actionable** — ideally something the user offers to do for the recipient (send the deck, make an intro, share a doc, pick a time). A follow-up with no next move is noise. Never generic "would love to stay connected" filler.
+   - **Open with a specific callback, not a pleasantry.** The first line names a concrete detail from the meeting — a problem they raised, something they said that stuck, a person/project they mentioned. That one detail earns the reply. **Banned openers:** "Great meeting you", "Great to connect", "Thanks for your time", "It was a pleasure", or any opener that would read the same to anyone else they met that day. If context is too thin to write a specific opener, go back to step 2 and ask what the meeting was about rather than drafting generic.
+   - Short — readable in ~30 seconds. DMs under ~80 words; email body under ~150; LinkedIn connection note **300-char hard cap**. It's a thread-opener, not a pitch.
+   - **Always include something actionable** — ideally something the user offers to do for the recipient (send the deck, make an intro, share a doc, pick a time). Make it low-friction: one clear ask or offer the recipient can act on without having to figure out what's wanted. A follow-up with no next move is noise. Never generic "would love to stay connected" filler.
    - No em-dashes, no emojis, no AI-tropes.
 
 ## channels
 
 All channels are **copy/paste**. The skill produces text the user sends; it doesn't send anything or depend on a connected mail/DM tool.
 
-- **email** — produce a **subject + body** (subject auto-generated from the angle); show both to copy into whatever mail client they use.
+- **email** — produce a **subject + body**; show both to copy into whatever mail client they use. The subject is specific to the angle or a meeting detail (it drives the open), not generic "Following up" / "Great meeting you".
 - **linkedin** — two modes, resolve **before drafting**:
   - *connection request note* (not yet connected): **300-char hard cap, enforced before drafting**; still carries a concrete next move, never empty "let's connect" filler. Show the char count.
   - *DM* (already connected): longer (~80 words), room for a fuller ask.
