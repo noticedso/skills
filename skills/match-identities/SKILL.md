@@ -127,15 +127,20 @@ profile, so you give it one.
 
 1. **List the gaps.** `list_profile_gaps()` → email-only contacts (person_id,
    name, email, and any URL already submitted). This is the "Add a profile" list.
-2. **Attach a URL.** When the user knows (or you find) a contact's LinkedIn/GitHub,
-   `add_profile_to_person({ person_id, url })` with a `linkedin.com/in/…` OR
-   `github.com/…` URL. Two outcomes:
+2. **Find their profile, network first.** Before searching the open web, search
+   noticed itself: `search_people` (or `resolve_person`) on the contact's name or
+   email handle. They're often already in your network with a LinkedIn/GitHub
+   attached, in which case it's a duplicate to resolve (accept / mark different) and
+   you already have the URL. Only when they're NOT already in noticed do you go to
+   the open web for their LinkedIn/GitHub.
+3. **Attach a URL.** Once you have it, `add_profile_to_person({ person_id, url })`
+   with a `linkedin.com/in/…` OR `github.com/…` URL. Two outcomes:
    - **applied** → that profile was already in noticed → matched + merged into one
      record.
    - **queued** → noticed couldn't merge it outright: it'll fetch + match the
      profile (if it's new), or route a conflict to a quick admin review. Tell the
      user it'll resolve shortly (and may need a quick review).
-3. Use this to ENRICH a thin contact, not to merge two existing records (that's
+4. Use this to ENRICH a thin contact, not to merge two existing records (that's
    accept_identity_match / suggest_identity_match). One URL per call (LinkedIn XOR
    GitHub).
 
@@ -159,7 +164,8 @@ profile, so you give it one.
 - `noticed`: `list_identity_matches` (the queue), `accept_identity_match`,
   `mark_different_people`, `dismiss_identity_match` (the actions),
   `list_profile_gaps` + `add_profile_to_person` (fill missing profiles), and
-  `resolve_person` / `get_person` (context when a row is ambiguous).
+  `search_people` / `resolve_person` / `get_person` (find someone already in your
+  network before going to the open web + context when a row is ambiguous).
 
 ## explicitly NOT in scope
 
@@ -201,5 +207,7 @@ comes back queued, tell the user noticed will fetch + match it shortly.
 
 **Work the gap list.**
 Input: `any contacts missing a profile?`
-Action: `list_profile_gaps()` → show the email-only contacts; offer to attach a
-LinkedIn/GitHub URL for any the user can provide.
+Action: `list_profile_gaps()` → for each, search the network first (`search_people`
+on the name/handle) in case they're already in noticed; then offer to attach a
+LinkedIn/GitHub URL (from the network, or failing that the open web) for any the
+user can provide.
