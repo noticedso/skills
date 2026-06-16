@@ -7,14 +7,13 @@ description: >-
   `list_identity_matches` (status: 'pending') and acts on each row with
   `accept_identity_match` (merge), `mark_different_people` (durable "not the
   same person"), or `dismiss_identity_match` (soft "not now"). Use whenever the
-  user says "review my matches", "go through my proposed matches", "clean up
-  duplicates", "are these the same person?", "any duplicate contacts?", "merge
-  the duplicates in my network", "approve/reject the identity suggestions", or
-  asks to tidy who's-who. Also fills profile GAPS, email-only contacts with no
-  LinkedIn/GitHub, via `list_profile_gaps` + `add_profile_to_person` ("add a
-  profile for X", "here's the LinkedIn for that contact"). Writes to the network
-  (merges + disconnects), so it confirms before merging anyone who isn't an
-  obvious duplicate. Read the queue freely; act deliberately.
+  user says "review my matches", "clean up duplicates", "are these the same
+  person?", "any duplicate contacts?", "approve/reject the identity
+  suggestions", or asks to tidy who's-who. Also fills profile GAPS, email-only
+  contacts with no LinkedIn/GitHub, via `list_profile_gaps` +
+  `add_profile_to_person` ("add a profile for X", "here's the LinkedIn for that
+  contact"). Writes to the network (merges + disconnects), so it confirms before
+  merging anyone who isn't an obvious duplicate.
 ---
 
 # match-identities
