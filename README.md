@@ -71,7 +71,21 @@ See **[TESTING.md](./TESTING.md)** for suggested prompts to exercise each skill 
 
 ## updates
 
-Updates are manual for now. Reinstall to get the latest.
+Releases are versioned automatically: any change under `skills/` on `main` triggers CI
+([`.github/workflows/version-bump.yml`](./.github/workflows/version-bump.yml)), which bumps
+the version in `marketplace.json` (semver, derived from the conventional-commit messages) and
+publishes a GitHub Release.
+
+To pull a new version, **refresh the marketplace** — reinstalling the plugin alone reuses a
+cached copy and will *not* see new commits:
+
+```
+/plugin marketplace update noticed-skills
+```
+
+Then update the plugin (the Update button activates once the refreshed marketplace reports a
+higher version). On claude.ai / ChatGPT, re-sync the marketplace from the repo rather than
+reinstalling the plugin.
 
 ## notes
 
