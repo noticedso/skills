@@ -52,8 +52,9 @@ disconnect), or **dismiss** (not sure / not now → soft).
      `company_overlap`) → **mark different**.
    - **Genuinely unsure** → **dismiss** (or leave it; don't guess).
 
-   When unsure which two records a name refers to, use `resolve_person` /
-   `get_person` to pull more context before deciding.
+   When a row is ambiguous (a thin profile, a first-name-only email, a handle
+   collision), research before deciding (see **research before deciding** below)
+   rather than guess.
 
 3. **Act**, passing whichever handle the row carries:
    - **Accept (merge):** `accept_identity_match({ candidate_id })` OR
@@ -83,6 +84,41 @@ disconnect), or **dismiss** (not sure / not now → soft).
 5. **Close out.** Summarize what changed: merged / marked-different / dismissed
    counts, and offer to re-pull `status: "pending"` to confirm the queue shrank.
 
+## research before deciding (ambiguous rows)
+
+Some rows can't be judged from the queue alone: a bare profile with no name, a
+first-name-only email (`josh@`, `mario@`), a generic LinkedIn vanity, or a famous
+GitHub handle. Don't guess on these. Research first, then decide; for the ones that
+stay uncertain, the user usually knows, so ask.
+
+1. **Pull the in-network side's dossier.** One side of the pair is usually already
+   a person (`identity_b.person_id`). `get_person({ person_id })` returns their
+   headline, company, tags, and sometimes a known email in the notes. If the
+   candidate email's domain or surname matches the dossier, it's the same person;
+   if the dossier's company or surname conflicts, they're different.
+2. **Identify a bare profile from the open web.** A `github:<id>` resolves to a
+   real account at `https://api.github.com/user/<id>` (login, name, company, bio,
+   blog). For a `linkedin:<vanity>`, web-search the vanity or the name plus a
+   company. Use this to learn who the profile actually belongs to before matching
+   an email to it.
+3. **Show the user a batch (about 10 at a time) in a table**: unmatched side, who
+   the profile really is, same person?, and your recommendation. Act on the clear
+   ones and let the user settle the rest.
+
+Patterns that look like matches but usually aren't (research, don't auto-accept):
+- **Handle collision.** A famous, low-numbered GitHub account whose login equals a
+  generic first-name email alias (`josh@company-a` and `josh@company-b` both
+  matched to GitHub `josh`) is almost always different people.
+- **Same company, different surname.** `maria.adriana.cardoso@acme.com` matched to
+  Maria Inês **Fonseca** is a colleague, not her → mark different.
+- **Too-thin target.** A LinkedIn/GitHub record with no name or headline can't be
+  confirmed; don't merge on a first-name match alone.
+
+The inverse is also true: research often CONFIRMS a non-obvious real match, then
+accept. The email's surname is the person's; a personal-domain address
+(`hello@theirname.com`); a founder's `name@theircompany.com`; or the dossier
+already lists that exact email.
+
 ## fill profile gaps (add a profile)
 
 The flip side of the queue: contacts noticed has **no profile for**: email-only
@@ -96,8 +132,9 @@ profile, so you give it one.
    `github.com/…` URL. Two outcomes:
    - **applied** → that profile was already in noticed → matched + merged into one
      record.
-   - **queued** → new profile → noticed fetches + enriches it, then matches; tell
-     the user it'll resolve shortly.
+   - **queued** → noticed couldn't merge it outright: it'll fetch + match the
+     profile (if it's new), or route a conflict to a quick admin review. Tell the
+     user it'll resolve shortly (and may need a quick review).
 3. Use this to ENRICH a thin contact, not to merge two existing records (that's
    accept_identity_match / suggest_identity_match). One URL per call (LinkedIn XOR
    GitHub).
