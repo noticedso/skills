@@ -10,9 +10,11 @@ description: >-
   user says "review my matches", "go through my proposed matches", "clean up
   duplicates", "are these the same person?", "any duplicate contacts?", "merge
   the duplicates in my network", "approve/reject the identity suggestions", or
-  asks to tidy who's-who. Writes to the network (merges + disconnects), so it
-  confirms before merging anyone who isn't an obvious duplicate. Read the queue
-  freely; act deliberately.
+  asks to tidy who's-who. Also fills profile GAPS — email-only contacts with no
+  LinkedIn/GitHub — via `list_profile_gaps` + `add_profile_to_person` ("add a
+  profile for X", "here's the LinkedIn for that contact"). Writes to the network
+  (merges + disconnects), so it confirms before merging anyone who isn't an
+  obvious duplicate. Read the queue freely; act deliberately.
 ---
 
 # match-identities
@@ -81,6 +83,25 @@ disconnect), or **dismiss** (not sure / not now → soft).
 5. **Close out.** Summarize what changed — merged / marked-different / dismissed
    counts — and offer to re-pull `status: "pending"` to confirm the queue shrank.
 
+## fill profile gaps (add a profile)
+
+The flip side of the queue: contacts noticed has **no profile for** — email-only
+people with no LinkedIn/GitHub. They can't be matched until noticed knows their
+profile, so you give it one.
+
+1. **List the gaps.** `list_profile_gaps()` → email-only contacts (person_id,
+   name, email, and any URL already submitted). This is the "Add a profile" list.
+2. **Attach a URL.** When the user knows (or you find) a contact's LinkedIn/GitHub,
+   `add_profile_to_person({ person_id, url })` with a `linkedin.com/in/…` OR
+   `github.com/…` URL. Two outcomes:
+   - **applied** → that profile was already in noticed → matched + merged into one
+     record.
+   - **queued** → new profile → noticed fetches + enriches it, then matches; tell
+     the user it'll resolve shortly.
+3. Use this to ENRICH a thin contact — not to merge two existing records (that's
+   accept_identity_match / suggest_identity_match). One URL per call (LinkedIn XOR
+   GitHub).
+
 ## the rule
 
 - **Reads are free; writes are deliberate.** Pull and judge the whole queue
@@ -99,7 +120,8 @@ disconnect), or **dismiss** (not sure / not now → soft).
 ## tool needs
 
 - `noticed`: `list_identity_matches` (the queue), `accept_identity_match`,
-  `mark_different_people`, `dismiss_identity_match` (the actions), and
+  `mark_different_people`, `dismiss_identity_match` (the actions),
+  `list_profile_gaps` + `add_profile_to_person` (fill missing profiles), and
   `resolve_person` / `get_person` (context when a row is ambiguous).
 
 ## explicitly NOT in scope
@@ -133,3 +155,14 @@ the user confirms.
 Accept returns `needs_confirmation` with "their commit email points to a different
 GitHub account" → show that to the user. They still say same person → call
 `accept_identity_match` again with the returned `confirmation_token`.
+
+**Add a profile to a thin contact.**
+Input: `erick@gomry.com is github.com/erickz`
+Action: find the contact via `list_profile_gaps()` (or `search_people`), then
+`add_profile_to_person({ person_id, url: "https://github.com/erickz" })`. If it
+comes back queued, tell the user noticed will fetch + match it shortly.
+
+**Work the gap list.**
+Input: `any contacts missing a profile?`
+Action: `list_profile_gaps()` → show the email-only contacts; offer to attach a
+LinkedIn/GitHub URL for any the user can provide.
