@@ -1,0 +1,108 @@
+name: Auto version bump
+
+# When any skill changes on main, derive a semver bump from the conventional-commit
+# messages in the push, write it into marketplace.json, push it back, and cut a release.
+#
+# Loop-safety: this triggers ONLY on skills/** changes. The bump commit it creates touches
+# only .claude-plugin/marketplace.json, so it can never re-trigger this workflow. The
+# [skip ci] guard and GITHUB_TOKEN's no-recursion rule are extra belts.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'skills/**'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: version-bump
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine bump level from conventional commits
+        id: level
+        run: |
+          set -euo pipefail
+          BEFORE='${{ github.event.before }}'
+          SHA='${{ github.sha }}'
+          ZERO='0000000000000000000000000000000000000000'
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "$ZERO" ] || ! git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
+            # branch creation / shallow history: inspect just the head commit
+            RANGE=(-1 "$SHA")
+          else
+            RANGE=("${BEFORE}..${SHA}")
+          fi
+          MSGS="$(git log --format='%B' "${RANGE[@]}")"
+          LEVEL=patch
+          if printf '%s' "$MSGS" | grep -qE '^[a-z]+(\([^)]+\))?!:|BREAKING CHANGE'; then
+            LEVEL=major
+          elif printf '%s' "$MSGS" | grep -qE '^feat(\([^)]+\))?:'; then
+            LEVEL=minor
+          fi
+          echo "level=$LEVEL" >> "$GITHUB_OUTPUT"
+          echo "Bump level: $LEVEL"
+
+      - name: Compute and write new version
+        id: ver
+        run: |
+          set -euo pipefail
+          FILE=.claude-plugin/marketplace.json
+          CUR="$(jq -r '.plugins[0].version // .metadata.version // "1.0.0"' "$FILE")"
+          IFS=. read -r MA MI PA <<< "$CUR"
+          case "${{ steps.level.outputs.level }}" in
+            major) MA=$((MA + 1)); MI=0; PA=0 ;;
+            minor) MI=$((MI + 1)); PA=0 ;;
+            patch) PA=$((PA + 1)) ;;
+          esac
+          NEW="${MA}.${MI}.${PA}"
+          tmp="$(mktemp)"
+          jq --arg v "$NEW" '.metadata.version = $v | .plugins[0].version = $v' "$FILE" > "$tmp"
+          mv "$tmp" "$FILE"
+          echo "new=$NEW" >> "$GITHUB_OUTPUT"
+          echo "Version: $CUR -> $NEW"
+
+      - name: Commit and push
+        id: commit
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .claude-plugin/marketplace.json
+          if git diff --cached --quiet; then
+            echo "No version change to commit."
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git commit -m "chore(release): v${{ steps.ver.outputs.new }} [skip ci]"
+          git push origin HEAD:main
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Tag and GitHub Release
+        if: ${{ steps.commit.outputs.pushed == 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG='v${{ steps.ver.outputs.new }}'
+          BEFORE='${{ github.event.before }}'
+          SHA='${{ github.sha }}'
+          ZERO='0000000000000000000000000000000000000000'
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "$ZERO" ] || ! git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
+            NOTES="$(git log --pretty='- %s' -1 "$SHA" -- skills/)"
+          else
+            NOTES="$(git log --pretty='- %s' "${BEFORE}..${SHA}" -- skills/)"
+          fi
+          git tag "$TAG"
+          git push origin "$TAG"
+          gh release create "$TAG" --title "$TAG" --notes "${NOTES:-Skill updates}"
