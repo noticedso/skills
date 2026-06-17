@@ -69,6 +69,10 @@ All skills follow the same rules, so they read as one system:
 
 See **[TESTING.md](./TESTING.md)** for suggested prompts to exercise each skill and a checklist of behaviors to confirm.
 
+## improving the skills
+
+At the end of a session that used a skill, paste the prompt in **[skill-improvement.md](./skill-improvement.md)** to have the agent review how the skill actually behaved and suggest edits — biased toward making it simpler first, then more accurate. Works in any client and for any of the seven skills.
+
 ## updates
 
 Releases are versioned automatically: any change under `skills/` on `main` triggers CI
