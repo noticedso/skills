@@ -17,6 +17,8 @@ Draft a follow-up to one person the user recently met IRL. One person at a time.
 
 Person resolution is shared with `remember-person` — same own → ask order. No web enrichment, no public scope.
 
+> Note: `remember-person` is being renamed to `add-person` in PR #13; update this reference once that lands.
+
 ## flow
 
 1. **Resolve the person.** `search_people` own, multi-word names AND-joined. Strong match → use it. Multiple/no match → surface candidates, never default to new silently. On "new", get a linkedin before drafting so they can be added after the send is confirmed.
@@ -55,10 +57,14 @@ Never log until the user confirms "sent it". Then:
 
 Brand-new contact: `add_to_network` fires with the first `log_interaction` after "sent it", not before. Then read back what was logged (and added).
 
-No `default_notes` writes, no `memory_save` calls — interaction-only.
+No `default_notes` writes, no `memory_save` calls — interactions, plus an optional `create_action` (below).
+
+## next step
+
+After the touchpoint is logged, if the draft carried a concrete next move the *user* committed to (send the deck, make an intro, share a doc), offer to `create_action({ person_id, content, remind_at? })` so it doesn't evaporate. Keep it optional and user-confirmed — offer it, don't auto-create. This skill stays primarily copy/paste.
 
 ## tool needs
-- `noticed`: `search_people`, `get_person`, `add_to_network` (only on a confirmed brand-new contact), `log_interaction`
+- `noticed`: `search_people`, `get_person`, `add_to_network` (only on a confirmed brand-new contact), `log_interaction`, `create_action` (optional, post-send, for a user-side next step)
 - No Gmail — email is copy/paste like the DMs.
 
 ## explicitly NOT in scope
