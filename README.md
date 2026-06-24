@@ -75,6 +75,7 @@ At the end of a session that used a skill, paste the prompt in **[skill-improvem
 
 ## updates
 
+Updates are manual for now. Reinstall to get the latest.
 Releases are versioned automatically: any change under `skills/` on `main` triggers CI
 ([`.github/workflows/version-bump.yml`](./.github/workflows/version-bump.yml)), which bumps
 the version in `marketplace.json` (semver, derived from the conventional-commit messages) and
@@ -90,7 +91,3 @@ cached copy and will *not* see new commits:
 Then update the plugin (the Update button activates once the refreshed marketplace reports a
 higher version). On claude.ai / ChatGPT, re-sync the marketplace from the repo rather than
 reinstalling the plugin.
-
-## notes
-
-Design notes and per-skill detail live in the Notion workspace under **🤹 mcp: skill ideas**. These skills were revised and tightened during NY Tech Week 2026 against the live MCP learnings; product gaps that surface during use go to the **🔧 NYTW: mcp learnings** page.
