@@ -80,15 +80,16 @@ After the interaction, save the freeform context — who they are, what they nee
 noticed.add_memory({
   person_id,
   content: "[mcp · skill:add-person · YYYY-MM-DD]\n<source-tagged context>",
+  occurred_at: "<same ISO timestamp as the met interaction>",
   tags: [...]      // optional; inherit from person tags where relevant
 })
 ```
 
 - Each content line tagged `[from user]` or `[research, unverified]`. Flag conflicts between the user's account and web research — write both, tag each.
-- The date in the memory prefix (YYYY-MM-DD) should match `occurred_at` of the interaction. They describe the same moment.
+- Set `occurred_at` to the **same** ISO timestamp as the `met` interaction, and match the YYYY-MM-DD in the memory prefix to it — the memory and the interaction describe the same moment, so back-date both. Don't anchor episodic context to write-time.
 - `add_memory` attaches to `relationship.memories` on the person record, readable back via `get_person`. This is the right home for dated, episodic context.
 - **`default_notes` is not the right place for rich context.** Reserve it for terse, stable record-level annotations (e.g. a pronunciation note, a permanent caveat) — not for "what we talked about at that dinner."
-- Tighter memory ↔ interaction linking (foreign-key refs) is a future enhancement once the MCP supports it. For now: keep dates consistent and don't try to force a link manually.
+- Date alignment between the two records is native via `occurred_at`. (A true foreign-key ref linking the memory to the interaction is still a future enhancement; until then, matching dates is enough — no manual prefix-matching trick needed.)
 
 ---
 
@@ -139,23 +140,23 @@ Recap what happened per person — unprompted. noticed writes are silent; this i
 
 ## write sequence
 
-Structured fields (`linkedin_username`, `headline`, `github`) can only be set at creation via `add_to_network`; `update_person` cannot write them. Web-found headline → `free_form.headline` on a new record, or the memory body (`[research, unverified]`) on an existing one.
+`add_to_network`'s `free_form` sets identity at creation: `name`, `headline`, `linkedin_url`, `github_login`. For someone **already in the network**, `update_person` can set `company`, `role`, and `email` as user overrides — each wins over the imported/derived value; pass `null` to clear. Write a web-found role/company/email there. `headline`/`linkedin_url`/`github` are not `update_person` params, so a web-found headline for an existing record still goes in the memory body (`[research, unverified]`).
 
-`add_to_network`'s `default_notes` param silently drops — always set notes via a follow-up `add_memory` call, not on the creation call.
+`add_to_network` has no notes param — context goes through a follow-up `add_memory` call, never on the creation call.
 
 ```
 # — already in network —
 noticed.get_person({ person_id, include: "dossier" })
   # check for existing met on this date before writing
 noticed.log_interaction({ person_id, kind: "met", occurred_at: "...", payload: { summary: "..." } })
-noticed.add_memory({ person_id, content: "[mcp · skill:add-person · YYYY-MM-DD]\n<source-tagged context>" })
-noticed.update_person({ person_id, tags: [...] })          # tags only; not default_notes for rich context
+noticed.add_memory({ person_id, content: "[mcp · skill:add-person · YYYY-MM-DD]\n<source-tagged context>", occurred_at: "<same as met>" })
+noticed.update_person({ person_id, tags: [...], company?, role?, email? })   # tags merge; company/role/email are overrides
 
 # — new contact —
 noticed.add_to_network({ free_form: { name, linkedin_url?, github_login?, headline? }, tags: [...] })
   # → person_id returned
 noticed.log_interaction({ person_id, kind: "met", occurred_at: "...", payload: { summary: "..." } })
-noticed.add_memory({ person_id, content: "[mcp · skill:add-person · YYYY-MM-DD]\n<source-tagged context>" })
+noticed.add_memory({ person_id, content: "[mcp · skill:add-person · YYYY-MM-DD]\n<source-tagged context>", occurred_at: "<same as met>" })
 ```
 
 ---
@@ -176,9 +177,9 @@ noticed.add_memory({ person_id, content: "[mcp · skill:add-person · YYYY-MM-DD
 noticed.search_people({ q: "Name AND Company", scope: "own" })
 noticed.get_person({ person_id, include: "dossier" })
 noticed.add_to_network({ free_form: { name, linkedin_url?, github_login?, headline? }, tags: [...] })
-noticed.update_person({ person_id, tags: [...] })
+noticed.update_person({ person_id, tags: [...], company?, role?, email? })
 noticed.log_interaction({ person_id, kind: "met", occurred_at?: "ISO timestamp", payload?: { summary } })
-noticed.add_memory({ person_id, content: "...", tags?: [...] })
+noticed.add_memory({ person_id, content: "...", occurred_at?: "ISO timestamp", tags?: [...] })
 web_search(...)     // canonicalize companies, enrich thin identity
 ```
 

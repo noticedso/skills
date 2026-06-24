@@ -21,6 +21,13 @@ Wrap `search_people` cleanly. Default scope is the user's own network. Show resu
 
 1. **Parse the query** into filters where possible: `q` (free text), `company`, `role`, `location`, `skills`, `tags`. Use only what's clearly in the prompt — don't invent filters.
 
+   **Interaction-recency and source intents map to filters, not `q`:**
+   - "haven't talked to in a while / lost touch / dormant" → `stale: true` (never, or not in 90+ days).
+   - "who have I been in touch with lately" → `recent: true` (last 14 days).
+   - "who did I see/talk to this week / since <date>" → `last_interaction_after`; a bounded window → `last_interaction_after` + `last_interaction_before`.
+   - "people from my calendar / from LinkedIn / from GitHub" → `sources` (`linkedin` | `github` | `calendar` | `manual`).
+   These are touchpoint dates, distinct from `added_after`/`added_before` (network-join dates).
+
    **Extract role keywords into the `role: [...]` filter** whenever the query names one of the enum values: `engineer`, `designer`, `product`, `gtm`, `founder`, `recruiter`, `investor`, `other`. Don't leave them in `q` — structured matches against the headline field, which is cleaner than free-text fuzzing. `gtm` covers sales, growth, marketing, partnerships, biz-dev.
 
 2. **Vague-query check.** A query is "vague" when it has only one broad dimension with no specifier (e.g. "find AI engineers" → role only, no place/company; "any designers?" → role only). In that case, ask **one** short clarifying question before running: e.g. "where, or any company in mind?" Otherwise skip and run directly.
@@ -32,6 +39,8 @@ Wrap `search_people` cleanly. Default scope is the user's own network. Show resu
    **Structured-filter zero = thin data, not absence.** If a structured filter (e.g. `location: "NYC"`) returns 0, the data is missing on those records — not "no NYC people." Drop the structured filter and re-run with the same term in `q`.
 
    **Multi-term narrowing with AND.** When the query has multiple distinct dimensions that should all be required (e.g. "AI engineers in NYC", "founders raising a seed in Lisbon"), pass `q` with explicit `AND` between terms (`"AI AND NYC"`) rather than space-separated OR. Use `+term` to require one term and let others rank. Bare space-separated terms stay ranked-OR (the default, broadens).
+
+   **Read `strong_total` for AND queries.** When terms are AND-required, trust `strong_total` (rows matching all terms) as the honest count rather than eyeballing how many rows are "really" relevant. Per-row `matched_on` explains why a row surfaced — use it in the closing line when a hit looks surprising. If the response carries a `fuzzy` or `semantic` flag, the search fell back from exact matching; confirm fuzzy matches before trusting them.
 
 4. **Show results as a markdown table.** Aim for 5-10 — it's the comfortable range for chat. If results land at 12-15 and they're all relevant, show them. If they balloon past ~20 (or `hasMore` is true), the query is too broad — surface a narrowing prompt instead of dumping the list.
 
@@ -69,6 +78,10 @@ Action: `search_people({ q: "Stripe", company: "Stripe", scope: "own", limit: 25
 **Vague query → ask first.**
 Input: `any AI engineers?`
 Action: "where, or any company in mind?" Wait for reply. Then run with the narrower filter.
+
+**Interaction-recency query.**
+Input: `who have I lost touch with?`
+Action: `search_people({ stale: true, scope: "own", limit: 25 })` → table. For "who did I talk to since June 1": `search_people({ last_interaction_after: "2026-06-01", scope: "own" })`.
 
 **Scope escalation.**
 Input: `find founders raising a seed — include people outside my network`

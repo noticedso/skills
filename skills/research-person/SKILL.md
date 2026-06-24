@@ -17,6 +17,8 @@ Single person, deep dive. Read everything available, present cleanly, then offer
 
 Person resolution is shared with `remember-person` — same own → web → ask order. Read-heavy: the deliverable is a dossier in chat; writes only on an explicit "save".
 
+> Note: `remember-person` is being renamed to `add-person` in PR #13; update this reference once that lands.
+
 ## flow
 
 1. **Resolve the person** via `remember-person`'s flow: own-scope search, multi-word names AND-joined. Strong match → use it. Multiple hits → surface candidates. Nothing in own → not in network yet; web-only enrichment, mark not-in-noticed. **No public-scope search.**
@@ -39,7 +41,7 @@ Person resolution is shared with `remember-person` — same own → web → ask 
 - **Stored note (system-only):** every saved line tagged `[from user]` or `[research, unverified]`, written into `default_notes`, **never shown in chat**. Since this skill mostly writes research-derived claims, most saved lines are `[research, unverified]`. (A `~40k-users` figure from an aggregator must not sit in the note looking as trusted as a firsthand fact.)
 
 ## writes (only on "save")
-Read existing notes via `get_person` first; never overwrite. MCP limit: `update_person` can't set structured identity fields, so a web-found headline for someone already in noticed goes in the note body, tagged `[research, unverified]`.
+Read existing notes via `get_person` first; never overwrite. A web-found role, company, or email for someone already in noticed goes to the structured override fields via `update_person({ role, company, email })` — each overrides the imported value. A web-found headline still has no `update_person` param, so that one goes in the note body. Either way, tag the saved memory/note provenance `[research, unverified]` for the narrative context.
 
 ## the rule
 - One person at a time. Read-heavy; writes only on "save".
