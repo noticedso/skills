@@ -21,13 +21,13 @@ Wrap `search_people` cleanly. Default scope is the user's own network. Show resu
 
 1. **Parse the query** into filters where possible: `q` (free text), `company`, `role`, `location`, `skills`, `tags`. Use only what's clearly in the prompt — don't invent filters.
 
-   **Extract role keywords into the `role: [...]` filter** whenever the query names one of the enum values: `founder`, `ceo`, `cto`, `c-level`, `executive`, `investor`, `engineer`, `designer`, `product`, `recruiter`. Don't leave them in `q` — structured matches against the headline field, which is cleaner than free-text fuzzing.
+   **Extract role keywords into the `role: [...]` filter** whenever the query names one of the enum values: `engineer`, `designer`, `product`, `gtm`, `founder`, `recruiter`, `investor`, `other`. Don't leave them in `q` — structured matches against the headline field, which is cleaner than free-text fuzzing. `gtm` covers sales, growth, marketing, partnerships, biz-dev.
 
 2. **Vague-query check.** A query is "vague" when it has only one broad dimension with no specifier (e.g. "find AI engineers" → role only, no place/company; "any designers?" → role only). In that case, ask **one** short clarifying question before running: e.g. "where, or any company in mind?" Otherwise skip and run directly.
 
 3. **Run `search_people`** with the extracted filters. Default `limit: 25` for `scope: 'own'`, **`limit: 10` for `scope: 'public'`** (public-scope queries hit a much larger universe and are more memory-expensive on the backend). Default `scope: 'own'`. Escalate to `scope: 'public'` only when the user explicitly asks for warm-intro paths, "people I don't know yet", "outside my network", or similar. When escalating, note it in the closing line.
 
-   **Prefer structured filters over free text when they fit.** `role` accepts an enum: `founder`, `ceo`, `cto`, `c-level`, `executive`, `investor`, `engineer`, `designer`, `product`, `recruiter`. Use it when the user names a role. `company`, `location`, `skills`, `tags` are also structured.
+   **Prefer structured filters over free text when they fit.** `role` accepts an enum: `engineer`, `designer`, `product`, `gtm`, `founder`, `recruiter`, `investor`, `other`. Use it when the user names a role. Seniority terms ("ceo", "cto", "head of", "vp") aren't in the enum — pass those through `q` instead. `company`, `location`, `skills`, `tags` are also structured.
 
    **Structured-filter zero = thin data, not absence.** If a structured filter (e.g. `location: "NYC"`) returns 0, the data is missing on those records — not "no NYC people." Drop the structured filter and re-run with the same term in `q`.
 

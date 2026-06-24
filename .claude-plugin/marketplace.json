@@ -6,12 +6,13 @@
   },
   "metadata": {
     "description": "the skills that make your agent fluent in noticed",
-    "version": "1.0.0"
+    "version": "1.1.1"
   },
   "plugins": [
     {
       "name": "noticed-skills",
-      "description": "six skills for the noticed mcp: remember-person, event-debrief, research-person, follow-up, search-network, interview-me",
+      "version": "1.1.1",
+      "description": "seven skills for the noticed mcp: remember-person, event-debrief, research-person, follow-up, search-network, onboard, match-identities",
       "source": "./",
       "strict": false,
       "skills": [
@@ -20,7 +21,8 @@
         "./skills/research-person",
         "./skills/follow-up",
         "./skills/search-network",
-        "./skills/interview-me"
+        "./skills/onboard",
+        "./skills/match-identities"
       ]
     }
   ]

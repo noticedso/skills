@@ -1,19 +1,20 @@
 ---
-name: interview-me
+name: onboard
 description: >-
-  Onboard the user and gather light user research at the same time. A
-  short chip-driven questionnaire (about 7 questions, 2-3 minutes) that
-  captures basic identity (role, location, what they're building) and
-  research about how they manage relationships today + what they want
-  from noticed. Pre-fills from `my_profile` and `get_person('me')` to
-  skip questions the agent already knows. Trigger on "interview me",
-  "set me up", "onboard me", "noticed onboarding", "what does noticed
-  know about me", or any first-run intent.
+  Onboard a new user to noticed and gather light user research at the same
+  time. A short chip-driven questionnaire (about 7 questions, 2-3 minutes)
+  that captures basic identity (role, location, what they're building) and
+  research about how they manage relationships today + what they want from
+  noticed — then stores everything in the noticed system with a single
+  `save_onboarding` call. Pre-fills from `my_profile` and `get_person('me')`
+  to skip questions the agent already knows. Trigger on "onboard me", "set
+  me up", "interview me", "noticed onboarding", "what does noticed know
+  about me", or any first-run intent.
 ---
 
-# interview-me
+# onboard
 
-Onboarding + light user research in one flow. Get the basics right so downstream skills don't fumble identity; capture goals + current tools so the product team learns what users actually want.
+Onboarding + light user research in one flow. Get the basics right so downstream skills don't fumble identity; capture goals + current tools so the product team learns what users actually want. Everything lands in noticed through one write tool, so the user's record, the agent's workspace, and onboarding progress all update together.
 
 ## flow
 
@@ -31,7 +32,7 @@ Onboarding + light user research in one flow. Get the basics right so downstream
 
 4. **After the last question**, show a quick summary of all answers and ask once: "save?"
 
-5. **On "save", fan out writes** (see writes section). Echo what landed.
+5. **On "save", write everything with ONE `save_onboarding` call** (see writes section). Echo what landed.
 
 ## the questions
 
@@ -67,7 +68,22 @@ Whatever doesn't fit above — who you're trying to meet, specific goals, contex
 
 ## pre-fill rules
 
-- **Q1 (role):** match `my_profile.role` against the chip options. Strong signal → pre-select + confirm. Thin signal → soft-guess.
+- **Q1 (role):** match `my_profile.role` against the chip options. Strong signal → pre-select + confirm. Thin signal → soft-guess. Chip ↔ MCP `role` enum mapping (used by search-network and any downstream filter):
+
+  | onboard chip | MCP enum |
+  |---|---|
+  | Founder | `founder` |
+  | Product & Engineering | `engineer`, `product` |
+  | Sales & Growth | `gtm` |
+  | Marketing & Brand | `gtm` |
+  | Partnerships & BizDev | `gtm` |
+  | Customer Success | `other` |
+  | Operations | `other` |
+  | Investing | `investor` |
+  | Recruiting | `recruiter` |
+  | Other | `other` |
+
+  Store the chip text as-is (pass it to `save_onboarding.roles` unchanged); translate at query time, not at save time.
 - **Q2 (location):** match `my_profile.location` to one of NYC / SF / LA / London / Lisbon / Berlin / Remote (case-insensitive; aliases ok: "New York" → NYC, "San Francisco" → SF). Confirm if clean; ask if ambiguous.
 - **Q3 (building):** if `my_profile` or `get_person('me').default_notes` mentions a company/project, draft a one-liner and offer to edit: "Looks like you're building noticed — a personal networking agent. Refine?"
 - **Q4 – Q7:** no pre-fill. Always ask.
@@ -76,29 +92,34 @@ If Q1 and Q2 are both strong signal, collapse them into one confirm shown before
 
 ## writes (on save)
 
-### Identity → `update_person('me', default_notes)`
+### One call: `save_onboarding`
 
-Read existing notes via `get_person({ person_id: "me" })` first, then append a new dated block. Never overwrite.
+Map the answers onto the tool's fields and call it once:
 
 ```
-<existing default_notes>
-
-[mcp · skill:interview-me · YYYY-MM-DD]
-Role: <Q1, comma-separated> · Based in <Q2> · Building: <Q3>
+save_onboarding({
+  user_name:      <their name, if it came up or needed correcting>,
+  roles:          [<Q1 chips, as-is>],
+  location:       <Q2>,
+  building:       <Q3>,
+  focus_areas:    [<Q4 chips, as-is>],
+  value_ranking:  [<Q5 most → least important>],
+  current_tools:  [<Q6 chips, as-is>],
+  extra_notes:    <Q7, omit if blank>,
+})
 ```
 
-### Research / goals → `memory_save` (4 entries, all prefixed for filtering)
+Omit any field the user skipped — never invent values. The server fans the write out for you: identity (role · location · building) lands on the user's own record and the agent workspace profile, the research answers (focus, value ranking, tools, extras) land in long-term memory, and the noticed onboarding steps are marked satisfied.
 
-- `[mcp · skill:interview-me] active goals: <Q4 comma-separated>` — category: `commitment`
-- `[mcp · skill:interview-me] noticed value ranking: 1) <top> · 2) <#2> · 3) <#3> · 4) <#4> · 5) <#5>` — category: `preference`
-- `[mcp · skill:interview-me] current relationship-memory tools: <Q6 comma-separated>` — category: `fact`
-- `[mcp · skill:interview-me] additional: <Q7>` — category: `fact` (skip if blank)
+`save_onboarding` is idempotent: re-running replaces the profile snapshot, appends a dated history block to the user's notes, and dedupes memories — safe to call again with updated answers.
 
-`memory_save` dedupes server-side, so re-runs don't double-store.
+### Fallback (older servers without `save_onboarding`)
+
+If the tool is missing from the surface, fan out manually exactly like the legacy interview-me skill: append a dated `[mcp · skill:onboard · YYYY-MM-DD]` block (Role · Based in · Building) to the `'me'` person via `get_person` → `update_person('me', default_notes)` (read first, append, never overwrite), then `memory_save` the four research entries prefixed `[mcp · skill:onboard]` (active goals — `commitment`; value ranking — `preference`; current tools — `fact`; additional — `fact`, skip if blank).
 
 ### Echo
 
-After writes land, recap exactly what was saved: "saved your role + location to your record. saved your goals, value ranking, current tools, and notes to memory. you can re-run anytime to refresh."
+After the write lands, recap exactly what was saved: "saved your role + location + what you're building to your record, your goals, value ranking, and current tools to memory, and marked your onboarding done. you can re-run anytime to refresh."
 
 ## the rule
 
@@ -111,17 +132,17 @@ After writes land, recap exactly what was saved: "saved your role + location to 
 
 Idempotent. Re-running:
 - Re-asks each question (with pre-fills from the latest profile state).
-- Appends a new dated `[mcp · skill:interview-me · YYYY-MM-DD]` block to `default_notes` — older blocks stay as history, latest reflects current state.
-- `memory_save` dedupes via embedding so research entries don't double-store.
+- `save_onboarding` replaces the profile snapshot in place and appends a dated notes block — older blocks stay as history, latest reflects current state.
+- Memory entries dedupe via embedding so research entries don't double-store.
 
 ## retrieval note for downstream skills
 
-Basic identity (role, location, what the user is building) lives in `default_notes` on the `'me'` person — read via `get_person({ person_id: "me" })`. Goals, primary value ranking, current tools, and the open-ended add-on live in `memory_search` (filter on the `[mcp · skill:interview-me]` prefix). Both surfaces are needed for a complete picture of the user.
+Basic identity (role, location, what the user is building) lives on the `'me'` person — read via `get_person({ person_id: "me" })`. Goals, primary value ranking, current tools, and the open-ended add-on live in `memory_search` (filter on the `[onboarding]` prefix; legacy installs may also carry `[mcp · skill:interview-me]` entries). Both surfaces are needed for a complete picture of the user.
 
 ## tool needs
 
-- `noticed`: `my_profile`, `get_person`, `update_person`, `memory_save`
-- No web search — V2 doesn't enrich beyond what `my_profile` already has.
+- `noticed`: `my_profile`, `get_person`, `save_onboarding` (fallback: `update_person`, `memory_save`)
+- No web search — this skill doesn't enrich beyond what `my_profile` already has.
 
 ## explicitly NOT in scope
 

@@ -1,6 +1,6 @@
 # noticed-skills
 
-A suite of agent skills for [noticed](https://noticed.so) — a personal networking agent. Each skill wraps the noticed MCP to handle one job in the relationship-management loop: capturing people you meet, debriefing meetings, researching contacts, following up, searching your network, and onboarding.
+A suite of agent skills for [noticed](https://noticed.so) — a personal networking agent. Each skill wraps the noticed MCP to handle one job in the relationship-management loop: capturing people you meet, debriefing meetings, researching contacts, following up, searching your network, matching identities, and onboarding.
 
 ## connect noticed first
 
@@ -15,6 +15,23 @@ Go to **[noticed.so/onboarding](https://www.noticed.so/onboarding)** and pick yo
 /plugin install noticed-skills@noticed-skills
 ```
 
+## install (claude.ai)
+
+Requires a Pro, Max, Team, or Enterprise plan with code execution enabled (Settings → Capabilities).
+
+1. Open **Customize → Plugins** and click **+ → Add marketplace**.
+2. Sync from this GitHub repo: `noticedso/skills`.
+3. From the synced marketplace, install **noticed-skills**. All seven skills land in one shot.
+
+## install (ChatGPT)
+
+ChatGPT has no GitHub marketplace install, so each skill goes in by hand.
+
+1. Open **Skills → New skill → Upload from your computer**.
+2. Upload each `skills/<name>/` folder from this repo as its own skill (zip the folder first if ChatGPT asks for a single file). Repeat for all seven.
+
+Workspace admins: confirm **Enable skills** and **Enable skill uploading** are on under Permissions & roles.
+
 ## the skills
 
 | skill | what it does | writes? |
@@ -24,7 +41,8 @@ Go to **[noticed.so/onboarding](https://www.noticed.so/onboarding)** and pick yo
 | **research-person** | Deep-dive one person before a meeting; render a dossier from noticed + the web; offer to save it back. | only on save |
 | **follow-up** | Draft a follow-up message to someone you just met, in your voice, with something actionable in it. | logs the touchpoint only after you confirm it went out |
 | **search-network** | Natural-language search across your network; returns a tight table; drills into anyone. | read-only |
-| **interview-me** | Onboarding questionnaire that captures your identity, goals, and current tools. | yes (to your own record) |
+| **onboard** | Onboards you to noticed: a short questionnaire that captures your identity, goals, and current tools, saved in one `save_onboarding` call. | yes (to your own record) |
+| **match-identities** | Triage the cross-source identity matches noticed proposes — confirm real matches, clear false positives, merge duplicates — and fill profile gaps by searching your network first. | yes |
 
 ## how they fit together
 
@@ -35,7 +53,7 @@ remember-person  →  event-debrief
    (during)            (after)
 ```
 
-`research-person` and `follow-up` support any contact at any time. `search-network` is the read path over everything you've captured. `interview-me` is first-run setup.
+`research-person` and `follow-up` support any contact at any time. `search-network` is the read path over everything you've captured. `onboard` is first-run setup.
 
 ## shared conventions
 
@@ -51,6 +69,25 @@ All skills follow the same rules, so they read as one system:
 
 See **[TESTING.md](./TESTING.md)** for suggested prompts to exercise each skill and a checklist of behaviors to confirm.
 
+## improving the skills
+
+At the end of a session that used a skill, paste the prompt in **[skill-improvement.md](./skill-improvement.md)** to have the agent review how the skill actually behaved and suggest edits — biased toward making it simpler first, then more accurate. Works in any client and for any of the seven skills.
+
 ## updates
 
 Updates are manual for now. Reinstall to get the latest.
+Releases are versioned automatically: any change under `skills/` on `main` triggers CI
+([`.github/workflows/version-bump.yml`](./.github/workflows/version-bump.yml)), which bumps
+the version in `marketplace.json` (semver, derived from the conventional-commit messages) and
+publishes a GitHub Release.
+
+To pull a new version, **refresh the marketplace** — reinstalling the plugin alone reuses a
+cached copy and will *not* see new commits:
+
+```
+/plugin marketplace update noticed-skills
+```
+
+Then update the plugin (the Update button activates once the refreshed marketplace reports a
+higher version). On claude.ai / ChatGPT, re-sync the marketplace from the repo rather than
+reinstalling the plugin.
