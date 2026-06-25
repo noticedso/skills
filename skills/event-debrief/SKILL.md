@@ -15,7 +15,7 @@ description: >-
 
 Orchestrator. Take a meeting dump, parse it, write the right things to the right places. One preview, one confirm, fan out.
 
-Person resolution, provenance, and the prose preview are shared with `remember-person` — same conventions, don't restate them. This skill adds the parsing and the routing.
+Person resolution, provenance, and the prose preview are shared with `add-person` — same conventions, don't restate them. This skill adds the parsing and the routing.
 
 ## flow
 
@@ -23,7 +23,7 @@ Person resolution, provenance, and the prose preview are shared with `remember-p
 
 2. **Normalize companies first.** Web search each company to canonicalize ("Amplo Market" → Amplemarket). Carry the corrected name through. If nothing recognizable comes back, flag it unverified in the preview.
 
-3. **Resolve each person** via `remember-person`'s flow: parallel own-scope searches (name-only and name+company, multi-word names AND-joined), then web enrichment if a bare name returned 0, then ask. **No public-scope search.** Strong match → already in network; uncertain → surface candidates; nothing → new contact, but ask first on a bare name.
+3. **Resolve each person** via `add-person`'s flow: parallel own-scope searches (name-only and name+company, multi-word names AND-joined), then web enrichment if a bare name returned 0, then ask. **No public-scope search.** Strong match → already in network; uncertain → surface candidates; nothing → new contact, but ask first on a bare name.
 
 4. **Only after identity is confirmed**, build the preview (below). Never default to a new record silently.
 
@@ -33,7 +33,7 @@ Person resolution, provenance, and the prose preview are shared with `remember-p
 
 ## preview structure
 
-Same actionable-first, empty-zones-collapse shape as `remember-person`. A debrief writes more than people, so "ready to save" is grouped:
+Same actionable-first, empty-zones-collapse shape as `add-person`. A debrief writes more than people, so "ready to save" is grouped:
 
 ```
 ready to save to noticed:
@@ -55,7 +55,7 @@ need from you:
 <closing line naming the effect — "save all this to noticed?">
 ```
 
-Inherited from `remember-person`: prose not plan rows; **no `[merged]` / `[new]` / `[waiting_on]` / `[memory: fact]` tags shown to the user** (internal routing, not labels); plain status language; names in **bold**; **no `tags:` row** (fold into prose if worth surfacing, else silent); close names the effect and says "noticed".
+Inherited from `add-person`: prose not plan rows; **no `[merged]` / `[new]` / `[waiting_on]` / `[memory: fact]` tags shown to the user** (internal routing, not labels); plain status language; names in **bold**; **no `tags:` row** (fold into prose if worth surfacing, else silent); close names the effect and says "noticed".
 
 ## routing
 
@@ -74,7 +74,7 @@ Read existing notes via `get_person` before any `default_notes` append; never ov
 
 ## provenance
 
-Same split as `remember-person`. Note lines tagged `[from user]` / `[research, unverified]`, **system-only, never shown in chat**. Flag conflicts.
+Same split as `add-person`. Note lines tagged `[from user]` / `[research, unverified]`, **system-only, never shown in chat**. Flag conflicts.
 
 ## the company / person rule
 

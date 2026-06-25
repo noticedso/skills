@@ -6,7 +6,7 @@ ChatGPT, anything that loaded the skill). It asks the agent to look back at what
 actually happened and propose concrete edits to the skill — biased toward making
 it **simpler and more effective** first, **more accurate and complete** second.
 
-It works for any of the seven skills (remember-person, event-debrief,
+It works for any of the seven skills (add-person, event-debrief,
 research-person, follow-up, search-network, match-identities, onboard) because it
 makes the agent ground every suggestion in the real session rather than in generic
 advice, and check each one against the suite's shared conventions before proposing
@@ -16,7 +16,7 @@ Paste everything inside the block below.
 
 ```
 You just finished a session in which you used one or more of the noticed skills:
-remember-person, event-debrief, research-person, follow-up, search-network,
+add-person, event-debrief, research-person, follow-up, search-network,
 match-identities, onboard. Before we close, review how the skill(s) actually
 behaved in THIS session and propose concrete improvements to the skill's own
 instructions (its SKILL.md). Make the edits precise enough to apply directly.
@@ -47,7 +47,7 @@ transcript. First walk back through the session and note where:
 If a moment maps to none of these, it probably isn't worth a change.
 
 RESPECT THE DESIGN. These skills share deliberate conventions — identity
-resolution lives in remember-person; provenance has two surfaces (soft attribution
+resolution lives in add-person; provenance has two surfaces (soft attribution
 in chat, source tags in the stored note); readback after every write; preview
 before any write; no public scope in the capture path; no Gmail dependency; prose,
 not field-dumps — and each skill carries an "explicitly NOT in scope" list. Check
