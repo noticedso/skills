@@ -15,11 +15,11 @@ description: >-
 
 Single person, deep dive. Read everything available, present cleanly, then offer to save the enriched context back to noticed.
 
-Person resolution is shared with `remember-person` — same own → web → ask order. Read-heavy: the deliverable is a dossier in chat; writes only on an explicit "save".
+Person resolution is shared with `add-person` — same own → web → ask order. Read-heavy: the deliverable is a dossier in chat; writes only on an explicit "save".
 
 ## flow
 
-1. **Resolve the person** via `remember-person`'s flow: own-scope search, multi-word names AND-joined. Strong match → use it. Multiple hits → surface candidates. Nothing in own → not in network yet; web-only enrichment, mark not-in-noticed. **No public-scope search.**
+1. **Resolve the person** via `add-person`'s flow: own-scope search, multi-word names AND-joined. Strong match → use it. Multiple hits → surface candidates. Nothing in own → not in network yet; web-only enrichment, mark not-in-noticed. **No public-scope search.**
 
 2. **Read what's in noticed.** `get_person({ include: "dossier" })` for `default_notes`, tags, recent `log_interactions`.
 

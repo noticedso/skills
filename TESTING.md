@@ -2,7 +2,7 @@
 
 Run each prompt in a chat with the noticed MCP connected. Prompts are ordered easy → hard: the first is the happy path, the rest exercise the branches that matter (ambiguity, batches, edge cases). Substitute real names from your own network where it helps.
 
-## remember-person
+## add-person
 
 1. `add https://linkedin.com/in/<someone> — met at the fintech dinner, working on btc payments`
    *(clean new contact from a URL + context; should preview, then save on confirm, then read back what landed)*
@@ -18,7 +18,7 @@ Run each prompt in a chat with the noticed MCP connected. Prompts are ordered ea
 2. `i'm going to a founders dinner tonight, here's the guest list: [paste names]. i'm raising a seed — who matters?`
    *(goal stated up front; check it tiers against "investors / people who can intro to investors" and flags in-network people prominently)*
 3. After a shortlist: `save the tier 1 and 2 people, tag them nytw-2026`
-   *(should hand the batch to remember-person — one preview, one confirm — and not log any "met" interaction)*
+   *(should hand the batch to add-person — one preview, one confirm — and not log any "met" interaction)*
 
 ## event-debrief
 

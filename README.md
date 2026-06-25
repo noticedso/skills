@@ -36,7 +36,7 @@ Workspace admins: confirm **Enable skills** and **Enable skill uploading** are o
 
 | skill | what it does | writes? |
 |---|---|---|
-| **remember-person** | Capture one or more people into noticed from a name, URL, handle, photo, or freeform dump. The core capture primitive. | yes |
+| **add-person** | Add or update one or more people in noticed from a name, URL, handle, photo, or freeform dump — dedupe-first, logs the meeting on the day it happened, saves context as a memory. The core capture primitive. | yes |
 | **event-debrief** | Process a meeting/event dump into people, notes, follow-ups, ideas, and references — all written in one pass. | yes |
 | **research-person** | Deep-dive one person before a meeting; render a dossier from noticed + the web; offer to save it back. | only on save |
 | **follow-up** | Draft a follow-up message to someone you just met, in your voice, with something actionable in it. | logs the touchpoint only after you confirm it went out |
@@ -49,7 +49,7 @@ Workspace admins: confirm **Enable skills** and **Enable skill uploading** are o
 The capture loop runs across a real-world interaction:
 
 ```
-remember-person  →  event-debrief
+add-person  →  event-debrief
    (during)            (after)
 ```
 
@@ -59,7 +59,7 @@ remember-person  →  event-debrief
 
 All skills follow the same rules, so they read as one system:
 
-- **Identity resolution** is owned by `remember-person` (own-network search → web enrichment → ask). The other skills follow that flow rather than re-implementing it.
+- **Identity resolution** is owned by `add-person` (own-network search → web enrichment → ask). The other skills follow that flow rather than re-implementing it.
 - **Provenance, two surfaces.** In chat, web-found facts are attributed softly ("his linkedin says…") so research never reads as something you said. In the stored note, every line carries a system-only tag (`[from user]` / `[research, unverified]`) that is never shown in chat.
 - **Readback after every write.** noticed writes are silent, so each skill recaps what landed — in prose, not a database-style `tags:` row.
 - **No public scope in the capture path.** Capture answers *who is this person* via own-network + web. Warm-intro / reachability discovery (`scope: "public"`) lives only in `search-network`, where it falls back to own-scope silently if the backend errors.

@@ -15,7 +15,7 @@ description: >-
 
 Draft a follow-up to one person the user recently met IRL. One person at a time. Resolve identity, channel, and angle before writing a word.
 
-Person resolution is shared with `remember-person` — same own → ask order. No web enrichment, no public scope.
+Person resolution is shared with `add-person` — same own → ask order. No web enrichment, no public scope.
 
 ## flow
 
