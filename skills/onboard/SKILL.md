@@ -42,8 +42,7 @@ Ask in order. Pre-fill where signal exists. Skip Q1 / Q2 if covered by the colla
 Founder · Sales & Growth · Marketing & Brand · Partnerships & BizDev · Product & Engineering · Customer Success · Operations · Investing · Recruiting · Other
 _"No big deal if you don't fit neatly. This is just to get started."_
 
-**Q2. Where are you based?** (single-select chips + "other" → text — never multi)
-NYC · SF · LA · London · Lisbon · Berlin · Remote · Other (type it)
+**Q2. Where in the world do you spend most of the year?** (if you have context about the user present multi-select chips + "other" → text; if no context just text based answer)
 
 **Q3. What are you building or working on right now?** (short free text)
 One line is fine.
@@ -51,7 +50,10 @@ One line is fine.
 **Q4. Which of these are on your plate right now?** (multi-select chips)
 Sales · Hiring · Find work · Fundraising · Investing · Customer success · Networking · Collabs · Other
 
-**Q5. If noticed nailed one thing for you, what would it be?** (rank all 5 from most to least important)
+**Q5. How do you keep up with people today?** (multi-select chips)
+Notes app · Spreadsheet · LinkedIn · Notion · CRM · Nothing · Other
+
+**Q6. If noticed nailed one thing for you, what would it be?** (rank all 5 from most to least important)
 - Remember context before a meeting
 - Reconnect with people I've lost touch with
 - Get warm intros to people I want to meet
@@ -60,8 +62,11 @@ Sales · Hiring · Find work · Fundraising · Investing · Customer success · 
 
 Use a drag-to-rank UI if available; otherwise ask the user to list the five in order.
 
-**Q6. How do you remember relationships today?** (multi-select chips)
-Notes app · Spreadsheet · LinkedIn · Notion · CRM · Nothing · Other
+**Q7. what are you great at — the thing people come to you for?** (free text, skippable)
+How you can add value to others. 
+
+**Q8. what's a topic you could talk about for an hour?** (free text, skippable)
+Genuine interests, not just professional surface.
 
 **Q7. Anything else worth knowing?** (free text, skippable)
 Whatever doesn't fit above — who you're trying to meet, specific goals, context I should have.
