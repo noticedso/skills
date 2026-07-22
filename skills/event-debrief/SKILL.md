@@ -61,8 +61,8 @@ Inherited from `add-person`: prose not plan rows; **no `[merged]` / `[new]` / `[
 
 | What | Where |
 |---|---|
-| Person attended (in noticed) | `update_person(default_notes, tags)` + `log_interaction(kind: 'met', payload: { summary, feel }, occurred_at)` |
-| Person attended (new) | `add_to_network` → `update_person(default_notes)` + `log_interaction(kind: 'met', …)` |
+| Person attended (in noticed) | `add_note`/`add_memory` (context, `occurred_at`) + `update_person(tags)` + `log_interaction(kind: 'met', payload: { summary, feel }, occurred_at)` |
+| Person attended (new) | `add_to_network` → `add_note`/`add_memory` (context, `occurred_at`) + `log_interaction(kind: 'met', …)` |
 | Person mentioned only | Same person write, no `log_interaction(met)` |
 | Follow-up about a person | `log_interaction(kind: 'note', payload: { todo, type })` on them. Undated (backend stamps `now` regardless — MCP limit). |
 | Follow-up not tied to a person | Closest related person if one fits, else `memory_save(category: 'commitment', "[mcp · skill:event-debrief] <todo>")` |
@@ -70,11 +70,11 @@ Inherited from `add-person`: prose not plan rows; **no `[merged]` / `[new]` / `[
 | Reference (tool, company, book) | `memory_save(category: 'fact', "[mcp · skill:event-debrief] <reference>")` |
 | Event-level summary | Only if 2+ attended. `memory_save(category: 'fact', "[mcp · skill:event-debrief] <title>, <date>. Attended: A, B, C. Topics: …")` |
 
-Read existing notes via `get_person` before any `default_notes` append; never overwrite. `log_interaction` payloads take no prefix (`kind` + `occurred_at` carry the semantics).
+Rich person context goes to `add_note` (what the user told you) / `add_memory` (what you researched), not `default_notes`. Pass `captured_via: "event-debrief"` on both so the entry records which skill captured it. Read existing context via `get_person` first; append, never overwrite. The `memory_save` prefix (`[mcp · skill:event-debrief]`) stays — it namespaces global memories for `memory_search`, a different surface from a person's notes. `log_interaction` payloads take no prefix (`kind` + `occurred_at` carry the semantics).
 
 ## provenance
 
-Same split as `add-person`. Note lines tagged `[from user]` / `[research, unverified]`, **system-only, never shown in chat**. Flag conflicts.
+Same split as `add-person`: what the user told you → `add_note`, what you researched → `add_memory`. The author carries the provenance — no `[from user]` / `[research, unverified]` tags on person context. Flag conflicts by writing both.
 
 ## the company / person rule
 
@@ -87,7 +87,7 @@ One confirm per dump. Identity questions are the only blocking step, only when t
 `memory_save` dedupes server-side (safe to re-run for ideas/references/summary). `log_interaction` is append-only and does **not** dedupe — re-running a debrief duplicates meeting notes and follow-ups. Don't run twice on the same dump.
 
 ## tool needs
-- `noticed`: `search_people`, `get_person`, `add_to_network`, `update_person`, `log_interaction`, `memory_save`
+- `noticed`: `search_people`, `get_person`, `add_to_network`, `add_note`, `add_memory`, `update_person`, `log_interaction`, `memory_save`
 - `web_search`: canonicalize companies + enrich thin context
 
 ## explicitly NOT in scope
