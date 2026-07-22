@@ -72,23 +72,24 @@ noticed.log_interaction({
 
 ---
 
-## save memory — rich context here, not in default_notes
+## save context — your notes vs noticed's research
 
-After the interaction, save the freeform context — who they are, what they need, what was discussed, how they can help — as a durable memory attached to the person record.
+After the interaction, save the freeform context — who they are, what they need, what was discussed, how they can help — attached to the person record. **Split it by where it came from:**
+
+- **What the user told you** (firsthand: what was discussed, how they can help, plans, their own account of themselves) → `add_note`. The content is theirs; you're the keyboard.
+- **What you found on the web** (unverified research: a headline, a company detail, a follower count) → `add_memory`. You worked it out, so it's noticed's.
+
+The tool you pick records **who authored the line**, and that authorship is what tells the reader how far to trust it — a note is firsthand, a memory is researched. So there are **no `[from user]` / `[research, unverified]` tags** and **no `[mcp · skill:…]` or date prefix**: the author carries the provenance, `occurred_at` carries the date.
 
 ```
-noticed.add_memory({
-  person_id,
-  content: "[mcp · skill:add-person · YYYY-MM-DD]\n<source-tagged context>",
-  tags: [...]      // optional; inherit from person tags where relevant
-})
+noticed.add_note({   person_id, content: "<what the user told you>",    occurred_at: "<ISO>", tags: [...] })
+noticed.add_memory({ person_id, content: "<what you found on the web>", occurred_at: "<ISO>", tags: [...] })
 ```
 
-- Each content line tagged `[from user]` or `[research, unverified]`. Flag conflicts between the user's account and web research — write both, tag each.
-- The date in the memory prefix (YYYY-MM-DD) should match `occurred_at` of the interaction. They describe the same moment.
-- `add_memory` attaches to `relationship.memories` on the person record, readable back via `get_person`. This is the right home for dated, episodic context.
-- **`default_notes` is not the right place for rich context.** Reserve it for terse, stable record-level annotations (e.g. a pronunciation note, a permanent caveat) — not for "what we talked about at that dinner."
-- Tighter memory ↔ interaction linking (foreign-key refs) is a future enhancement once the MCP supports it. For now: keep dates consistent and don't try to force a link manually.
+- Set `occurred_at` to the same moment as the `met` interaction — that's the date the entry files under. Omitting it defaults to now, which back-dated context should never do.
+- One entry per distinct claim — don't concatenate firsthand and researched lines into one blob. When the user's account and web research conflict, write both (one note, one memory) so the disagreement is visible by author.
+- Both read back via `get_person`: your notes under `relationship.notes`, noticed's under `relationship.memories`. This is the right home for dated, episodic context.
+- **`default_notes` is not the right place for rich context.** Reserve it for terse, stable record-level annotations (a pronunciation note, a permanent caveat) — not "what we talked about at that dinner."
 
 ---
 
@@ -125,9 +126,9 @@ to noticed" — or just "save to noticed?" when nothing's blocking.>
 ## provenance — two surfaces
 
 - **Chat (preview + readback):** web-found facts attributed softly in prose ("his LinkedIn says founder in consumer AI") so research never reads as user-stated. No bracket tags shown in chat.
-- **Stored memory (system-only):** every line tagged `[from user]` or `[research, unverified]`, written into `add_memory` content. **Never shown verbatim in chat.**
+- **Stored context (the record):** firsthand lines go through `add_note`, research lines through `add_memory` — the author records the provenance, so no inline tags. **Never echoed verbatim into chat.**
 
-Flag conflicts between the user's account and research — write both, tag each.
+When the user's account and research conflict, write both — one as a note, one as a memory.
 
 ---
 
@@ -139,23 +140,25 @@ Recap what happened per person — unprompted. noticed writes are silent; this i
 
 ## write sequence
 
-Structured fields (`linkedin_username`, `headline`, `github`) can only be set at creation via `add_to_network`; `update_person` cannot write them. Web-found headline → `free_form.headline` on a new record, or the memory body (`[research, unverified]`) on an existing one.
+Structured fields (`linkedin_username`, `headline`, `github`) can only be set at creation via `add_to_network`; `update_person` cannot write them. Web-found headline → `free_form.headline` on a new record, or an `add_memory` line on an existing one (research → memory).
 
-`add_to_network`'s `default_notes` param silently drops — always set notes via a follow-up `add_memory` call, not on the creation call.
+`add_to_network`'s `default_notes` param silently drops — always save context via a follow-up `add_note` / `add_memory` call, not on the creation call.
 
 ```
 # — already in network —
 noticed.get_person({ person_id, include: "dossier" })
   # check for existing met on this date before writing
 noticed.log_interaction({ person_id, kind: "met", occurred_at: "...", payload: { summary: "..." } })
-noticed.add_memory({ person_id, content: "[mcp · skill:add-person · YYYY-MM-DD]\n<source-tagged context>" })
+noticed.add_note({   person_id, content: "<what the user told you>",    occurred_at: "..." })
+noticed.add_memory({ person_id, content: "<web-found research, if any>", occurred_at: "..." })
 noticed.update_person({ person_id, tags: [...] })          # tags only; not default_notes for rich context
 
 # — new contact —
 noticed.add_to_network({ free_form: { name, linkedin_url?, github_login?, headline? }, tags: [...] })
   # → person_id returned
 noticed.log_interaction({ person_id, kind: "met", occurred_at: "...", payload: { summary: "..." } })
-noticed.add_memory({ person_id, content: "[mcp · skill:add-person · YYYY-MM-DD]\n<source-tagged context>" })
+noticed.add_note({   person_id, content: "<what the user told you>",    occurred_at: "..." })
+noticed.add_memory({ person_id, content: "<web-found research, if any>", occurred_at: "..." })
 ```
 
 ---
@@ -178,7 +181,8 @@ noticed.get_person({ person_id, include: "dossier" })
 noticed.add_to_network({ free_form: { name, linkedin_url?, github_login?, headline? }, tags: [...] })
 noticed.update_person({ person_id, tags: [...] })
 noticed.log_interaction({ person_id, kind: "met", occurred_at?: "ISO timestamp", payload?: { summary } })
-noticed.add_memory({ person_id, content: "...", tags?: [...] })
+noticed.add_note({   person_id, content: "...", occurred_at?: "ISO timestamp", tags?: [...] })   // firsthand: the user's own words
+noticed.add_memory({ person_id, content: "...", occurred_at?: "ISO timestamp", tags?: [...] })   // research: what you worked out
 web_search(...)     // canonicalize companies, enrich thin identity
 ```
 
