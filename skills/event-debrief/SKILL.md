@@ -70,7 +70,7 @@ Inherited from `add-person`: prose not plan rows; **no `[merged]` / `[new]` / `[
 | Reference (tool, company, book) | `memory_save(category: 'fact', "[mcp · skill:event-debrief] <reference>")` |
 | Event-level summary | Only if 2+ attended. `memory_save(category: 'fact', "[mcp · skill:event-debrief] <title>, <date>. Attended: A, B, C. Topics: …")` |
 
-Rich person context goes to `add_note` (what the user told you) / `add_memory` (what you researched), not `default_notes`. Read existing context via `get_person` first; append, never overwrite. The `memory_save` prefix (`[mcp · skill:event-debrief]`) stays — it namespaces global memories for `memory_search`, a different surface from a person's notes. `log_interaction` payloads take no prefix (`kind` + `occurred_at` carry the semantics).
+Rich person context goes to `add_note` (what the user told you) / `add_memory` (what you researched), not `default_notes`. Pass `captured_via: "event-debrief"` on both so the entry records which skill captured it. Read existing context via `get_person` first; append, never overwrite. The `memory_save` prefix (`[mcp · skill:event-debrief]`) stays — it namespaces global memories for `memory_search`, a different surface from a person's notes. `log_interaction` payloads take no prefix (`kind` + `occurred_at` carry the semantics).
 
 ## provenance
 

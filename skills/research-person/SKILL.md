@@ -30,7 +30,7 @@ Person resolution is shared with `add-person` — same own → web → ask order
 5. **Proactively offer to save.** Always close with the offer — don't wait to be asked: "want me to save this back to <name>'s record?" Wait for an explicit "save".
 
 6. **On "save":** a tight 3-5 line summary of the *new* findings (not the full dossier). Save each finding as its own `add_memory` entry — research is noticed's, so it lands as a memory, not one of the user's notes. Then read back what was written.
-   - In noticed → one `add_memory` per finding, `occurred_at` set to the research date; merge tags.
+   - In noticed → one `add_memory` per finding, `occurred_at` set to the research date, `captured_via: "research-person"`; merge tags.
    - Not in noticed → ask "add them to your network too?" Yes → `add_to_network`, then `add_memory` the findings. No → save nothing.
 
 ## provenance — two surfaces

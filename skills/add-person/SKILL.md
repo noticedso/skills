@@ -82,10 +82,11 @@ After the interaction, save the freeform context — who they are, what they nee
 The tool you pick records **who authored the line**, and that authorship is what tells the reader how far to trust it — a note is firsthand, a memory is researched. So there are **no `[from user]` / `[research, unverified]` tags** and **no `[mcp · skill:…]` or date prefix**: the author carries the provenance, `occurred_at` carries the date.
 
 ```
-noticed.add_note({   person_id, content: "<what the user told you>",    occurred_at: "<ISO>", tags: [...] })
-noticed.add_memory({ person_id, content: "<what you found on the web>", occurred_at: "<ISO>", tags: [...] })
+noticed.add_note({   person_id, content: "<what the user told you>",    occurred_at: "<ISO>", captured_via: "add-person", tags: [...] })
+noticed.add_memory({ person_id, content: "<what you found on the web>", occurred_at: "<ISO>", captured_via: "add-person", tags: [...] })
 ```
 
+- Pass `captured_via: "add-person"` on every `add_note` / `add_memory` — it records which skill captured the entry (the structured stand-in for the old `[mcp · skill:…]` prefix).
 - Set `occurred_at` to the same moment as the `met` interaction — that's the date the entry files under. Omitting it defaults to now, which back-dated context should never do.
 - One entry per distinct claim — don't concatenate firsthand and researched lines into one blob. When the user's account and web research conflict, write both (one note, one memory) so the disagreement is visible by author.
 - Both read back via `get_person`: your notes under `relationship.notes`, noticed's under `relationship.memories`. This is the right home for dated, episodic context.
