@@ -1,6 +1,6 @@
 # noticed-skills
 
-A suite of agent skills for [noticed](https://noticed.so) — a personal networking agent. Each skill wraps the noticed MCP to handle one job in the relationship-management loop: capturing people you meet, debriefing meetings, researching contacts, following up, searching your network, matching identities, and onboarding.
+A suite of agent skills for [noticed](https://noticed.so) — a personal networking agent. Each skill wraps the noticed MCP to handle one job in the relationship-management loop: capturing people you meet, debriefing meetings, researching contacts, following up, searching your network, matching identities, making introductions, and onboarding.
 
 ## connect noticed first
 
@@ -21,14 +21,14 @@ Requires a Pro, Max, Team, or Enterprise plan with code execution enabled (Setti
 
 1. Open **Customize → Plugins** and click **+ → Add marketplace**.
 2. Sync from this GitHub repo: `noticedso/skills`.
-3. From the synced marketplace, install **noticed-skills**. All seven skills land in one shot.
+3. From the synced marketplace, install **noticed-skills**. All eight skills land in one shot.
 
 ## install (ChatGPT)
 
 ChatGPT has no GitHub marketplace install, so each skill goes in by hand.
 
 1. Open **Skills → New skill → Upload from your computer**.
-2. Upload each `skills/<name>/` folder from this repo as its own skill (zip the folder first if ChatGPT asks for a single file). Repeat for all seven.
+2. Upload each `skills/<name>/` folder from this repo as its own skill (zip the folder first if ChatGPT asks for a single file). Repeat for all eight.
 
 Workspace admins: confirm **Enable skills** and **Enable skill uploading** are on under Permissions & roles.
 
@@ -43,6 +43,7 @@ Workspace admins: confirm **Enable skills** and **Enable skill uploading** are o
 | **search-network** | Natural-language search across your network; returns a tight table; drills into anyone. | read-only |
 | **onboard** | Onboards you to noticed: a short questionnaire that captures your identity, goals, and current tools, saved in one `save_onboarding` call. | yes (to your own record) |
 | **match-identities** | Triage the cross-source identity matches noticed proposes — confirm real matches, clear false positives, merge duplicates — and fill profile gaps by searching your network first. | yes |
+| **intro** | Find the warm path to a target, draft an intro between two people, write an intro request with a forwardable blurb, or write a backchannel vouch — all copy/paste. | only on confirmed intro tracking |
 
 ## how they fit together
 
@@ -53,7 +54,7 @@ add-person  →  event-debrief
    (during)            (after)
 ```
 
-`research-person` and `follow-up` support any contact at any time. `search-network` is the read path over everything you've captured. `onboard` is first-run setup.
+`research-person` and `follow-up` support any contact at any time. `search-network` is the read path over everything you've captured. `intro` turns that network into warm paths and the messages that open them. `onboard` is first-run setup.
 
 ## shared conventions
 
@@ -62,7 +63,7 @@ All skills follow the same rules, so they read as one system:
 - **Identity resolution** is owned by `add-person` (own-network search → web enrichment → ask). The other skills follow that flow rather than re-implementing it.
 - **Provenance, two surfaces.** In chat, web-found facts are attributed softly ("his linkedin says…") so research never reads as something you said. In the stored note, every line carries a system-only tag (`[from user]` / `[research, unverified]`) that is never shown in chat.
 - **Readback after every write.** noticed writes are silent, so each skill recaps what landed — in prose, not a database-style `tags:` row.
-- **No public scope in the capture path.** Capture answers *who is this person* via own-network + web. Warm-intro / reachability discovery (`scope: "public"`) lives only in `search-network`, where it falls back to own-scope silently if the backend errors.
+- **No public scope in the capture path.** Capture answers *who is this person* via own-network + web. Warm-intro / reachability discovery (`scope: "public"`) lives only in `search-network` and `intro`'s path-finding mode, both of which fall back to own-scope silently if the backend errors.
 - **No Gmail dependency.** Drafts are copy/paste (subject included for email); nothing is sent automatically.
 
 ## testing
@@ -71,7 +72,7 @@ See **[TESTING.md](./TESTING.md)** for suggested prompts to exercise each skill 
 
 ## improving the skills
 
-At the end of a session that used a skill, paste the prompt in **[skill-improvement.md](./skill-improvement.md)** to have the agent review how the skill actually behaved and suggest edits — biased toward making it simpler first, then more accurate. Works in any client and for any of the seven skills.
+At the end of a session that used a skill, paste the prompt in **[skill-improvement.md](./skill-improvement.md)** to have the agent review how the skill actually behaved and suggest edits — biased toward making it simpler first, then more accurate. Works in any client and for any of the eight skills.
 
 ## updates
 
