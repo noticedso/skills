@@ -8,29 +8,13 @@ These skills call the noticed MCP. Connect it to your client before you install 
 
 Go to **[noticed.so/onboarding](https://www.noticed.so/onboarding)** and pick your client — Claude, Claude Code, Cursor, Gemini CLI / Antigravity, ChatGPT, or anything else that speaks MCP. The MCP server itself lives at [noticedso/cli](https://github.com/noticedso/cli) if you want to run it locally.
 
-## install (Claude Code)
+## install
 
-```
-/plugin marketplace add noticedso/skills
-/plugin install noticed-skills@noticed-skills
-```
-
-## install (claude.ai)
-
-Requires a Pro, Max, Team, or Enterprise plan with code execution enabled (Settings → Capabilities).
-
-1. Open **Customize → Plugins** and click **+ → Add marketplace**.
-2. Sync from this GitHub repo: `noticedso/skills`.
-3. From the synced marketplace, install **noticed-skills**. All eight skills land in one shot.
-
-## install (ChatGPT)
-
-ChatGPT has no GitHub marketplace install, so each skill goes in by hand.
-
-1. Open **Skills → New skill → Upload from your computer**.
-2. Upload each `skills/<name>/` folder from this repo as its own skill (zip the folder first if ChatGPT asks for a single file). Repeat for all eight.
-
-Workspace admins: confirm **Enable skills** and **Enable skill uploading** are on under Permissions & roles.
+Use the universal installer at **[noticed.so/skills#install](https://www.noticed.so/skills#install)**.
+Copy one prompt into your agent and it will choose the supported setup, perform
+what it can, show you what the skills can access or change, ask before
+persisting them, and verify they loaded. Download and manual fallbacks live on
+the same page.
 
 ## the skills
 
@@ -76,19 +60,17 @@ At the end of a session that used a skill, paste the prompt in **[skill-improvem
 
 ## updates
 
-Updates are manual for now. Reinstall to get the latest.
-Releases are versioned automatically: any change under `skills/` on `main` triggers CI
-([`.github/workflows/version-bump.yml`](./.github/workflows/version-bump.yml)), which bumps
-the version in `marketplace.json` (semver, derived from the conventional-commit messages) and
-publishes a GitHub Release.
+Run the **[universal installer](https://www.noticed.so/skills#install)** again.
+It downloads the skills version currently published with noticed, shows you
+what the skills can access or change, asks before replacing anything, and
+verifies the updated pack loaded.
 
-To pull a new version, **refresh the marketplace** — reinstalling the plugin alone reuses a
-cached copy and will *not* see new commits:
+If you originally installed the Claude Code marketplace plugin, refresh the
+marketplace before updating it:
 
 ```
 /plugin marketplace update noticed-skills
 ```
 
-Then update the plugin (the Update button activates once the refreshed marketplace reports a
-higher version). On claude.ai / ChatGPT, re-sync the marketplace from the repo rather than
-reinstalling the plugin.
+Then update the plugin when Claude Code reports a newer version. Marketplace
+users on other clients can use that client's native refresh/update action.
