@@ -6,8 +6,8 @@ ChatGPT, anything that loaded the skill). It asks the agent to look back at what
 actually happened and propose concrete edits to the skill — biased toward making
 it **simpler and more effective** first, **more accurate and complete** second.
 
-It works for any of the seven skills (add-person, event-debrief,
-research-person, follow-up, search-network, match-identities, onboard) because it
+It works for any of the eight skills (add-person, event-debrief,
+research-person, follow-up, search-network, match-identities, onboard, intro) because it
 makes the agent ground every suggestion in the real session rather than in generic
 advice, and check each one against the suite's shared conventions before proposing
 it.
@@ -17,7 +17,7 @@ Paste everything inside the block below.
 ```
 You just finished a session in which you used one or more of the noticed skills:
 add-person, event-debrief, research-person, follow-up, search-network,
-match-identities, onboard. Before we close, review how the skill(s) actually
+match-identities, onboard, intro. Before we close, review how the skill(s) actually
 behaved in THIS session and propose concrete improvements to the skill's own
 instructions (its SKILL.md). Make the edits precise enough to apply directly.
 
@@ -71,11 +71,13 @@ OUTPUT:
   - Why it's better — what behaves differently next time.
   - Confidence — high / medium / low, and whether it's a recurring pattern or a
     one-off (flag one-offs so we don't overfit a single transcript).
-- The single highest-leverage change.
 - Underlying product gaps, if any, as a short separate list.
 
-If you can open the SKILL.md, re-read it before proposing edits and offer to apply
-the high-confidence ones. If not, work from the skill text already in your context
-and give the edits as paste-ready text. If nothing in this session justifies a
-change, say so plainly rather than inventing suggestions.
+If you can open the SKILL.md, re-read it before proposing edits. Check for an
+existing GitHub issue labeled `skill-improvement`, then offer to create or update
+an issue with the compact evidence and proposed change. Never mutate GitHub
+without explicit approval, and never include private messages, personal notes,
+credentials, or other sensitive source material. If you cannot open the skill or
+repository, give the candidate as paste-ready text. If nothing in this session
+justifies a change, say so plainly rather than inventing suggestions.
 ```

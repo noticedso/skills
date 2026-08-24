@@ -1,0 +1,41 @@
+name: Skill improvement
+description: Record evidence from real use before changing a Networking Assistant skill.
+title: "[skill] "
+labels:
+  - skill-improvement
+body:
+  - type: input
+    id: skill
+    attributes:
+      label: Skill
+      placeholder: add-person
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence from real use
+      description: Describe the correction, hesitation, repeated friction, or useful behavior without including private source material.
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: Smallest proposed change
+      description: Explain what should behave differently. A precise problem is enough when the solution is not clear yet.
+    validations:
+      required: true
+  - type: input
+    id: owner
+    attributes:
+      label: Decision owner
+      description: Name the person whose approval is needed for this customer-facing behavior change.
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: This issue contains no credentials, private messages, personal notes, customer data, or other sensitive source material.
+          required: true

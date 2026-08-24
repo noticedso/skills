@@ -67,7 +67,7 @@ See **[TESTING.md](./TESTING.md)** for suggested prompts to exercise each skill 
 
 ## improving the skills
 
-At the end of a session that used a skill, paste the prompt in **[skill-improvement.md](./skill-improvement.md)** to have the agent review how the skill actually behaved and suggest edits — biased toward making it simpler first, then more accurate. Works in any client and for any of the eight skills.
+At the end of a session that used a skill, paste the prompt in **[skill-improvement.md](./skill-improvement.md)** to have the agent review how the skill actually behaved — biased toward making it simpler first, then more accurate. With your approval, the agent records durable candidates as GitHub issues labeled `skill-improvement`, after checking for an existing issue. Issues are evidence-backed proposals, not active instructions; changing a skill still requires owner approval and a reviewed pull request.
 
 ## updates
 
