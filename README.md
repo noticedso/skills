@@ -21,16 +21,11 @@ Requires a Pro, Max, Team, or Enterprise plan with code execution enabled (Setti
 
 1. Open **Customize → Plugins** and click **+ → Add marketplace**.
 2. Sync from this GitHub repo: `noticedso/skills`.
-3. From the synced marketplace, install **noticed-skills**. All eight skills land in one shot.
+3. From the synced marketplace, install **Networking Assistant**. All eight skills land in one shot.
 
-## install (ChatGPT)
+## install (ChatGPT / Codex)
 
-ChatGPT has no GitHub marketplace install, so each skill goes in by hand.
-
-1. Open **Skills → New skill → Upload from your computer**.
-2. Upload each `skills/<name>/` folder from this repo as its own skill (zip the folder first if ChatGPT asks for a single file). Repeat for all eight.
-
-Workspace admins: confirm **Enable skills** and **Enable skill uploading** are on under Permissions & roles.
+Add `noticedso/skills` as a plugin marketplace, then install **Networking Assistant**. The plugin keeps all eight capabilities together; do not upload them one by one.
 
 ## the skills
 
