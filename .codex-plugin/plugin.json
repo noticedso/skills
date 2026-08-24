@@ -1,0 +1,35 @@
+{
+  "name": "noticed-skills",
+  "version": "1.3.0+codex.20260824185033",
+  "description": "A networking assistant that helps noticed users maintain relationships, prepare for meetings, follow up, make introductions, and search their network.",
+  "author": {
+    "name": "noticed",
+    "url": "https://noticed.so"
+  },
+  "repository": "https://github.com/noticedso/skills",
+  "keywords": [
+    "noticed",
+    "networking",
+    "relationships",
+    "introductions"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Networking Assistant",
+    "shortDescription": "Maintain relationships and use your network.",
+    "longDescription": "A noticed user coworker for adding people, preparing for meetings, following up, making introductions, resolving identities, and finding the right people in your network.",
+    "developerName": "noticed",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Prepare me for an upcoming meeting with someone in my network.",
+      "Help me follow up with someone I recently met.",
+      "Find the right people in my network for this introduction."
+    ],
+    "brandColor": "#111111"
+  }
+}
