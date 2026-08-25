@@ -64,11 +64,27 @@ const agentSystem = `${skill}\n\n${flow}\n\n${voice}\n\n# Mock product data\n${J
 const namesById = new Map(
   input.network_candidates.map((candidate) => [candidate.id, candidate.name]),
 );
-const feedback = Object.entries(answerKey.feedback)
-  .map(([id, [judgment, reason]]) => `${namesById.get(id)}: ${judgment} — ${reason}`)
-  .join("\n");
+function candidateIdsIn(content) {
+  return input.network_candidates
+    .filter((candidate) => content.includes(candidate.name))
+    .map((candidate) => candidate.id);
+}
+
+function feedbackForCandidateIds(candidateIds) {
+  return candidateIds
+    .map((id) => {
+      const [judgment, reason] = answerKey.feedback[id] ?? [
+        "maybe",
+        "this was not in my expected first set; explain the tradeoff",
+      ];
+      return `${namesById.get(id)}: ${judgment} — ${reason}`;
+    })
+    .join("\n");
+}
+
 const goalAnswers = answerKey.goal_answers;
 const goalReply = `my goal: ${goalAnswers.goal}\n\nwhat we're building: ${goalAnswers.product}\n\nideal fit: ${goalAnswers.ideal_customer}\n\nexamples: ${goalAnswers.examples.join(", ")}`;
+const feedbackTurn = Symbol("feedback");
 const automatedUserTurns = [
   "1",
   "2",
@@ -78,7 +94,7 @@ const automatedUserTurns = [
   "[checkpoint: linkedin sync started]",
   goalReply,
   "[checkpoint: linkedin sync complete]",
-  feedback,
+  feedbackTurn,
   "I'm done for now",
   "not now",
   "[simulation complete]",
@@ -90,7 +106,7 @@ const humanUserTurns = [
   "done",
   "done",
   goalReply,
-  feedback,
+  feedbackTurn,
   "I'm done for now",
   "not now",
   "[simulation complete]",
@@ -104,11 +120,24 @@ const transcript = [
     content: "i've just signed in and connected google. start onboarding me.",
   },
 ];
+let feedback = "";
+let simulationError = null;
 
 for (let turn = 0; turn < turnBudget; turn += 1) {
   const agentReply = await respond(agentSystem, transcript);
   transcript.push({ role: "assistant", content: agentReply });
-  const simulatorReply = goldenUserTurns[turn] ?? "[simulation complete]";
+  const requestedReply = goldenUserTurns[turn] ?? "[simulation complete]";
+  let simulatorReply = requestedReply;
+  if (requestedReply === feedbackTurn) {
+    const shownCandidateIds = candidateIdsIn(agentReply);
+    if (shownCandidateIds.length !== 5) {
+      simulationError = `expected first shortlist with five candidates, found ${shownCandidateIds.length}`;
+      simulatorReply = "[simulation complete]";
+    } else {
+      feedback = feedbackForCandidateIds(shownCandidateIds);
+      simulatorReply = feedback;
+    }
+  }
   transcript.push({ role: "user", content: simulatorReply });
   if (simulatorReply.trim() === "[simulation complete]") break;
 }
@@ -140,16 +169,11 @@ const judgmentMatch = rawJudgment.match(/\{[\s\S]*\}/);
 if (!judgmentMatch) throw new Error(`Judge returned invalid JSON: ${rawJudgment}`);
 const judgment = JSON.parse(judgmentMatch[0]);
 
-function candidateIdsIn(content) {
-  return input.network_candidates
-    .filter((candidate) => content.includes(candidate.name))
-    .map((candidate) => candidate.id);
-}
-
-function firstAssistantWithFiveCandidates(afterIndex) {
+function firstAssistantWithFiveCandidates(afterIndex, beforeIndex = transcript.length) {
   return transcript.findIndex(
     (turn, index) =>
       index > afterIndex &&
+      index < beforeIndex &&
       turn.role === "assistant" &&
       candidateIdsIn(turn.content).length >= 5,
   );
@@ -174,8 +198,14 @@ const doneIndex = transcript.findIndex(
 );
 const firstShortlistGateIndex =
   interactionMode === "human" ? goalIndex : syncCompleteIndex;
-const firstShortlistIndex = firstAssistantWithFiveCandidates(firstShortlistGateIndex);
-const refinedShortlistIndex = firstAssistantWithFiveCandidates(feedbackIndex);
+const firstShortlistIndex =
+  feedbackIndex >= 0
+    ? firstAssistantWithFiveCandidates(firstShortlistGateIndex, feedbackIndex)
+    : -1;
+const refinedShortlistIndex =
+  doneIndex >= 0
+    ? firstAssistantWithFiveCandidates(feedbackIndex, doneIndex)
+    : -1;
 const finalShortlistIndex = firstAssistantWithFiveCandidates(doneIndex);
 const firstShortlistIds =
   firstShortlistIndex >= 0 ? candidateIdsIn(transcript[firstShortlistIndex].content) : [];
@@ -273,6 +303,7 @@ const report = {
   model,
   interaction_mode: interactionMode,
   turns: transcript.length,
+  simulation_error: simulationError,
   transcript,
   judgment,
   deterministic_checks: deterministicChecks,

@@ -2,6 +2,12 @@
 
 ## Automated golden paths
 
+Run the simulator regression tests without an API call:
+
+```bash
+node --test scripts/simulate.test.mjs
+```
+
 Run from any directory with Node 18+ and an OpenAI API key:
 
 ```bash
