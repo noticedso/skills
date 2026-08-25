@@ -35,7 +35,7 @@ test("does not count a refined shortlist as the missing first shortlist", () => 
   );
 });
 
-test("fails when a shortlist appears before sync completes", () => {
+test("fails when a shortlist appears before LinkedIn connections are ingested", () => {
   const report = runScenario("early-first");
 
   assert.equal(
@@ -45,17 +45,20 @@ test("fails when a shortlist appears before sync completes", () => {
   assert.equal(report.deterministic_passed, false);
 });
 
-test("fails when placeholder people appear before sync completes", () => {
+test("fails when placeholder people appear before LinkedIn connections are ingested", () => {
   const report = runScenario("early-placeholder");
 
   assert.equal(report.deterministic_checks.no_placeholder_people, false);
   assert.equal(report.deterministic_passed, false);
 });
 
-test("fails when goal discovery starts before sync starts", () => {
+test("fails when goal discovery starts before the LinkedIn scan starts", () => {
   const report = runScenario("early-goal");
 
-  assert.equal(report.deterministic_checks.no_goal_before_sync_started, false);
+  assert.equal(
+    report.deterministic_checks.no_goal_before_linkedin_scan_started,
+    false,
+  );
   assert.equal(report.deterministic_passed, false);
 });
 

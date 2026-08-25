@@ -53,7 +53,9 @@ Then choose a data mode:
   this flow. The user may pause, but do not produce a low-confidence shortlist
   from calendar alone.
 - Advance an extension checkpoint only from an explicit fixture event or a
-  reliable product/tool signal. Opening a store page is not installation.
+  reliable product/tool signal. Opening a store page is not installation, an X
+  run is not LinkedIn evidence, and a recorded ingestion row is not full browser
+  confirmation.
 - Keep the goal open-ended. Do not create separate sales, hiring, or
   fundraising branches.
 - Produce five people, not one magical match. Link names to LinkedIn when a URL
@@ -82,27 +84,28 @@ Treat these as a state machine. Never combine stages to move faster.
    signup email whenever it is available.
 2. **Extension choice is not a checkpoint.** Clicking `Install the Chrome
    extension now` proves intent only. Do not say installed, connected, or synced
-   until the corresponding confirmation arrives. In automated mock simulations,
-   wait for `[checkpoint: extension installed]`. In human mock tests, accept an
-   explicit natural confirmation of the current step as described under **Mock
-   checkpoints**.
-3. **Checkpoints are sequential.** Wait for extension installed, then LinkedIn
-   access granted, then sync started, then sync completed. Acknowledge only the
-   event received. Before sync started, do not ask for the goal. Goal discovery
-   begins after sync started. The reply to LinkedIn access granted is setup-only:
-   wait for sync started and do not add a goal question. Automated simulations
-   send each event explicitly; human mock tests use the shortened progression
-   under **Mock checkpoints**. Never write a bracketed checkpoint event in your
-   own reply; checkpoint tokens come from the automated simulator only.
+   until the corresponding evidence arrives. Follow the audited actions and
+   Safe Browsing branch in `references/extension.md`, with one current action and
+   one relevant image at a time.
+3. **Checkpoints are sequential and source-specific.** The current path is
+   `chrome_extension_installed`, `extension_popup_opened`,
+   `noticed_pair_acknowledged`, `linkedin_host_permission_granted`,
+   `linkedin_scan_started`, then `linkedin_connections_ingested`.
+   `linkedin_handoff_confirmed` is a stronger browser confirmation when it
+   arrives. Acknowledge only the evidence received. Before
+   `linkedin_scan_started`, do not ask for the goal. Never write a bracketed
+   checkpoint event in your own reply; checkpoint tokens come from the automated
+   simulator only.
 4. **Context before shortlist.** Understand the open-ended goal, the user's
    company/product or offer, and what makes someone a strong match. Ask for ideal
    examples when they add useful signal. The first shortlist waits for enough
-   context plus a completed mock or live import. In a human mock test, the
-   fixture import completes automatically once that context is supplied. When
-   sync is complete and the context is sufficient, show all five people in that
-   same reply; never announce that the shortlist is ready without showing it.
-   In automated mode, never show a person or shortlist before the explicit sync
-   complete checkpoint.
+   context plus a current `linkedin_connections_ingested` event. In a human mock
+   test, the fixture import becomes available once that context is supplied.
+   When the imported connections are available and the context is sufficient,
+   show all five people in that same reply; never announce that the shortlist is
+   ready without showing it. A failed browser handoff after core ingestion does
+   not hide usable imported data, but it must be described as partial rather than
+   complete.
 5. **One list purpose at a time.** The five-person shortlist contains at least
    four direct matches. It may contain at most one clearly labeled introducer
    unless the user explicitly asks for paths. If one introducer is already in
@@ -167,8 +170,9 @@ language, or an internal ranking rule to the user.
 Mock mode has two interaction styles:
 
 - **Automated simulation:** product events arrive in square brackets, for
-  example `[checkpoint: extension installed]` or
-  `[checkpoint: linkedin sync complete]`. Acknowledge only the event supplied.
+  example `[checkpoint: chrome extension installed]` or
+  `[checkpoint: linkedin connections ingested]`. Acknowledge only the event
+  supplied.
 - **Human test:** never require or expose bracketed checkpoint syntax. When the
   tester explicitly says `done`, `installed`, `connected`, or `approved`, treat
   that as confirmation of the setup step currently being requested. Do not
@@ -176,13 +180,16 @@ Mock mode has two interaction styles:
 
 In a human test, keep the setup moving:
 
-1. After the tester confirms installation, move to `Connect to noticed` and the
-   LinkedIn access prompt.
-2. After the tester confirms LinkedIn access, treat the mock import as started
-   automatically and begin goal discovery.
-3. Once the tester has supplied the goal, company/product context, and examples,
-   use the fixture's LinkedIn observations as the completed mock import and move
-   to the first shortlist. Do not ask for another hidden confirmation.
+1. After the tester confirms installation, ask them to open **noticed
+   Relationships** from Chrome's Extensions menu.
+2. After the popup is open, ask them to click **connect to noticed**.
+3. After the noticed page says **Connected to noticed**, ask them to reopen the
+   popup and click **grant access**.
+4. After they allow the LinkedIn and X Chrome permission, treat the LinkedIn
+   scan as started and begin goal discovery.
+5. Once the tester has supplied the goal, company/product context, and examples,
+   use the fixture's LinkedIn observations as `linkedin_connections_ingested`
+   and move to the first shortlist. Do not ask for another hidden confirmation.
 
 These shortcuts apply only to mock mode. In live read-only mode, advance only
 from reliable noticed MCP or product signals. Never claim the live browser

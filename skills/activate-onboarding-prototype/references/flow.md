@@ -93,17 +93,25 @@ trust answer with a natural question such as whether the user is ready to
 install the Chrome extension or wants to clarify anything else. Do not create a
 meaningless `ask another question` menu option.
 
-Use only reliable checkpoints: Chrome extension installed, LinkedIn access
-granted, sync started, and sync completed. Acknowledge only the event received.
-Do not ask about the goal before the LinkedIn sync has started. Before then,
-guide only the current setup action. Once sync starts, discover the goal while
-LinkedIn processes, but wait for the first successful import before producing a
-shortlist. Never show a person or shortlist until an explicit sync-complete
-event arrives.
+Follow the audited sequence and image map in `references/extension.md`. The
+current flow includes the Chrome Web Store, a possible **Proceed with caution**
+branch, the noticed.so installation permission, opening the popup, connecting
+the noticed account, reopening the popup, **grant access**, the combined
+LinkedIn and X Chrome permission, and automatic scanning. Show only the image
+for the current decision. Never expose an account-specific raw audit image.
 
-In the response to `LinkedIn access granted`, the only next checkpoint is `sync
-started`. Do not ask about the goal in that response. Begin goal discovery only
-after the explicit `sync started` event arrives.
+Use source-specific checkpoints. Do not ask about the goal before
+`linkedin_scan_started`. After that event, discover the goal while the scan and
+handoff continue. Wait for `linkedin_connections_ingested` before producing a
+shortlist. That event means the core LinkedIn relationship data is available;
+it does not mean the browser received final confirmation. Never use a fresh X
+run as a LinkedIn checkpoint.
+
+If `linkedin_handoff_confirmed` arrives, acknowledge the browser confirmation.
+If the core connections were ingested but the handoff failed, explain both
+facts without saying **all set** or **import complete**, use the available data
+for the shortlist, and guide the separate source-specific recovery described in
+`references/extension.md`.
 
 ## 3. Understand the goal
 
@@ -138,9 +146,9 @@ progress separate from the next goal question.
 
 ## 4. First shortlist and learning loop
 
-When sync is complete and goal context is sufficient, show the five people in
-that same reply. Do not announce that the shortlist is ready without showing the
-people.
+When `linkedin_connections_ingested` is available and goal context is
+sufficient, show the five people in that same reply. Do not announce that the
+shortlist is ready without showing the people.
 
 Return a first hypothesis of five people. For each person include:
 

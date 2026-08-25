@@ -8,7 +8,7 @@ const outputPath = process.argv[3] ? resolve(process.argv[3]) : null;
 const model = process.env.ONBOARDING_EVAL_MODEL ?? "gpt-5.4-mini";
 const interactionMode = process.env.ONBOARDING_EVAL_INTERACTION ?? "automated";
 const apiKey = process.env.OPENAI_API_KEY?.trim();
-const turnBudget = 18;
+const turnBudget = 24;
 
 if (!apiKey) throw new Error("OPENAI_API_KEY is required");
 if (!new Set(["automated", "human"]).has(interactionMode)) {
@@ -68,11 +68,11 @@ const {
 const accountEmail = input.signup_account?.email ?? "";
 const interactionContract =
   interactionMode === "human"
-    ? "This is a human mock test. A natural `done` confirms the current action requested in the immediately preceding setup reply. The mock walks through installation, noticed connection, and site access as separate actions. Never demand a real browser signal or hidden checkpoint syntax."
+    ? "This is a human mock test. A natural description of the current visible Chrome state or completed action confirms that step. The mock walks through the audited store warning, installation permission, popup, noticed connection, combined LinkedIn and X permission, and automatic scan. Never demand a real browser signal or hidden checkpoint syntax."
     : "Bracketed checkpoint messages from the user are authoritative product events. Acknowledge only the event supplied.";
 
-const agentSystem = `${skill}\n\n${flow}\n\n${voice}\n\n${extension}\n\n# Mock product data available before LinkedIn sync completes\n${JSON.stringify(preSyncInput, null, 2)}\n\n# Mock runtime state\n${interactionContract}\n\nThe first reply must include the exact signup account email when supplied. After the user agrees to install, give only the current setup action and wait for its confirmation. After LinkedIn access is granted, discuss only the next setup step until sync starts; do not ask about the goal. A sync-started event authorizes goal discovery only. The fixture's network_candidates and linkedin_observations are unavailable until the explicit LinkedIn sync-complete event. Before sync completes, do not name a person, invent placeholder people, or show shortlist-shaped content. If the goal is already clear, acknowledge what you learned and wait for sync completion.\n\nRun the conversation as noticed. You cannot see the evaluator answer key. Use only the mock product data and what the user says.`;
-const syncResult = `# Newly available LinkedIn sync result\n${JSON.stringify({
+const agentSystem = `${skill}\n\n${flow}\n\n${voice}\n\n${extension}\n\n# Mock product data available before LinkedIn connections are ingested\n${JSON.stringify(preSyncInput, null, 2)}\n\n# Mock runtime state\n${interactionContract}\n\nThe first reply must include the exact signup account email when supplied. After the user agrees to install, give only the current audited setup action and wait for its confirmation. A LinkedIn-scan-started event authorizes goal discovery only. The fixture's network_candidates and linkedin_observations are unavailable until the explicit LinkedIn-connections-ingested event. Before that event, do not name a person, invent placeholder people, or show shortlist-shaped content. If the goal is already clear, acknowledge what you learned and wait for the imported connections.\n\nRun the conversation as noticed. You cannot see the evaluator answer key. Use only the mock product data and what the user says.`;
+const syncResult = `# Newly available ingested LinkedIn connections\n${JSON.stringify({
   linkedin_observations: linkedinObservations,
   network_candidates: networkCandidates,
 }, null, 2)}\n\n# Result-stage contract\nThe first shortlist contains at least four direct-match candidates and at most one clearly labeled path or introducer. Prefer a direct candidate with uncertainty to a second path candidate. After all five initial judgments, show the revised five-person shortlist and the three continuation choices in the same reply. Do not mention early access, email, or Slack before the user chooses that they are done. After that choice, list all five final names and offer the optional relationship-maintenance follow-on before giving the access close.`;
@@ -109,11 +109,15 @@ const automatedUserTurns = [
   "1",
   "2",
   "install the Chrome extension now",
-  "[checkpoint: extension installed]",
-  "[checkpoint: linkedin access granted]",
-  "[checkpoint: linkedin sync started]",
+  "[ui: proceed with caution shown]",
+  "[ui: install permission shown]",
+  "[checkpoint: chrome extension installed]",
+  "[checkpoint: extension popup opened]",
+  "[checkpoint: noticed pair acknowledged]",
+  "[checkpoint: linkedin host permission granted]",
+  "[checkpoint: linkedin scan started]",
   goalReply,
-  "[checkpoint: linkedin sync complete]",
+  "[checkpoint: linkedin connections ingested]",
   feedbackTurn,
   "I'm done for now",
   "not now",
@@ -123,9 +127,12 @@ const humanUserTurns = [
   "1",
   "2",
   "install the Chrome extension now",
-  "done",
-  "done",
-  "done",
+  "i see Proceed with caution",
+  "i clicked Continue to install",
+  "i added the extension",
+  "i opened noticed Relationships",
+  "the page says Connected to noticed",
+  "i clicked grant access and allowed LinkedIn and X",
   goalReply,
   feedbackTurn,
   "I'm done for now",
@@ -153,27 +160,69 @@ for (let turn = 0; turn < turnBudget; turn += 1) {
       : transcript.some(
           (item) =>
             item.role === "user" &&
-            item.content === "[checkpoint: linkedin sync complete]",
+            item.content === "[checkpoint: linkedin connections ingested]",
         );
   const suppliedFeedbackCount = transcript.filter(
     (item) => item.role === "user" && feedbackMessages.includes(item.content),
   ).length;
-  const humanDoneCount = transcript.filter(
-    (item) => item.role === "user" && item.content === "done",
-  ).length;
   const latestUserReply = transcript.at(-1)?.content ?? "";
   let turnContract = "";
-  if (interactionMode === "human" && latestUserReply === "done") {
-    if (humanDoneCount === 1) {
-      turnContract =
-        "# Current turn contract\nThe mock Chrome extension installation is confirmed. Ask for only the noticed connection action next.";
-    } else if (humanDoneCount === 2) {
-      turnContract =
-        "# Current turn contract\nThe mock noticed connection is confirmed. Ask for only the site-access approval next.";
-    } else {
-      turnContract =
-        "# Current turn contract\nMock site access is confirmed and the import has started. Begin goal discovery now. Do not ask for another setup confirmation.";
-    }
+  if (interactionMode === "human" && latestUserReply === "i see Proceed with caution") {
+    turnContract =
+      "# Current turn contract\nThe audited Enhanced Safe Browsing warning is visible. Explain it briefly and ask for only Continue to install.";
+  } else if (
+    interactionMode === "human" &&
+    latestUserReply === "i clicked Continue to install"
+  ) {
+    turnContract =
+      "# Current turn contract\nThe audited noticed.so installation permission is visible. Explain it briefly and ask for only Add extension.";
+  } else if (
+    interactionMode === "human" &&
+    latestUserReply === "i added the extension"
+  ) {
+    turnContract =
+      "# Current turn contract\nThe mock Chrome extension installation is confirmed. Ask for only opening noticed Relationships from Chrome's Extensions menu.";
+  } else if (
+    interactionMode === "human" &&
+    latestUserReply === "i opened noticed Relationships"
+  ) {
+    turnContract =
+      "# Current turn contract\nThe popup is open. Ask for only connect to noticed.";
+  } else if (
+    interactionMode === "human" &&
+    latestUserReply === "the page says Connected to noticed"
+  ) {
+    turnContract =
+      "# Current turn contract\nThe noticed pair acknowledgement is confirmed. Ask the user to verify the destination account, reopen noticed Relationships, and click grant access.";
+  } else if (
+    interactionMode === "human" &&
+    latestUserReply === "i clicked grant access and allowed LinkedIn and X"
+  ) {
+    turnContract =
+      "# Current turn contract\nThe mock LinkedIn permission is granted and the LinkedIn scan has started automatically. Acknowledge the scan, tell the user to keep Chrome open, and begin goal discovery now.";
+  } else if (latestUserReply === "[ui: proceed with caution shown]") {
+    turnContract =
+      "# Current turn contract\nThe audited Enhanced Safe Browsing warning is visible. Explain it briefly and ask for only Continue to install.";
+  } else if (latestUserReply === "[ui: install permission shown]") {
+    turnContract =
+      "# Current turn contract\nThe audited noticed.so installation permission is visible. Explain it briefly and ask for only Add extension.";
+  } else if (latestUserReply === "[checkpoint: chrome extension installed]") {
+    turnContract =
+      "# Current turn contract\nThe extension is installed in this Chrome profile. Ask for only opening noticed Relationships from Chrome's Extensions menu.";
+  } else if (latestUserReply === "[checkpoint: extension popup opened]") {
+    turnContract =
+      "# Current turn contract\nThe extension popup is open. Ask for only connect to noticed.";
+  } else if (latestUserReply === "[checkpoint: noticed pair acknowledged]") {
+    turnContract =
+      "# Current turn contract\nThe extension is connected to the noticed account. Ask the user to verify the destination account, reopen noticed Relationships, and click grant access.";
+  } else if (
+    latestUserReply === "[checkpoint: linkedin host permission granted]"
+  ) {
+    turnContract =
+      "# Current turn contract\nChrome granted the current LinkedIn and X site permission. Do not ask about the goal until the LinkedIn scan-started event arrives.";
+  } else if (latestUserReply === "[checkpoint: linkedin scan started]") {
+    turnContract =
+      "# Current turn contract\nThe LinkedIn scan started automatically. Tell the user to keep Chrome open and begin goal discovery now.";
   } else if (
     feedbackMessages.length === 5 &&
     suppliedFeedbackCount === 5 &&
@@ -261,18 +310,20 @@ function coverage(actualIds, expectedIds) {
   return expectedIds.filter((id) => actual.has(id)).length;
 }
 
-const syncCompleteIndex = transcript.findIndex(
-  (turn) => turn.role === "user" && turn.content === "[checkpoint: linkedin sync complete]",
-);
-const accessGrantedIndex = transcript.findIndex(
+const connectionsIngestedIndex = transcript.findIndex(
   (turn) =>
     turn.role === "user" &&
-    turn.content === "[checkpoint: linkedin access granted]",
+    turn.content === "[checkpoint: linkedin connections ingested]",
 );
-const syncStartedIndex = transcript.findIndex(
+const hostPermissionIndex = transcript.findIndex(
   (turn) =>
     turn.role === "user" &&
-    turn.content === "[checkpoint: linkedin sync started]",
+    turn.content === "[checkpoint: linkedin host permission granted]",
+);
+const scanStartedIndex = transcript.findIndex(
+  (turn) =>
+    turn.role === "user" &&
+    turn.content === "[checkpoint: linkedin scan started]",
 );
 const goalIndex = transcript.findIndex(
   (turn) => turn.role === "user" && turn.content === goalReply,
@@ -303,7 +354,7 @@ const finalAccessReply =
     ? transcript[followOnDecisionIndex + 1].content
     : "";
 const firstShortlistGateIndex =
-  interactionMode === "human" ? goalIndex : syncCompleteIndex;
+  interactionMode === "human" ? goalIndex : connectionsIngestedIndex;
 const firstShortlistIndex =
   feedbackIndex >= 0
     ? firstAssistantWithFiveCandidates(firstShortlistGateIndex, feedbackIndex)
@@ -340,18 +391,29 @@ const assistantBeforeProgressGate = transcript
   .filter((turn) => turn.role === "assistant")
   .map((turn) => turn.content)
   .join("\n");
-const assistantBetweenAccessAndSyncStart = transcript
-  .slice(accessGrantedIndex + 1, syncStartedIndex)
+const assistantBetweenPermissionAndScanStart = transcript
+  .slice(hostPermissionIndex + 1, scanStartedIndex)
   .filter((turn) => turn.role === "assistant")
   .map((turn) => turn.content)
   .join("\n");
 const humanStallPattern =
   /haven[’']t (?:received|seen)|hasn[’']t confirmed|still hasn[’']t|setup screen reports success|browser (?:finishes|confirms|reports)/i;
-const humanDoneIndexes = transcript
+const humanSetupConfirmations = new Set([
+  "i see Proceed with caution",
+  "i clicked Continue to install",
+  "i added the extension",
+  "i opened noticed Relationships",
+  "the page says Connected to noticed",
+  "i clicked grant access and allowed LinkedIn and X",
+]);
+const humanConfirmationIndexes = transcript
   .map((turn, index) => ({ turn, index }))
-  .filter(({ turn }) => turn.role === "user" && turn.content === "done")
+  .filter(
+    ({ turn }) =>
+      turn.role === "user" && humanSetupConfirmations.has(turn.content),
+  )
   .map(({ index }) => index);
-const humanRepliesAfterDone = humanDoneIndexes
+const humanRepliesAfterConfirmation = humanConfirmationIndexes
   .map((index) => transcript[index + 1])
   .filter((turn) => turn?.role === "assistant")
   .map((turn) => turn.content);
@@ -372,16 +434,18 @@ const deterministicChecks = {
   ),
   human_mock_accepts_natural_confirmation:
     interactionMode !== "human" ||
-    (humanDoneIndexes.length >= 2 &&
-      humanRepliesAfterDone.length === humanDoneIndexes.length &&
-      humanRepliesAfterDone.every((reply) => !humanStallPattern.test(reply))),
+    (humanConfirmationIndexes.length === humanSetupConfirmations.size &&
+      humanRepliesAfterConfirmation.length === humanConfirmationIndexes.length &&
+      humanRepliesAfterConfirmation.every(
+        (reply) => !humanStallPattern.test(reply),
+      )),
   human_mock_reaches_goal:
     interactionMode !== "human" ||
     (goalIndex >= 0 && firstShortlistGateIndex === goalIndex),
-  no_goal_before_sync_started:
+  no_goal_before_linkedin_scan_started:
     interactionMode === "human" ||
     !/(?:what(?:'s| is) (?:your )?(?:goal|most important goal)|what .*looking for)/i.test(
-      assistantBetweenAccessAndSyncStart,
+      assistantBetweenPermissionAndScanStart,
     ),
   no_placeholder_people:
     !/(?:\bName\s*\d+\b|placeholder\d*)/i.test(assistantBeforeProgressGate),
@@ -443,7 +507,7 @@ const deterministicPassed =
   deterministicChecks.no_assistant_authored_checkpoint &&
   deterministicChecks.human_mock_accepts_natural_confirmation &&
   deterministicChecks.human_mock_reaches_goal &&
-  deterministicChecks.no_goal_before_sync_started &&
+  deterministicChecks.no_goal_before_linkedin_scan_started &&
   deterministicChecks.no_placeholder_people &&
   deterministicChecks.no_shortlist_before_progress_gate &&
   deterministicChecks.first_shortlist_after_progress_gate &&

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
@@ -79,7 +79,7 @@ test("loads the extension fact sheet into simulated conversations", () => {
 test("makes mock product-state gates explicit after fixture data", () => {
   assert.match(
     simulator,
-    /network_candidates.*(?:must not|do not|never).*sync complete|sync complete.*(?:must not|do not|never).*network_candidates/is,
+    /network_candidates.*(?:must not|do not|never).*connections.*ingested|connections.*ingested.*(?:must not|do not|never).*network_candidates/is,
   );
   assert.match(
     simulator,
@@ -109,16 +109,81 @@ test("answers the exact extension explanation completely", () => {
   assert.match(networkContext, /platform risk/i);
 });
 
-test("does not begin goal discovery before the LinkedIn sync starts", () => {
+test("documents the audited Chrome installation path one action at a time", () => {
+  const extension = read("references/extension.md");
+
+  assert.match(
+    extension,
+    /https:\/\/chromewebstore\.google\.com\/detail\/noticed-relationships\/hjckpjgbhjichgkbmgjfbbdibchghdaf/,
+  );
+  assert.match(extension, /Add to Chrome/);
+  assert.match(extension, /Proceed with caution/);
+  assert.match(extension, /Continue to install/);
+  assert.match(extension, /Add extension/);
+  assert.match(extension, /Chrome['’]s Extensions menu/i);
+  assert.match(extension, /connect to noticed/);
+  assert.match(extension, /Connected to noticed/);
+  assert.match(extension, /grant access/);
+  assert.match(extension, /LinkedIn and X/);
+  assert.match(extension, /click `Allow`|click \*\*Allow\*\*/i);
+  assert.match(
+    extension,
+    /one current action at a time|only the current action/is,
+  );
+});
+
+test("uses audited source-specific checkpoints without treating a recorded run as full success", () => {
+  const extension = read("references/extension.md");
+  const instructions = `${skill}\n${flow}\n${extension}`;
+
+  for (const checkpoint of [
+    "chrome_extension_installed",
+    "noticed_pair_acknowledged",
+    "linkedin_host_permission_granted",
+    "linkedin_scan_started",
+    "linkedin_connections_ingested",
+    "linkedin_handoff_confirmed",
+  ]) {
+    assert.match(extension, new RegExp(checkpoint));
+  }
+  assert.match(extension, /connections were accepted/i);
+  assert.match(extension, /browser didn['’]t receive final\s+confirmation/i);
+  assert.match(
+    instructions,
+    /(?:do not|never).*(?:all set|complete|completed).*(?:ingestion row|recorded run)|(?:ingestion row|recorded run).*(?:do not|never).*(?:all set|complete|completed)/is,
+  );
+  assert.match(
+    instructions,
+    /X\s+(?:run\s+)?(?:is not|cannot be used as)\s+(?:LinkedIn evidence|a LinkedIn checkpoint)/is,
+  );
+});
+
+test("packages only reusable installation screenshots", () => {
+  const extension = read("references/extension.md");
+  const assets = [
+    "assets/extension-setup/03-enhanced-safe-browsing-warning.jpg",
+    "assets/extension-setup/04-final-install-permission.jpg",
+    "assets/extension-setup/11-chrome-linkedin-x-permission.jpg",
+  ];
+
+  for (const asset of assets) {
+    assert.match(extension, new RegExp(asset.replaceAll(".", "\\.")));
+    assert.equal(existsSync(join(skillRoot, asset)), true, asset);
+  }
+  assert.doesNotMatch(extension, /10-extension-popup-grant-access\.jpg/);
+  assert.doesNotMatch(extension, /12-linkedin-import-in-progress\.jpg/);
+});
+
+test("does not begin goal discovery before the LinkedIn scan starts", () => {
   const networkContext = section(flow, "## 2.", "## 3.");
 
   assert.match(
     networkContext,
-    /do not ask.*goal.*before.*sync (?:has )?started/is,
+    /do not ask.*goal.*before.*linkedin_scan_started/is,
   );
   assert.match(
     networkContext,
-    /response to.*LinkedIn access.*only.*sync started|LinkedIn access.*only next step.*sync started/is,
+    /after.*linkedin_scan_started.*discover the goal|discover the goal.*after.*linkedin_scan_started/is,
   );
 });
 
@@ -136,13 +201,13 @@ test("adapts goal discovery to the context already supplied", () => {
   assert.doesNotMatch(goal, /getting advice/i);
 });
 
-test("shows the five people as soon as sync and goal context are ready", () => {
+test("shows the five people as soon as imported connections and goal context are ready", () => {
   const goal = section(flow, "## 3.", "## 4.");
   const learningLoop = section(flow, "## 4.", "## 5.");
 
   assert.match(
     `${goal}\n${learningLoop}`,
-    /sync.*complete.*same reply.*five|same reply.*five.*sync.*complete/is,
+    /linkedin_connections_ingested.*same reply.*five|same reply.*five.*linkedin_connections_ingested/is,
   );
   assert.match(
     `${goal}\n${learningLoop}`,
@@ -150,7 +215,7 @@ test("shows the five people as soon as sync and goal context are ready", () => {
   );
   assert.match(
     `${skill}\n${goal}`,
-    /(?:never|do not).*show.*(?:person|people|shortlist).*(?:before|until).*explicit.*sync complete|explicit.*sync complete.*(?:before|until).*(?:person|people|shortlist)/is,
+    /(?:never|do not).*show.*(?:person|people|shortlist).*(?:before|until).*linkedin_connections_ingested|linkedin_connections_ingested.*(?:before|until).*(?:person|people|shortlist)/is,
   );
 });
 
