@@ -1,0 +1,9 @@
+{
+  "evaluator_only": true,
+  "goal_answers": {"goal":"Find seed investors and warm intro paths for TideLedger's round.","product":"TideLedger helps climate-project operators automate financing and reporting.","ideal_customer":"The round needs seed investors who understand fintech infrastructure or climate software, ideally in Europe.","examples":["early-stage fintech funds","climate-software seed investors","founders who recently raised from those funds"]},
+  "first_shortlist_expected_ids": ["f1", "f7", "f2", "f5", "f3"],
+  "feedback": {"f1":["strong fit","stage and fintech thesis align"],"f7":["strong fit","reciprocity creates a credible reactivation"],"f2":["maybe","good thesis but weak path"],"f5":["strong fit","best introducer even if not lead investor"],"f3":["not a fit","founder path is useful but this core list already has its introducer"]},
+  "refined_shortlist_expected_ids": ["f1", "f7", "f5", "f2", "f6"],
+  "required_learning": ["seed stage is a hard constraint", "fintech or climate-software thesis matters", "warm paths and reciprocity matter", "separate investors from introducers"],
+  "known_traps": ["including the growth-stage investor", "presenting the design partner as an investor", "creating a separate fundraising conversation flow"]
+}
