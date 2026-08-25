@@ -57,17 +57,37 @@ function transcriptText(transcript) {
 const skill = read("SKILL.md");
 const flow = read("references/flow.md");
 const voice = read("references/voice.md");
+const extension = read("references/extension.md");
 const input = JSON.parse(read(`fixtures/${fixtureId}/input.json`));
 const answerKey = JSON.parse(read(`fixtures/${fixtureId}/answer-key.json`));
+const {
+  linkedin_observations: linkedinObservations,
+  network_candidates: networkCandidates,
+  ...preSyncInput
+} = input;
+const interactionContract =
+  interactionMode === "human"
+    ? "This is a human mock test. A natural `done` confirms the current action requested in the immediately preceding setup reply. The mock walks through installation, noticed connection, and site access as separate actions. Never demand a real browser signal or hidden checkpoint syntax."
+    : "Bracketed checkpoint messages from the user are authoritative product events. Acknowledge only the event supplied.";
 
-const agentSystem = `${skill}\n\n${flow}\n\n${voice}\n\n# Mock product data\n${JSON.stringify(input, null, 2)}\n\nRun the conversation as noticed. You cannot see the evaluator answer key. Use only the mock product data and what the user says.`;
+const agentSystem = `${skill}\n\n${flow}\n\n${voice}\n\n${extension}\n\n# Mock product data available before LinkedIn sync completes\n${JSON.stringify(preSyncInput, null, 2)}\n\n# Mock runtime state\n${interactionContract}\n\nThe first reply must include the exact signup account email when supplied. After the user agrees to install, give only the current setup action and wait for its confirmation. After LinkedIn access is granted, discuss only the next setup step until sync starts; do not ask about the goal. A sync-started event authorizes goal discovery only. The fixture's network_candidates and linkedin_observations are unavailable until the explicit LinkedIn sync-complete event. Before sync completes, do not name a person, invent placeholder people, or show shortlist-shaped content. If the goal is already clear, acknowledge what you learned and wait for sync completion.\n\nRun the conversation as noticed. You cannot see the evaluator answer key. Use only the mock product data and what the user says.`;
+const syncResult = `# Newly available LinkedIn sync result\n${JSON.stringify({
+  linkedin_observations: linkedinObservations,
+  network_candidates: networkCandidates,
+}, null, 2)}\n\n# Result-stage contract\nThe first shortlist contains at least four direct-match candidates and at most one clearly labeled path or introducer. Prefer a direct candidate with uncertainty to a second path candidate. After all five initial judgments, show the revised five-person shortlist and the three continuation choices in the same reply. Do not mention early access, email, or Slack before the user chooses that they are done. In the finite ending, list all five final names again.`;
 const namesById = new Map(
   input.network_candidates.map((candidate) => [candidate.id, candidate.name]),
 );
 function candidateIdsIn(content) {
+  const normalizedContent = content.toLocaleLowerCase();
   return input.network_candidates
-    .filter((candidate) => content.includes(candidate.name))
-    .map((candidate) => candidate.id);
+    .map((candidate) => ({
+      id: candidate.id,
+      position: normalizedContent.indexOf(candidate.name.toLocaleLowerCase()),
+    }))
+    .filter(({ position }) => position >= 0)
+    .sort((left, right) => left.position - right.position)
+    .map(({ id }) => id);
 }
 
 function feedbackForCandidateIds(candidateIds) {
@@ -78,8 +98,7 @@ function feedbackForCandidateIds(candidateIds) {
         "this was not in my expected first set; explain the tradeoff",
       ];
       return `${namesById.get(id)}: ${judgment} — ${reason}`;
-    })
-    .join("\n");
+    });
 }
 
 const goalAnswers = answerKey.goal_answers;
@@ -88,7 +107,7 @@ const feedbackTurn = Symbol("feedback");
 const automatedUserTurns = [
   "1",
   "2",
-  "1",
+  "install the Chrome extension now",
   "[checkpoint: extension installed]",
   "[checkpoint: linkedin access granted]",
   "[checkpoint: linkedin sync started]",
@@ -102,7 +121,8 @@ const automatedUserTurns = [
 const humanUserTurns = [
   "1",
   "2",
-  "1",
+  "install the Chrome extension now",
+  "done",
   "done",
   "done",
   goalReply,
@@ -120,22 +140,75 @@ const transcript = [
     content: "i've just signed in and connected google. start onboarding me.",
   },
 ];
-let feedback = "";
+let feedbackMessages = [];
+let feedbackQueue = [];
+let goldenTurnIndex = 0;
 let simulationError = null;
 
 for (let turn = 0; turn < turnBudget; turn += 1) {
-  const agentReply = await respond(agentSystem, transcript);
+  const networkReady =
+    interactionMode === "human"
+      ? transcript.some((item) => item.role === "user" && item.content === goalReply)
+      : transcript.some(
+          (item) =>
+            item.role === "user" &&
+            item.content === "[checkpoint: linkedin sync complete]",
+        );
+  const suppliedFeedbackCount = transcript.filter(
+    (item) => item.role === "user" && feedbackMessages.includes(item.content),
+  ).length;
+  const humanDoneCount = transcript.filter(
+    (item) => item.role === "user" && item.content === "done",
+  ).length;
+  const latestUserReply = transcript.at(-1)?.content ?? "";
+  let turnContract = "";
+  if (interactionMode === "human" && latestUserReply === "done") {
+    if (humanDoneCount === 1) {
+      turnContract =
+        "# Current turn contract\nThe mock Chrome extension installation is confirmed. Ask for only the noticed connection action next.";
+    } else if (humanDoneCount === 2) {
+      turnContract =
+        "# Current turn contract\nThe mock noticed connection is confirmed. Ask for only the site-access approval next.";
+    } else {
+      turnContract =
+        "# Current turn contract\nMock site access is confirmed and the import has started. Begin goal discovery now. Do not ask for another setup confirmation.";
+    }
+  } else if (
+    feedbackMessages.length === 5 &&
+    suppliedFeedbackCount === 5 &&
+    feedbackMessages.includes(latestUserReply)
+  ) {
+    turnContract =
+      "# Current turn contract\nThis is the fifth initial judgment. In this reply, apply all five judgments, show the revised five-person shortlist, then offer the three continuation choices. Do not enter the finite ending yet.";
+  } else if (latestUserReply === "I'm done for now") {
+    turnContract =
+      "# Current turn contract\nThe user is done. Give the finite ending now and list all five final names.";
+  }
+  const currentSystem = [
+    networkReady ? `${agentSystem}\n\n${syncResult}` : agentSystem,
+    turnContract,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+  const agentReply = await respond(currentSystem, transcript);
   transcript.push({ role: "assistant", content: agentReply });
-  const requestedReply = goldenUserTurns[turn] ?? "[simulation complete]";
-  let simulatorReply = requestedReply;
-  if (requestedReply === feedbackTurn) {
+  let simulatorReply;
+  if (feedbackQueue.length > 0) {
+    simulatorReply = feedbackQueue.shift();
+  } else {
+    const requestedReply =
+      goldenUserTurns[goldenTurnIndex++] ?? "[simulation complete]";
+    simulatorReply = requestedReply;
+  }
+  if (simulatorReply === feedbackTurn) {
     const shownCandidateIds = candidateIdsIn(agentReply);
     if (shownCandidateIds.length !== 5) {
       simulationError = `expected first shortlist with five candidates, found ${shownCandidateIds.length}`;
       simulatorReply = "[simulation complete]";
     } else {
-      feedback = feedbackForCandidateIds(shownCandidateIds);
-      simulatorReply = feedback;
+      feedbackMessages = feedbackForCandidateIds(shownCandidateIds);
+      feedbackQueue = feedbackMessages.slice(1);
+      simulatorReply = feedbackMessages[0];
     }
   }
   transcript.push({ role: "user", content: simulatorReply });
@@ -187,12 +260,28 @@ function coverage(actualIds, expectedIds) {
 const syncCompleteIndex = transcript.findIndex(
   (turn) => turn.role === "user" && turn.content === "[checkpoint: linkedin sync complete]",
 );
+const accessGrantedIndex = transcript.findIndex(
+  (turn) =>
+    turn.role === "user" &&
+    turn.content === "[checkpoint: linkedin access granted]",
+);
+const syncStartedIndex = transcript.findIndex(
+  (turn) =>
+    turn.role === "user" &&
+    turn.content === "[checkpoint: linkedin sync started]",
+);
 const goalIndex = transcript.findIndex(
   (turn) => turn.role === "user" && turn.content === goalReply,
 );
-const feedbackIndex = transcript.findIndex(
-  (turn) => turn.role === "user" && turn.content === feedback,
-);
+const feedbackIndexes = transcript
+  .map((turn, index) => ({ turn, index }))
+  .filter(
+    ({ turn }) =>
+      turn.role === "user" && feedbackMessages.includes(turn.content),
+  )
+  .map(({ index }) => index);
+const feedbackIndex = feedbackIndexes[0] ?? -1;
+const feedbackEndIndex = feedbackIndexes.at(-1) ?? -1;
 const doneIndex = transcript.findIndex(
   (turn) => turn.role === "user" && turn.content === "I'm done for now",
 );
@@ -202,9 +291,13 @@ const firstShortlistIndex =
   feedbackIndex >= 0
     ? firstAssistantWithFiveCandidates(firstShortlistGateIndex, feedbackIndex)
     : -1;
+const earlyShortlistIndex = firstAssistantWithFiveCandidates(
+  -1,
+  firstShortlistGateIndex,
+);
 const refinedShortlistIndex =
   doneIndex >= 0
-    ? firstAssistantWithFiveCandidates(feedbackIndex, doneIndex)
+    ? firstAssistantWithFiveCandidates(feedbackEndIndex, doneIndex)
     : -1;
 const finalShortlistIndex = firstAssistantWithFiveCandidates(doneIndex);
 const firstShortlistIds =
@@ -214,7 +307,7 @@ const refinedShortlistIds =
 const finalShortlistIds =
   finalShortlistIndex >= 0 ? candidateIdsIn(transcript[finalShortlistIndex].content) : [];
 const firstAssistantReply = transcript.find((turn) => turn.role === "assistant")?.content ?? "";
-const accountEmail = input.connected_google_account?.email ?? "";
+const accountEmail = input.signup_account?.email ?? "";
 const privacyRequestIndex = transcript.findIndex(
   (turn) => turn.role === "user" && turn.content === "2",
 );
@@ -223,6 +316,16 @@ const privacyReply =
     ? transcript[privacyRequestIndex + 1].content
     : "";
 const assistantTranscript = transcript
+  .filter((turn) => turn.role === "assistant")
+  .map((turn) => turn.content)
+  .join("\n");
+const assistantBeforeProgressGate = transcript
+  .slice(0, Math.max(0, firstShortlistGateIndex))
+  .filter((turn) => turn.role === "assistant")
+  .map((turn) => turn.content)
+  .join("\n");
+const assistantBetweenAccessAndSyncStart = transcript
+  .slice(accessGrantedIndex + 1, syncStartedIndex)
   .filter((turn) => turn.role === "assistant")
   .map((turn) => turn.content)
   .join("\n");
@@ -253,12 +356,20 @@ const deterministicChecks = {
   ),
   human_mock_accepts_natural_confirmation:
     interactionMode !== "human" ||
-    (humanDoneIndexes.length === 2 &&
-      humanRepliesAfterDone.length === 2 &&
+    (humanDoneIndexes.length >= 2 &&
+      humanRepliesAfterDone.length === humanDoneIndexes.length &&
       humanRepliesAfterDone.every((reply) => !humanStallPattern.test(reply))),
   human_mock_reaches_goal:
     interactionMode !== "human" ||
     (goalIndex >= 0 && firstShortlistGateIndex === goalIndex),
+  no_goal_before_sync_started:
+    interactionMode === "human" ||
+    !/(?:what(?:'s| is) (?:your )?(?:goal|most important goal)|what .*looking for)/i.test(
+      assistantBetweenAccessAndSyncStart,
+    ),
+  no_placeholder_people:
+    !/(?:\bName\s*\d+\b|placeholder\d*)/i.test(assistantBeforeProgressGate),
+  no_shortlist_before_progress_gate: earlyShortlistIndex === -1,
   first_shortlist_after_progress_gate:
     firstShortlistGateIndex >= 0 && firstShortlistIndex > firstShortlistGateIndex,
   first_shortlist_expected_coverage: {
@@ -290,6 +401,9 @@ const deterministicPassed =
   deterministicChecks.no_assistant_authored_checkpoint &&
   deterministicChecks.human_mock_accepts_natural_confirmation &&
   deterministicChecks.human_mock_reaches_goal &&
+  deterministicChecks.no_goal_before_sync_started &&
+  deterministicChecks.no_placeholder_people &&
+  deterministicChecks.no_shortlist_before_progress_gate &&
   deterministicChecks.first_shortlist_after_progress_gate &&
   deterministicChecks.first_shortlist_expected_coverage.actual >=
     deterministicChecks.first_shortlist_expected_coverage.required &&

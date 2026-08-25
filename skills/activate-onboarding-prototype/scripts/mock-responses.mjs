@@ -12,14 +12,26 @@ const ordinaryReplies = [
   "It never reads message text. It reads interaction metadata, never sees your password, and is read-only.",
   "Install the extension, then come back.",
   "Connect LinkedIn access next.",
-  "The import has started. What is your goal?",
-  "I have the goal context and will use it after sync completes.",
+  scenario === "early-goal"
+    ? "What is your goal?"
+    : "The import is ready to start.",
+  scenario === "early-first"
+    ? list("EARLY SHORTLIST", names.alternative)
+    : scenario === "early-placeholder"
+      ? "[Name 1](https://example.com/placeholder1)\n[Name 2](https://example.com/placeholder2)"
+    : "I have the goal context and will use it after sync completes.",
   "The LinkedIn sync is complete.",
   scenario === "missing-first"
     ? "I am still preparing the first shortlist."
     : list("FIRST SHORTLIST", names.alternative),
+  "Thanks. Next person.",
+  "Got it. Next person.",
+  "Understood. Next person.",
+  "One more person.",
   list("REFINED SHORTLIST", names.alternative),
-  list("FINAL SHORTLIST", names.alternative),
+  scenario === "lowercase-final"
+    ? list("FINAL SHORTLIST", names.alternative.map((name) => name.toLowerCase()))
+    : list("FINAL SHORTLIST", names.alternative),
   "The simulation is complete.",
 ];
 

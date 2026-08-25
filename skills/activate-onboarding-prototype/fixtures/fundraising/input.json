@@ -1,8 +1,8 @@
 {
   "fixture_id": "fundraising",
   "user": {"first_name":"Aisha","company":"TideLedger","known_context":"Founder of a climate-fintech startup.","linkedin_url":"https://www.linkedin.com/in/aisha-demo"},
-  "connected_google_account": {"email":"aisha@tideledger.com","contacts":"connected","calendar":"connected"},
-  "initial_sources": {"google_contacts":"connected","calendar":"connected","linkedin_extension":"not_installed"},
+  "signup_account": {"provider":"google","email":"aisha@tideledger.com","capabilities":{"calendar_events":"connected","email":"not_connected"}},
+  "initial_sources": {"calendar":"connected","email":"not_connected","linkedin_extension":"not_installed"},
   "calendar_observations": {"analysis_window":"12 months","unique_people_across_calendar_events":74,"unique_people_across_calendar_events_last_90_days":36,"one_to_one_calendar_events_last_30_days":14},
   "linkedin_observations": {"connections_found":1675,"calendar_overlap":52,"potential_goal_matches_before_feedback":23},
   "network_candidates": [

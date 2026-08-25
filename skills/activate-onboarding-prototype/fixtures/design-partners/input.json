@@ -6,14 +6,17 @@
     "known_context": "Founder of Traceframe, an early-stage developer-tool company.",
     "linkedin_url": "https://www.linkedin.com/in/lena-ortiz"
   },
-  "connected_google_account": {
+  "signup_account": {
+    "provider": "google",
     "email": "lena@traceframe.com",
-    "contacts": "connected",
-    "calendar": "connected"
+    "capabilities": {
+      "calendar_events": "connected",
+      "email": "not_connected"
+    }
   },
   "initial_sources": {
-    "google_contacts": "connected",
     "calendar": "connected",
+    "email": "not_connected",
     "linkedin_extension": "not_installed"
   },
   "calendar_observations": {

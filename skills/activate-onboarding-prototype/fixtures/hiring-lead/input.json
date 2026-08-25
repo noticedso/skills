@@ -1,8 +1,8 @@
 {
   "fixture_id": "hiring-lead",
   "user": {"first_name":"Owen","company":"Cipherlane","known_context":"Founder of an early-stage cybersecurity company.","linkedin_url":"https://www.linkedin.com/in/owen-demo"},
-  "connected_google_account": {"email":"owen@cipherlane.com","contacts":"connected","calendar":"connected"},
-  "initial_sources": {"google_contacts":"connected","calendar":"connected","linkedin_extension":"not_installed"},
+  "signup_account": {"provider":"google","email":"owen@cipherlane.com","capabilities":{"calendar_events":"connected","email":"not_connected"}},
+  "initial_sources": {"calendar":"connected","email":"not_connected","linkedin_extension":"not_installed"},
   "calendar_observations": {"analysis_window":"12 months","unique_people_across_calendar_events":112,"unique_people_across_calendar_events_last_90_days":58,"one_to_one_calendar_events_last_30_days":22},
   "linkedin_observations": {"connections_found":2140,"calendar_overlap":81,"potential_goal_matches_before_feedback":27},
   "network_candidates": [
