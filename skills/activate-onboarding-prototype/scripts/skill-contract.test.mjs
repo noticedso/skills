@@ -210,12 +210,46 @@ test("reserves the finite ending for an explicit stop", () => {
 
   assert.match(
     ending,
-    /do not mention.*(?:waitlist|early access|email|Slack).*(?:before|until).*done|(?:before|until).*done.*do not mention.*(?:waitlist|early access|email|Slack)/is,
+    /enter this stage only after.*done/is,
   );
   assert.match(
     ending,
     /final.*(?:list|shortlist).*(?:five|all).*names|(?:five|all).*names.*final.*(?:list|shortlist)/is,
   );
+});
+
+test("offers the relationship-maintenance flow only after Activate is complete", () => {
+  const ending = section(flow, "## 5.");
+
+  assert.match(
+    ending,
+    /after.*(?:final|revised).*(?:list|shortlist).*(?:offer|ask).*(?:stay close|going cold)|(?:offer|ask).*(?:stay close|going cold).*after.*(?:final|revised).*(?:list|shortlist)/is,
+  );
+  assert.match(ending, /1\..*(?:stay close|going cold)/is);
+  assert.match(ending, /2\.\s*(?:i['’]m done|not now)/is);
+  assert.match(
+    ending,
+    /(?:do not|never).*(?:waitlist|early access|Slack).*(?:before|until).*(?:relationship|second flow|follow-on).*(?:choice|decision)|(?:before|until).*(?:relationship|second flow|follow-on).*(?:choice|decision).*(?:do not|never).*(?:waitlist|early access|Slack)/is,
+  );
+});
+
+test("closes with broader outcomes and a verified automatic Slack invite", () => {
+  const ending = section(flow, "## 5.");
+  const integration = read("references/integration.md");
+
+  assert.match(ending, /find\s+the right people/i);
+  assert.match(ending, /warmest (?:path|introduction)/i);
+  assert.match(ending, /relationships.*going cold|going cold.*relationships/is);
+  assert.match(
+    `${ending}\n${integration}`,
+    /verified.*Slack invite.*sent|Slack invite.*verified.*sent/is,
+  );
+  assert.match(
+    `${ending}\n${integration}`,
+    /(?:do not|never).*(?:claim|say).*(?:sent|invite).*(?:unless|without).*(?:verified|product event)|(?:unless|without).*(?:verified|product event).*(?:do not|never).*(?:claim|say).*(?:sent|invite)/is,
+  );
+  assert.doesNotMatch(ending, /join (?:the )?(?:private )?Slack/i);
+  assert.doesNotMatch(ending, /continue (?:building|working on|refining) (?:the|your) shortlist/i);
 });
 
 test("applies constraints to comparable evidence", () => {

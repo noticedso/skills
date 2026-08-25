@@ -66,8 +66,10 @@ Then choose a data mode:
 - Say what the feedback taught you in ordinary language before showing a
   refined shortlist. Never expose implementation or evaluation language.
 - Additional sources and feedback loops are optional after the first result.
-- End deliberately. Recap what you learned, preserve the shortlist, explain
-  early access, and offer the optional founder Slack path.
+- End deliberately. Recap what you learned, preserve the shortlist, and offer
+  the other top-level job as an optional follow-on. If the user stops, close on
+  noticed's broader outcomes and report only verified access or invitation
+  events.
 
 ## Stage invariants
 
@@ -108,10 +110,11 @@ Treat these as a state machine. Never combine stages to move faster.
    other path candidate. When feedback rejects a direct match, replace it with
    the next direct match before considering any path.
 6. **Choice before ending.** After applying all supplied judgments, make each
-   continuation choice name the result it unlocks. Connecting another account
-   comes first. Give the finite ending only after `I'm done for now`. Offer
-   Slack after that ending, and treat `Not now` as the final close. The ending
-   lists all five final names again.
+   continuation choice name the result it enables. Connecting another account
+   comes first. After `I'm done for now`, list all five final names and offer to
+   help the user stay close to the right people as an optional follow-on. If the
+   user declines, give the final access close. Do not ask whether to join Slack;
+   report an invitation only when a verified product event says it was sent.
 
 ## Shortlist ranking
 
@@ -228,9 +231,10 @@ acting as the onboarding agent in a normal conversation.
 
 ## Explicitly out of scope
 
-- Nurture onboarding
+- The detailed relationship-maintenance onboarding after the optional handoff
 - Production signup UI or checkpoint implementation
-- Writes, outreach, invitations, or account connections
+- Executing writes, outreach, invitations, or account connections. The
+  prototype may consume a verified product event that an invitation was sent.
 - Separate flows for each goal subtype
 - Perfect recommendation quality from incomplete data
 - Reading evaluator-only answer keys during the conversation

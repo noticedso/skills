@@ -129,3 +129,31 @@ test("answers the trust branch with an explicit install request", () => {
     "install the Chrome extension now",
   );
 });
+
+test("offers the relationship follow-on before the final access close", () => {
+  const report = runScenario("alternative-first");
+
+  assert.equal(
+    report.deterministic_checks.ending_offers_relationship_follow_on,
+    true,
+  );
+  assert.equal(report.deterministic_checks.ending_defers_access_close, true);
+  assert.equal(report.deterministic_checks.ending_explains_broader_outcomes, true);
+});
+
+test("reports the verified Slack invite without offering it as a choice", () => {
+  const report = runScenario("alternative-first");
+
+  assert.equal(
+    report.deterministic_checks.ending_reports_verified_slack_invite,
+    true,
+  );
+  assert.equal(
+    report.deterministic_checks.ending_does_not_offer_slack_choice,
+    true,
+  );
+  assert.equal(
+    report.deterministic_checks.ending_avoids_shortlist_cliffhanger,
+    true,
+  );
+});

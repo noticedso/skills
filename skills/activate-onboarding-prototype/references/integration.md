@@ -9,7 +9,7 @@ The prototype shows that Activate onboarding needs two cooperating layers.
 - extension install, LinkedIn access, sync started, and sync completed events
 - connected-source status and connection UI
 - persistence of the goal, feedback, and final shortlist
-- waitlist and optional Slack actions
+- early-access state, Slack invite dispatch, and verified invite status
 
 The model never infers or advances these states. Product events update the
 state machine; the next agent turn receives the verified state.
@@ -24,21 +24,27 @@ state machine; the next agent turn receives the verified state.
 - shortlist reasoning and relationship context
 - what the user's feedback taught noticed
 - which optional source would resolve the current uncertainty
-- the concise finite recap
+- the optional relationship-maintenance handoff and concise finite recap
 
 ## First integration slice
 
-1. Start the chat after Google or Microsoft sign-in and initial Calendar/
-   Contacts mapping.
+1. Start the chat after Google or Microsoft sign-in and initial calendar
+   mapping.
 2. Supply verified aggregate observations to the agent.
-3. Persist the Activate/Nurture choice. V1 continues only through Activate.
+3. Persist the initial top-level choice. V1 continues through the find-people
+   flow and may offer the relationship-maintenance flow only after that result
+   is complete.
 4. Gate on the existing extension checkpoint contract.
 5. Collect the open-ended goal, product/company context, and ideal examples.
 6. Run network retrieval after the first successful LinkedIn import and give
    the model a bounded candidate set with evidence.
 7. Persist per-person judgments and reasons, then rerank the same candidate
    pool plus eligible replacements.
-8. Preserve the final five and show the waitlist/Slack close.
+8. Preserve the final five and offer the optional relationship-maintenance
+   handoff.
+9. After the user declines that handoff, or after it later completes, add the
+   user to early access and dispatch the Slack invite. Pass the verified result
+   to the agent so it can close without inventing an external action.
 
 ## Prototype lesson
 

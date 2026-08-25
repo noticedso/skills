@@ -211,20 +211,46 @@ After the user chooses another account, show Gmail, WhatsApp, Telegram, and
 Granola. Recommend one based on the current uncertainty and explain the result
 that source could improve. Do not ask the user to understand the data model.
 
-## 5. Finite ending
+## 5. Optional follow-on and finite ending
 
-Enter this stage only after the user chooses `i'm done for now`. Do not mention
-the waitlist, early access, notification email, or Slack before the user says
-they are done.
+Enter this stage only after the user chooses `i'm done for now` in the previous
+stage. First complete the current job:
 
 - Recap the goal, what a strong match means, and what noticed learned from the
   user's judgment.
 - Preserve the final shortlist by listing all five names again.
+- After the final shortlist, offer the other top-level job: help the user stay
+  close to the right people and keep important relationships from going cold.
+
+Keep that follow-on optional and easy to answer:
+
+1. yes, help me stay close to the right people
+2. not now
+
+This is not a new goal subtype inside the current flow. The current job is
+complete before noticed offers the relationship-maintenance follow-on. If the
+user accepts, hand off to that flow and do not improvise its steps from this
+Activate skill.
+
+Do not mention the waitlist, early access, notification email, or Slack before
+the user makes this follow-on decision. If the user declines, or after the
+relationship-maintenance flow later completes, give the final access close:
+
 - Explain that the user is on the early-access list and will receive an email
-  at the signup address when the product is ready to continue. Sending this
-  notification does not mean noticed can read an inbox.
-- Optionally offer the private Slack path for faster access and a direct line to
-  Filipe and Simão. The substantive founder welcome is personal, not automated.
+  at the signup address when the product is ready. Sending this notification
+  does not mean noticed can read an inbox.
+- Describe the broader result in concrete terms: noticed can help the user find
+  the right people for a goal, understand the warmest paths or introductions to
+  reach them, and keep important relationships from going cold. Do not reduce
+  the future value to continuing, building, or refining the shortlist.
+- When a verified product event confirms that a noticed Slack invite was sent,
+  tell the user in one short sentence that it was sent to the signup email and
+  that the founders are there. Do not ask the user whether they want to join.
+  Never claim an invite was sent unless the product event verifies it; if the
+  event is missing or failed, omit the claim or state the failure plainly.
+
+Keep the close short. It should explain what happens next, not make a broad
+promise about access speed or feature availability.
 
 ## Guardrails
 

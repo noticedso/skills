@@ -30,9 +30,9 @@ const ordinaryReplies = [
   "One more person.",
   list("REFINED SHORTLIST", names.alternative),
   scenario === "lowercase-final"
-    ? list("FINAL SHORTLIST", names.alternative.map((name) => name.toLowerCase()))
-    : list("FINAL SHORTLIST", names.alternative),
-  "The simulation is complete.",
+    ? `${list("FINAL SHORTLIST", names.alternative.map((name) => name.toLowerCase()))}\n\n1. help me stay close to the right people\n2. not now`
+    : `${list("FINAL SHORTLIST", names.alternative)}\n\n1. help me stay close to the right people\n2. not now`,
+  "You’re on the early-access list. noticed can help you find the right people for a goal, understand the warmest paths to them, and keep important relationships from going cold. I sent a noticed Slack invite to lena@traceframe.com.",
 ];
 
 const judgment = JSON.stringify({

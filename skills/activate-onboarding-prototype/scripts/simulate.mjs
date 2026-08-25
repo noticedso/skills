@@ -65,6 +65,7 @@ const {
   network_candidates: networkCandidates,
   ...preSyncInput
 } = input;
+const accountEmail = input.signup_account?.email ?? "";
 const interactionContract =
   interactionMode === "human"
     ? "This is a human mock test. A natural `done` confirms the current action requested in the immediately preceding setup reply. The mock walks through installation, noticed connection, and site access as separate actions. Never demand a real browser signal or hidden checkpoint syntax."
@@ -74,7 +75,7 @@ const agentSystem = `${skill}\n\n${flow}\n\n${voice}\n\n${extension}\n\n# Mock p
 const syncResult = `# Newly available LinkedIn sync result\n${JSON.stringify({
   linkedin_observations: linkedinObservations,
   network_candidates: networkCandidates,
-}, null, 2)}\n\n# Result-stage contract\nThe first shortlist contains at least four direct-match candidates and at most one clearly labeled path or introducer. Prefer a direct candidate with uncertainty to a second path candidate. After all five initial judgments, show the revised five-person shortlist and the three continuation choices in the same reply. Do not mention early access, email, or Slack before the user chooses that they are done. In the finite ending, list all five final names again.`;
+}, null, 2)}\n\n# Result-stage contract\nThe first shortlist contains at least four direct-match candidates and at most one clearly labeled path or introducer. Prefer a direct candidate with uncertainty to a second path candidate. After all five initial judgments, show the revised five-person shortlist and the three continuation choices in the same reply. Do not mention early access, email, or Slack before the user chooses that they are done. After that choice, list all five final names and offer the optional relationship-maintenance follow-on before giving the access close.`;
 const namesById = new Map(
   input.network_candidates.map((candidate) => [candidate.id, candidate.name]),
 );
@@ -182,7 +183,10 @@ for (let turn = 0; turn < turnBudget; turn += 1) {
       "# Current turn contract\nThis is the fifth initial judgment. In this reply, apply all five judgments, show the revised five-person shortlist, then offer the three continuation choices. Do not enter the finite ending yet.";
   } else if (latestUserReply === "I'm done for now") {
     turnContract =
-      "# Current turn contract\nThe user is done. Give the finite ending now and list all five final names.";
+      "# Current turn contract\nThe find-people job is complete. Recap what you learned, list all five final names, then offer the optional relationship-maintenance follow-on with two numbered choices: help me stay close to the right people, or not now. Do not mention early access, email, or Slack yet.";
+  } else if (latestUserReply === "not now") {
+    turnContract = `# Current turn contract
+The user declined the optional relationship-maintenance follow-on. Product event: a noticed Slack invite was sent successfully to ${accountEmail}. Give the final access close now. Explain the broader outcomes noticed can provide: finding the right people for a goal, understanding the warmest paths to them, and keeping important relationships from going cold. Inform the user that the Slack invite was sent to the signup email and that the founders are there. Do not ask a question, offer Slack as a choice, promise faster access, or say that noticed will continue building the shortlist.`;
   }
   const currentSystem = [
     networkReady ? `${agentSystem}\n\n${syncResult}` : agentSystem,
@@ -228,7 +232,7 @@ Score each dimension from 1 to 5:
 - grounding: no fabricated data, people, capabilities, progress, or checkpoint detection
 - shortlist_quality: five-person hypotheses fit the available evidence and avoid known traps
 - learning_loop: feedback changes the stated model and refined shortlist in the expected direction
-- ending: deliberate recap, early-access expectation, and optional founder Slack path
+- ending: preserves the final five, offers the relationship-maintenance job once, then gives a concise early-access close that explains broader outcomes and reports the verified automatic founder Slack invitation
 
 Return JSON only:
 {"scores":{"opening_clarity":1,"extension_trust":1,"flow_order":1,"give_before_ask":1,"voice":1,"grounding":1,"shortlist_quality":1,"learning_loop":1,"ending":1},"overall":1,"passed":false,"strengths":["..."],"issues":["..."],"next_change":"one highest-leverage change"}`;
@@ -285,6 +289,19 @@ const feedbackEndIndex = feedbackIndexes.at(-1) ?? -1;
 const doneIndex = transcript.findIndex(
   (turn) => turn.role === "user" && turn.content === "I'm done for now",
 );
+const followOnDecisionIndex = transcript.findIndex(
+  (turn, index) =>
+    index > doneIndex && turn.role === "user" && turn.content === "not now",
+);
+const followOnOfferReply =
+  doneIndex >= 0 && transcript[doneIndex + 1]?.role === "assistant"
+    ? transcript[doneIndex + 1].content
+    : "";
+const finalAccessReply =
+  followOnDecisionIndex >= 0 &&
+  transcript[followOnDecisionIndex + 1]?.role === "assistant"
+    ? transcript[followOnDecisionIndex + 1].content
+    : "";
 const firstShortlistGateIndex =
   interactionMode === "human" ? goalIndex : syncCompleteIndex;
 const firstShortlistIndex =
@@ -307,7 +324,6 @@ const refinedShortlistIds =
 const finalShortlistIds =
   finalShortlistIndex >= 0 ? candidateIdsIn(transcript[finalShortlistIndex].content) : [];
 const firstAssistantReply = transcript.find((turn) => turn.role === "assistant")?.content ?? "";
-const accountEmail = input.signup_account?.email ?? "";
 const privacyRequestIndex = transcript.findIndex(
   (turn) => turn.role === "user" && turn.content === "2",
 );
@@ -387,6 +403,32 @@ const deterministicChecks = {
     required: Math.min(5, refinedShortlistIds.length),
     total: refinedShortlistIds.length,
   },
+  ending_offers_relationship_follow_on:
+    /(?:stay close|relationships? from going cold)/i.test(followOnOfferReply) &&
+    /(^|\n)\s*1\./m.test(followOnOfferReply) &&
+    /(^|\n)\s*2\./m.test(followOnOfferReply) &&
+    /not now/i.test(followOnOfferReply),
+  ending_defers_access_close:
+    !/(?:early[- ]access|waitlist|Slack)/i.test(followOnOfferReply),
+  ending_explains_broader_outcomes:
+    /find(?:ing)? the right people/i.test(finalAccessReply) &&
+    /warmest (?:path|paths|introduction|introductions)/i.test(finalAccessReply) &&
+    /relationships? (?:from )?going cold|keep(?:ing)? important relationships/i.test(
+      finalAccessReply,
+    ),
+  ending_reports_verified_slack_invite:
+    accountEmail.length > 0 &&
+    finalAccessReply.includes(accountEmail) &&
+    /Slack invite/i.test(finalAccessReply) &&
+    /sent/i.test(finalAccessReply),
+  ending_does_not_offer_slack_choice:
+    !/(?:join|want to join).{0,30}Slack|Slack.{0,30}(?:1\.|2\.)/is.test(
+      finalAccessReply,
+    ),
+  ending_avoids_shortlist_cliffhanger:
+    !/continue (?:building|working on|refining) (?:the|your) shortlist/i.test(
+      finalAccessReply,
+    ),
 };
 const deterministicPassed =
   deterministicChecks.opening_introduces_noticed &&
@@ -410,7 +452,13 @@ const deterministicPassed =
   deterministicChecks.refined_shortlist_expected_coverage.actual >=
     deterministicChecks.refined_shortlist_expected_coverage.required &&
   deterministicChecks.final_shortlist_preserved.actual >=
-    deterministicChecks.final_shortlist_preserved.required;
+    deterministicChecks.final_shortlist_preserved.required &&
+  deterministicChecks.ending_offers_relationship_follow_on &&
+  deterministicChecks.ending_defers_access_close &&
+  deterministicChecks.ending_explains_broader_outcomes &&
+  deterministicChecks.ending_reports_verified_slack_invite &&
+  deterministicChecks.ending_does_not_offer_slack_choice &&
+  deterministicChecks.ending_avoids_shortlist_cliffhanger;
 
 const report = {
   fixture: fixtureId,
