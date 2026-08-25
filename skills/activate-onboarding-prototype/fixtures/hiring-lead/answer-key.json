@@ -1,9 +1,0 @@
-{
-  "evaluator_only": true,
-  "goal_answers": {"goal":"Find a founding GTM lead for Cipherlane.","product":"Cipherlane secures machine identities for mid-market infrastructure teams.","ideal_customer":"The hire must be hands-on, comfortable before product-market fit, and credible with security buyers.","examples":["first GTM hire at a seed-stage security company","former founder who sold enterprise security","hands-on seller who can build the motion"]},
-  "first_shortlist_expected_ids": ["h1", "h7", "h3", "h2", "h6"],
-  "feedback": {"h1":["strong fit","best zero-to-one evidence"],"h7":["strong fit","hands-on and already helpful"],"h3":["maybe","strong builder but growth may not equal enterprise sales"],"h2":["not a fit","big-company seller without startup evidence"],"h6":["not a fit","too senior and relationship is cold"]},
-  "refined_shortlist_expected_ids": ["h1", "h7", "h3", "h5", "h8"],
-  "required_learning": ["zero-to-one evidence beats title seniority", "security credibility matters", "separate candidates from introducers", "avoid big-company-only sellers"],
-  "known_traps": ["treating the recruiter as a candidate", "ranking the VP Sales first because of title", "creating a separate hiring flow"]
-}

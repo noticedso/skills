@@ -65,17 +65,6 @@ Run each prompt in a chat with the noticed MCP connected. Prompts are ordered ea
 3. Run it once, then run `onboard me` again
    *(idempotent — should re-ask with fresh pre-fills; the repeat `save_onboarding` call replaces the profile snapshot and appends a dated notes block without duplicating memory entries)*
 
-## activate-onboarding-prototype
-
-1. Run `node skills/activate-onboarding-prototype/scripts/simulate.mjs design-partners /tmp/design-partners.json`
-   *(blind golden path; the simulated user asks how the extension works before installing. Confirm deterministic checks pass and review opening clarity plus extension trust.)*
-2. In a fresh ChatGPT or Codex chat: `use activate-onboarding-prototype in mock mode with the hiring-lead input fixture. do not open the answer key.`
-   *(the tester privately reads `tester-brief.md` first; the agent must not read it. Same conversation shape as sales, with no hidden hiring branch)*
-3. With the noticed MCP connected: `use activate-onboarding-prototype in live read-only mode. i want to activate my network for a real goal.`
-   *(real-data pilot; no writes, connections, invitations, or outreach)*
-
----
-
 ## what to watch for
 
 The behaviors the NYTW revisions were built to get right — confirm they hold across the tests above:
