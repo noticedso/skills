@@ -21,7 +21,7 @@ Requires a Pro, Max, Team, or Enterprise plan with code execution enabled (Setti
 
 1. Open **Customize → Plugins** and click **+ → Add marketplace**.
 2. Sync from this GitHub repo: `noticedso/skills`.
-3. From the synced marketplace, install **Networking Assistant**. All nine skills land in one shot.
+3. From the synced marketplace, install **Networking Assistant**. All eight skills land in one shot.
 
 ## install (ChatGPT / Codex)
 
@@ -37,7 +37,6 @@ Add `noticedso/skills` as a plugin marketplace, then install **Networking Assist
 | **follow-up** | Draft a follow-up message to someone you just met, in your voice, with something actionable in it. | logs the touchpoint only after you confirm it went out |
 | **search-network** | Natural-language search across your network; returns a tight table; drills into anyone. | read-only |
 | **onboard** | Onboards you to noticed: a short questionnaire that captures your identity, goals, and current tools, saved in one `save_onboarding` call. | yes (to your own record) |
-| **activate-onboarding-prototype** | Simulates the new Activate onboarding flow against mock fixtures or a live read-only noticed network. | no |
 | **match-identities** | Triage the cross-source identity matches noticed proposes — confirm real matches, clear false positives, merge duplicates — and fill profile gaps by searching your network first. | yes |
 | **intro** | Find the warm path to a target, draft an intro between two people, write an intro request with a forwardable blurb, or write a backchannel vouch — all copy/paste. | only on confirmed intro tracking |
 
