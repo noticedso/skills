@@ -1,56 +1,90 @@
 ---
 name: research-person
 description: >-
-  Research one person before a meeting or call. Pull together what's
-  already in noticed and what the web says, then render a concise,
-  scannable dossier in chat (overview, interaction history, company
-  context, conversation starters, sources), and proactively offer to
-  save the enriched context back to noticed. Use whenever the user says
-  "research X", "prep me for my meeting with X", "what do we know about
-  X", "deep dive on X", "pre-meeting brief on X", or "tell me about X".
-  One person at a time. Works whether the person is in noticed or not.
+  Prepare the user for a meeting or conversation with one person by combining
+  their existing relationship history in noticed with current public context.
+  Use for requests such as "research X", "prep me for X", "what do we know
+  about X", or "tell me about X". Research is read-only until the user asks to
+  save it.
 ---
 
 # research-person
 
-Single person, deep dive. Read everything available, present cleanly, then offer to save the enriched context back to noticed.
-
-Person resolution is shared with `add-person` — same own → web → ask order. Read-heavy: the deliverable is a dossier in chat; writes only on an explicit "save".
+Help the user understand one person and walk into the next conversation prepared.
 
 ## flow
 
-1. **Resolve the person** via `add-person`'s flow: own-scope search, multi-word names AND-joined. Strong match → use it. Multiple hits → surface candidates. Nothing in own → not in network yet; web-only enrichment, mark not-in-noticed. **No public-scope search.**
+1. Search the user's own network first with `search_people`.
+2. If several people match, stop and ask one easy identity question. Show the
+   concrete choices with role or company. Do not search the web until the person
+   is resolved.
+3. For one clear match, call `get_person({ person_id, include: "dossier" })`.
+4. Search the current web for the person and their company. Try at most two
+   focused queries. If the evidence still does not converge, say what is unclear.
+5. Return a short brief that separates the relationship history from public
+   research and helps with the specific upcoming conversation.
+6. End with one specific question about saving the useful new findings. Do not
+   write anything until the user says yes.
 
-2. **Read what's in noticed.** `get_person({ include: "dossier" })` for `default_notes`, tags, recent `log_interactions`.
+If the person is not in noticed, say so plainly and prepare a web-only brief. At
+the end, ask whether the user wants to add the person before saving research.
 
-3. **Web search to enrich:** the person (news, posts, role); their company (canonicalize first; news, funding, product); public output (latest tweet/post/repo). Stop rule: two reformulations that don't converge → ask.
+## response shape
 
-4. **Render a scannable dossier in chat.** Easy to skim, ideally one screen. Sections (skip empties): overview / interaction history (noticed `log_interactions`, dated) / company context / conversation starters / key notes / sources. Lowercase, friend-tone, names in **bold**. (Provenance: see below.)
+Start with the person's name. Keep the whole brief to about one screen and skip
+empty sections.
 
-5. **Proactively offer to save.** Always close with the offer — don't wait to be asked: "want me to save this back to <name>'s record?" Wait for an explicit "save".
+```markdown
+**Ana Costa**
+VP Product at Traceframe
 
-6. **On "save":** a tight 3-5 line summary of the *new* findings (not the full dossier). Save each finding as its own `add_memory` entry — research is noticed's, so it lands as a memory, not one of the user's notes. Then read back what was written.
-   - In noticed → one `add_memory` per finding, `occurred_at` set to the research date, `captured_via: "research-person"`; merge tags.
-   - Not in noticed → ask "add them to your network too?" Yes → `add_to_network`, then `add_memory` the findings. No → save nothing.
+**your history:**
+you worked together on a product launch in 2024. your last call was about
+enterprise onboarding.
 
-## provenance — two surfaces
+**current context:**
+Traceframe recently launched a team workspace. Ana has also written about
+reducing friction in enterprise adoption.
 
-- **Dossier (chat):** attribute web findings inline ("linkedin says…", "a recent piece notes…") so research never reads as fact. Surface conflicts with noticed notes rather than smoothing them.
-- **Stored context (the record):** save findings through `add_memory`, so they land as noticed's — researched, not user-stated. Being a memory (not one of the user's notes) is what marks it unverified, so there's no `[research, unverified]` tag and no `[mcp · skill:…]` prefix; `occurred_at` carries the date. A `~40k-users` figure from an aggregator is already flagged as research by being a memory. On the rare line the user stated firsthand, use `add_note` instead.
+**for tomorrow:**
+ask how the new workspace is changing the onboarding work you discussed.
 
-## writes (only on "save")
-Read existing context via `get_person` first; append, never overwrite. MCP limit: `update_person` can't set structured identity fields, so a web-found headline for someone already in noticed goes into an `add_memory` line (research → memory), not a structured field.
+**sources:**
+- [Traceframe launches team workspace](https://example.com/article)
+- [Ana Costa on product adoption](https://example.com/post)
 
-## the rule
-- One person at a time. Read-heavy; writes only on "save".
-- Never silently default to the wrong identity. Ask when ambiguous.
-- Don't grind: two reformulations, then ask.
-- On save, read back what landed.
+should i save the workspace launch and her adoption note to ana's record?
+```
 
-## tool needs
-- `noticed`: `search_people`, `get_person`, `add_memory` (save research findings), `add_note` (the rare firsthand line), `update_person` (tags), `add_to_network` (only when the user wants to add a new person)
-- `web_search`: enrichment + canonicalize companies
-- No Gmail (can't assume it's connected).
+Use the source URLs returned by web search. Attribute public claims and surface
+conflicts instead of smoothing them over. Never present web research as something
+the user told noticed.
 
-## explicitly NOT in scope
-- Batch research; cold profiling without intent; `scope: "public"` searches; `log_interaction` (event-debrief's job); auto-save without "save"; surfacing provenance tags in chat; composed plan-handoff (V3).
+## saving research
+
+Only save after an explicit yes.
+
+- Read the existing dossier before appending.
+- Save each genuinely new public finding with `add_memory`.
+- Use the research date as `occurred_at` and `captured_via: "research-person"`.
+- Use `add_note` only for something the user states firsthand.
+- Read back exactly what was saved.
+
+## rules
+
+- One person at a time.
+- Never guess between identities.
+- No public-network search. Open web research is allowed.
+- No Gmail assumption.
+- Do not use em dashes.
+- Do not auto-save or edit the person while preparing the brief.
+- Ask one question at a time.
+
+## tools
+
+- `search_people`
+- `get_person`
+- `web_search`
+- `add_memory` after approval
+- `add_note` for a new firsthand fact after approval
+- `add_to_network` only when a web-only person should be added after approval
