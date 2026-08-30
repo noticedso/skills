@@ -12,7 +12,7 @@
     {
       "name": "noticed-skills",
       "version": "1.2.3",
-      "description": "eight skills for the noticed mcp: add-person, event-debrief, research-person, follow-up, search-network, onboard, match-identities, intro",
+      "description": "seven skills for the noticed mcp: add-person, event-debrief, research-person, follow-up, search-network, match-identities, intro",
       "source": "./",
       "strict": false,
       "skills": [
@@ -21,7 +21,6 @@
         "./skills/research-person",
         "./skills/follow-up",
         "./skills/search-network",
-        "./skills/onboard",
         "./skills/match-identities",
         "./skills/intro"
       ]

@@ -56,17 +56,6 @@ Run each prompt in a chat with the noticed MCP connected. Prompts are ordered ea
 3. `how many investors are in my network?` then, after any table, `more on #2`
    *(network_summary count for the first; drill-down by number into a dossier for the second)*
 
-## onboard
-
-1. `onboard me`
-   *(should pre-fill role/location from your profile and present them as a confirm, then walk the questionnaire one question at a time)*
-2. `what does noticed know about me?`
-   *(same flow; check it skips questions it already has strong signal for)*
-3. Run it once, then run `onboard me` again
-   *(idempotent — should re-ask with fresh pre-fills; the repeat `save_onboarding` call replaces the profile snapshot and appends a dated notes block without duplicating memory entries)*
-
----
-
 ## what to watch for
 
 The behaviors the NYTW revisions were built to get right — confirm they hold across the tests above:
