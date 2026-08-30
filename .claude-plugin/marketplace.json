@@ -29,7 +29,6 @@
         "./skills/research-person",
         "./skills/follow-up",
         "./skills/search-network",
-        "./skills/onboard",
         "./skills/match-identities",
         "./skills/intro"
       ]

@@ -1,6 +1,6 @@
 # noticed-skills
 
-A suite of agent skills for [noticed](https://noticed.so) — a personal networking agent. Each skill wraps the noticed MCP to handle one job in the relationship-management loop: capturing people you meet, debriefing meetings, researching contacts, following up, searching your network, matching identities, making introductions, and onboarding.
+A suite of agent skills for [noticed](https://noticed.so) — a personal networking agent. Each skill wraps the noticed MCP to handle one job in the relationship-management loop: capturing people you meet, debriefing meetings, researching contacts, following up, searching your network, matching identities, and making introductions.
 
 ## connect noticed first
 
@@ -21,11 +21,11 @@ Requires a Pro, Max, Team, or Enterprise plan with code execution enabled (Setti
 
 1. Open **Customize → Plugins** and click **+ → Add marketplace**.
 2. Sync from this GitHub repo: `noticedso/skills`.
-3. From the synced marketplace, install **Networking Assistant**. All eight skills land in one shot.
+3. From the synced marketplace, install **Networking Assistant**. All seven skills land in one shot.
 
 ## install (ChatGPT / Codex)
 
-Add `noticedso/skills` as a plugin marketplace, then install **Networking Assistant**. The plugin keeps all eight capabilities together; do not upload them one by one.
+Add `noticedso/skills` as a plugin marketplace, then install **Networking Assistant**. The plugin keeps all seven capabilities together; do not upload them one by one.
 
 ## the skills
 
@@ -36,7 +36,6 @@ Add `noticedso/skills` as a plugin marketplace, then install **Networking Assist
 | **research-person** | Deep-dive one person before a meeting; render a dossier from noticed + the web; offer to save it back. | only on save |
 | **follow-up** | Draft a follow-up message to someone you just met, in your voice, with something actionable in it. | logs the touchpoint only after you confirm it went out |
 | **search-network** | Natural-language search across your network; returns a tight table; drills into anyone. | read-only |
-| **onboard** | Onboards you to noticed: a short questionnaire that captures your identity, goals, and current tools, saved in one `save_onboarding` call. | yes (to your own record) |
 | **match-identities** | Triage the cross-source identity matches noticed proposes — confirm real matches, clear false positives, merge duplicates — and fill profile gaps by searching your network first. | yes |
 | **intro** | Find the warm path to a target, draft an intro between two people, write an intro request with a forwardable blurb, or write a backchannel vouch — all copy/paste. | only on confirmed intro tracking |
 
@@ -49,7 +48,7 @@ add-person  →  event-debrief
    (during)            (after)
 ```
 
-`research-person` and `follow-up` support any contact at any time. `search-network` is the read path over everything you've captured. `intro` turns that network into warm paths and the messages that open them. `onboard` is first-run setup.
+`research-person` and `follow-up` support any contact at any time. `search-network` is the read path over everything you've captured. `intro` turns that network into warm paths and the messages that open them.
 
 ## shared conventions
 

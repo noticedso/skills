@@ -6,8 +6,8 @@ ChatGPT, anything that loaded the skill). It asks the agent to look back at what
 actually happened and propose concrete edits to the skill — biased toward making
 it **simpler and more effective** first, **more accurate and complete** second.
 
-It works for any of the eight skills (add-person, event-debrief,
-research-person, follow-up, search-network, match-identities, onboard, intro) because it
+It works for any of the seven skills (add-person, event-debrief,
+research-person, follow-up, search-network, match-identities, intro) because it
 makes the agent ground every suggestion in the real session rather than in generic
 advice, and check each one against the suite's shared conventions before proposing
 it.
@@ -17,7 +17,7 @@ Paste everything inside the block below.
 ```
 You just finished a session in which you used one or more of the noticed skills:
 add-person, event-debrief, research-person, follow-up, search-network,
-match-identities, onboard, intro. Before we close, review how the skill(s) actually
+match-identities, intro. Before we close, review how the skill(s) actually
 behaved in THIS session and propose concrete improvements to the skill's own
 instructions (its SKILL.md). Make the edits precise enough to apply directly.
 
