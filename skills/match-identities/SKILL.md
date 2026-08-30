@@ -1,212 +1,109 @@
 ---
 name: match-identities
 description: >-
-  Triage the cross-source identity matches noticed proposes for the user's
-  network: confirm the ones that are the same person, clear the false
-  positives, and merge obvious duplicates. Pulls the review queue with
-  `list_identity_matches` (status: 'pending') and acts on each row with
-  `accept_identity_match` (merge), `mark_different_people` (durable "not the
-  same person"), or `dismiss_identity_match` (soft "not now"). Use whenever the
-  user says "review my matches", "clean up duplicates", "are these the same
-  person?", "any duplicate contacts?", "approve/reject the identity
-  suggestions", or asks to tidy who's-who. Also fills profile GAPS, email-only
-  contacts with no LinkedIn/GitHub, via `list_profile_gaps` +
-  `add_profile_to_person` ("add a profile for X", "here's the LinkedIn for that
-  contact"). Writes to the network (merges + disconnects), so it confirms before
-  merging anyone who isn't an obvious duplicate.
+  Review proposed identity matches in noticed, merge records that are clearly
+  the same person, mark clear false positives as different people, and ask the
+  user about genuinely ambiguous pairs. Also attach verified LinkedIn or GitHub
+  profiles to contacts that are missing one.
 ---
 
 # match-identities
 
-noticed continuously proposes that two records are the **same human** across
-sources: an email-only contact ↔ their LinkedIn/GitHub, or two near-duplicate
-people. This skill walks that review queue with the user and resolves each one:
-**accept** (they're the same → merge), **mark different** (they're not → durable
-disconnect), or **dismiss** (not sure / not now → soft).
+Help noticed learn which profiles belong to the same person without making risky
+guesses.
+
+## decisions
+
+Every proposed match has one of three outcomes:
+
+- **same person:** use `accept_identity_match`.
+- **different people:** use `mark_different_people` so the false match does not
+  return.
+- **unclear:** leave it pending and ask the user one concrete question.
+
+Use `dismiss_identity_match` only when the user explicitly says to skip, hide,
+or revisit a match later. Uncertainty alone is not permission to dismiss it.
 
 ## flow
 
-1. **Pull the queue.** `list_identity_matches({ status: "pending" })`. Each row has:
-   - `identity_a` / `identity_b`: the two sides (name + `person_id`; the
-     `person_id` is `null` when a side is an email-only contact with no person yet).
-   - `confidence`, `channel` (how it was proposed: `email_equality`,
-     `company_overlap`, `external_search`, `name_fuzzy`, …), and a `reason`.
-   - **the handle to act on**: exactly one of:
-     - `candidate_id` (a proposed merge between two real people), or
-     - `profile_a` / `profile_b` (the review queue's usual case: an
-       `email:<addr>` ↔ `github:<id>`/`linkedin:<vanity>` pair, where one side
-       has no person and `candidate_id` is `null`).
+1. Pull pending matches with `list_identity_matches({ status: "pending" })`.
+2. Use the supplied names, identifiers, confidence, channel, and reason.
+3. Resolve clear cases without another confirmation:
+   - If the user explicitly says two identities are the same, find that pending
+     pair and merge it.
+   - Matching name plus a strong personal identifier can be merged.
+   - A role address such as `hello@`, `info@`, `contact@`, `support@`, or
+     `team@` matched to an individual only through company overlap is a clear
+     false positive. Mark it as different.
+4. For a thin or conflicting pair, inspect the known person's dossier and use
+   focused web research if it can reveal concrete evidence.
+5. If it remains unclear, do not merge, mark different, or dismiss it. Show the
+   pair and ask one choice the user can answer quickly.
+6. Recap what changed and keep the unresolved question visible.
 
-   Scope to one person with `person` when the user is reviewing a specific
-   cluster ("review the matches for Filipe"). Pass a bigger `limit` (max 100) to
-   see the whole queue.
+## response shape
 
-2. **Judge each row: same person or not?** Lead with the evidence in `reason`
-   and the two names/identifiers. Decide per row:
-   - **Clearly the same** (matching name + handle/email, or `email_equality`) →
-     a candidate for **accept**.
-   - **Clearly different**: different names/people, OR a **shared/role email**
-     matched to one individual (`hello@`, `contact@`, `general@`, `team@`,
-     `info@` at a company → almost always a false positive from
-     `company_overlap`) → **mark different**.
-   - **Genuinely unsure** → **dismiss** (or leave it; don't guess).
+Use compact cards, not tables or dense paragraphs.
 
-   When a row is ambiguous (a thin profile, a first-name-only email, a handle
-   collision), research before deciding (see **research before deciding** below)
-   rather than guess.
+```markdown
+cleared one obvious false match.
 
-3. **Act**, passing whichever handle the row carries:
-   - **Accept (merge):** `accept_identity_match({ candidate_id })` OR
-     `accept_identity_match({ profile_a, profile_b })` OR
-     `accept_identity_match({ person_a, person_b })`. The first/target survives;
-     the user's own person always survives.
-     - If noticed has counter-evidence it **does not merge**, it returns
-       `needs_confirmation: true` with the conflicting evidence and a
-       `confirmation_token`. **Relay that evidence to the user.** Only if they
-       review it and still say it's the same person, call again with the
-       `confirmation_token`. Never pre-set the token.
-     - `admin_required: true` (a verified sign-in says the identity belongs to
-       someone else) → tell the user an admin must resolve that one on the
-       dashboard; don't try to force it.
-   - **Mark different (durable):** `mark_different_people({ profile_a, profile_b })`
-     (or `candidate_id` / `person_a, person_b`). Records a lasting "not the same
-     person" so noticed stops suggesting it. Reversible by an admin.
-   - **Dismiss (soft):** `dismiss_identity_match({ … })`. Stops it surfacing for
-     now; it may return later if new evidence appears.
+**Alex Kim**
+Founder at Northstar
 
-4. **Batch sensibly.** A cluster of obvious same-company false positives (e.g. a
-   dozen `*@apple.com` emails matched to one person) → mark each different,
-   then report the count ("cleared 11 false positives for Filipe Lopes"). Don't
-   ask per-row for the obvious ones; do ask before any merge that isn't a clear
-   duplicate.
+**possible match:** alex@northstar.com + GitHub `alexk`
+**what's unclear:** the first name matches, but there is no surname evidence.
 
-5. **Close out.** Summarize what changed: merged / marked-different / dismissed
-   counts, and offer to re-pull `status: "pending"` to confirm the queue shrank.
+is `alexk` the Northstar founder, or a different person?
+```
 
-## research before deciding (ambiguous rows)
+For a completed explicit merge:
 
-Some rows can't be judged from the queue alone: a bare profile with no name, a
-first-name-only email (`josh@`, `mario@`), a generic LinkedIn vanity, or a famous
-GitHub handle. Don't guess on these. Research first, then decide; for the ones that
-stay uncertain, the user usually knows, so ask.
+```markdown
+merged `diogoribeiro@redlightsoft.com` into **Diogo Freitas Ribeiro**.
+```
 
-1. **Pull the in-network side's dossier.** One side of the pair is usually already
-   a person (`identity_b.person_id`). `get_person({ person_id })` returns their
-   headline, company, tags, and sometimes a known email in the notes. If the
-   candidate email's domain or surname matches the dossier, it's the same person;
-   if the dossier's company or surname conflicts, they're different.
-2. **Identify a bare profile from the open web.** A `github:<id>` resolves to a
-   real account at `https://api.github.com/user/<id>` (login, name, company, bio,
-   blog). For a `linkedin:<vanity>`, web-search the vanity or the name plus a
-   company. Use this to learn who the profile actually belongs to before matching
-   an email to it.
-3. **Show the user a batch (about 10 at a time) in a table**: unmatched side, who
-   the profile really is, same person?, and your recommendation. Act on the clear
-   ones and let the user settle the rest.
+## confirmation and access gates
 
-Patterns that look like matches but usually aren't (research, don't auto-accept):
-- **Handle collision.** A famous, low-numbered GitHub account whose login equals a
-  generic first-name email alias (`josh@company-a` and `josh@company-b` both
-  matched to GitHub `josh`) is almost always different people.
-- **Same company, different surname.** `maria.adriana.cardoso@acme.com` matched to
-  Maria Inês **Fonseca** is a colleague, not her → mark different.
-- **Too-thin target.** A LinkedIn/GitHub record with no name or headline can't be
-  confirmed; don't merge on a first-name match alone.
+If `accept_identity_match` returns `needs_confirmation: true`, show the
+conflicting evidence. Call it again with the returned confirmation token only
+after the user confirms.
 
-The inverse is also true: research often CONFIRMS a non-obvious real match, then
-accept. The email's surname is the person's; a personal-domain address
-(`hello@theirname.com`); a founder's `name@theircompany.com`; or the dossier
-already lists that exact email.
+If it returns `admin_required: true`, explain that an admin must resolve the
+verified-account conflict. Do not try to force it.
 
-## fill profile gaps (add a profile)
+## profile gaps
 
-The flip side of the queue: contacts noticed has **no profile for**: email-only
-people with no LinkedIn/GitHub. They can't be matched until noticed knows their
-profile, so you give it one.
+For a contact missing a LinkedIn or GitHub identity:
 
-1. **List the gaps.** `list_profile_gaps()` → email-only contacts (person_id,
-   name, email, and any URL already submitted). This is the "Add a profile" list.
-2. **Find their profile, network first.** Before searching the open web, search
-   noticed itself: `search_people` (or `resolve_person`) on the contact's name or
-   email handle. They're often already in your network with a LinkedIn/GitHub
-   attached, in which case it's a duplicate to resolve (accept / mark different) and
-   you already have the URL. Only when they're NOT already in noticed do you go to
-   the open web for their LinkedIn/GitHub.
-3. **Attach a URL.** Once you have it, `add_profile_to_person({ person_id, url })`
-   with a `linkedin.com/in/…` OR `github.com/…` URL. Two outcomes:
-   - **applied** → that profile was already in noticed → matched + merged into one
-     record.
-   - **queued** → noticed couldn't merge it outright: it'll fetch + match the
-     profile (if it's new), or route a conflict to a quick admin review. Tell the
-     user it'll resolve shortly (and may need a quick review).
-4. Use this to ENRICH a thin contact, not to merge two existing records (that's
-   accept_identity_match / suggest_identity_match). One URL per call (LinkedIn XOR
-   GitHub).
+1. Call `list_profile_gaps`.
+2. Search the user's network first in case the profile already belongs to an
+   existing person.
+3. Use open web research only when the network does not resolve it.
+4. Attach one verified URL with `add_profile_to_person({ person_id, url })`.
+5. Explain whether the profile was applied immediately or queued for review.
 
-## the rule
+Never attach a plausible but unverified profile.
 
-- **Reads are free; writes are deliberate.** Pull and judge the whole queue
-  freely. Merging two records is a structural change, so only do it for clear
-  duplicates without asking, and ask first for anything ambiguous.
-- **Respect the confirmation gate.** If accept returns `needs_confirmation`, show
-  the evidence and get a real yes before passing the token back. If it's
-  `admin_required`, route to an admin; don't force it.
-- **Shared/role emails are not people.** `hello@`, `contact@`, `support@`,
-  `team@`, `general@` matched to an individual is a false positive → mark
-  different.
-- **Mark-different is durable; dismiss is soft.** Use mark-different for "these
-  are genuinely different people"; dismiss for "not now / unsure".
-- Everything is reversible by an admin, but say what you did, plainly.
+## rules
 
-## tool needs
+- Do not ask the user to reconfirm an explicit merge request.
+- Do not merge on a first name, company overlap, or generic handle alone.
+- Mark-different is for evidence that they are different people.
+- Dismiss is only for the user's explicit "not now" decision.
+- Batch obvious false positives and report the count.
+- Leave genuinely ambiguous matches pending for the user.
+- Do not use em dashes.
+- Keep one unresolved question per message.
 
-- `noticed`: `list_identity_matches` (the queue), `accept_identity_match`,
-  `mark_different_people`, `dismiss_identity_match` (the actions),
-  `list_profile_gaps` + `add_profile_to_person` (fill missing profiles), and
-  `search_people` / `resolve_person` / `get_person` (find someone already in your
-  network before going to the open web + context when a row is ambiguous).
+## tools
 
-## explicitly NOT in scope
-
-- Adding people, logging interactions, or editing notes/tags (that's other
-  skills).
-- Guessing on ambiguous pairs: dismiss or ask instead of forcing a merge.
-- Overriding a verified-sign-in (`admin_required`) conflict: that's admin-only.
-
-## examples
-
-**Review the whole queue.**
-Input: `go through my proposed matches`
-Action: `list_identity_matches({ status: "pending", limit: 100 })` → group by the
-named side, judge each, then act: accept the clear duplicates, mark-different the
-role-email/company-overlap false positives, dismiss the unsure ones. Report counts.
-
-**Clear a false-positive cluster.**
-Input: `the Apple matches are all wrong`
-Action: for each pending row whose email is `*@apple.com` matched to the
-same person, `mark_different_people({ profile_a, profile_b })`. Close with
-"cleared 11, they were a company-overlap false positive."
-
-**Confirm a real duplicate.**
-Input: `diogoribeiro@redlightsoft.com is the same as Diogo Freitas Ribeiro`
-Action: find the row, `accept_identity_match({ profile_a, profile_b })`. If it
-returns `needs_confirmation`, relay the evidence; merge with the token only after
-the user confirms.
-
-**Hit the confirmation gate.**
-Accept returns `needs_confirmation` with "their commit email points to a different
-GitHub account" → show that to the user. They still say same person → call
-`accept_identity_match` again with the returned `confirmation_token`.
-
-**Add a profile to a thin contact.**
-Input: `erick@gomry.com is github.com/erickz`
-Action: find the contact via `list_profile_gaps()` (or `search_people`), then
-`add_profile_to_person({ person_id, url: "https://github.com/erickz" })`. If it
-comes back queued, tell the user noticed will fetch + match it shortly.
-
-**Work the gap list.**
-Input: `any contacts missing a profile?`
-Action: `list_profile_gaps()` → for each, search the network first (`search_people`
-on the name/handle) in case they're already in noticed; then offer to attach a
-LinkedIn/GitHub URL (from the network, or failing that the open web) for any the
-user can provide.
+- `list_identity_matches`
+- `accept_identity_match`
+- `mark_different_people`
+- `dismiss_identity_match`
+- `get_person`
+- `search_people`
+- `web_search`
+- `list_profile_gaps`
+- `add_profile_to_person`

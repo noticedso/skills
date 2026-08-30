@@ -1,10 +1,10 @@
 name: Auto version bump
 
 # When any skill changes on main, derive a semver bump from the conventional-commit
-# messages in the push, write it into marketplace.json, push it back, and cut a release.
+# messages in the push, write it into both plugin manifests, push it back, and cut a release.
 #
 # Loop-safety: this triggers ONLY on skills/** changes. The bump commit it creates touches
-# only .claude-plugin/marketplace.json, so it can never re-trigger this workflow. The
+# only plugin manifests, so it can never re-trigger this workflow. The
 # [skip ci] guard and GITHUB_TOKEN's no-recursion rule are extra belts.
 
 on:
@@ -58,6 +58,7 @@ jobs:
         run: |
           set -euo pipefail
           FILE=.claude-plugin/marketplace.json
+          CODEX_FILE=.codex-plugin/plugin.json
           CUR="$(jq -r '.plugins[0].version // .metadata.version // "1.0.0"' "$FILE")"
           IFS=. read -r MA MI PA <<< "$CUR"
           case "${{ steps.level.outputs.level }}" in
@@ -66,11 +67,17 @@ jobs:
             patch) PA=$((PA + 1)) ;;
           esac
           NEW="${MA}.${MI}.${PA}"
-          tmp="$(mktemp)"
-          jq --arg v "$NEW" '.metadata.version = $v | .plugins[0].version = $v' "$FILE" > "$tmp"
-          mv "$tmp" "$FILE"
+          CODEX_VERSION="${NEW}+codex.${GITHUB_SHA::12}"
+          CLAUDE_TMP="$(mktemp)"
+          CODEX_TMP="$(mktemp)"
+          trap 'rm -f "$CLAUDE_TMP" "$CODEX_TMP"' EXIT
+          jq --arg v "$NEW" '.metadata.version = $v | .plugins[0].version = $v' "$FILE" > "$CLAUDE_TMP"
+          jq --arg v "$CODEX_VERSION" '.version = $v' "$CODEX_FILE" > "$CODEX_TMP"
+          mv "$CLAUDE_TMP" "$FILE"
+          mv "$CODEX_TMP" "$CODEX_FILE"
           echo "new=$NEW" >> "$GITHUB_OUTPUT"
           echo "Version: $CUR -> $NEW"
+          echo "Codex version: $CODEX_VERSION"
 
       - name: Commit and push
         id: commit
@@ -78,7 +85,7 @@ jobs:
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add .claude-plugin/marketplace.json
+          git add .claude-plugin/marketplace.json .codex-plugin/plugin.json
           if git diff --cached --quiet; then
             echo "No version change to commit."
             echo "pushed=false" >> "$GITHUB_OUTPUT"

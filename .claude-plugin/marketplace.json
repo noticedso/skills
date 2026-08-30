@@ -1,20 +1,28 @@
 {
   "name": "noticed-skills",
+  "interface": {
+    "displayName": "noticed users"
+  },
   "owner": {
     "name": "noticed",
     "url": "https://noticed.so"
   },
   "metadata": {
-    "description": "the skills that make your agent fluent in noticed",
-    "version": "1.2.3"
+    "description": "Networking Assistant capabilities for noticed users",
+    "version": "1.4.2"
   },
   "plugins": [
     {
       "name": "noticed-skills",
-      "version": "1.2.3",
-      "description": "seven skills for the noticed mcp: add-person, event-debrief, research-person, follow-up, search-network, match-identities, intro",
+      "version": "1.4.2",
+      "description": "Maintain relationships, prepare for meetings, follow up, make introductions, and search your noticed network.",
       "source": "./",
       "strict": false,
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity",
       "skills": [
         "./skills/add-person",
         "./skills/event-debrief",

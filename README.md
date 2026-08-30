@@ -21,16 +21,11 @@ Requires a Pro, Max, Team, or Enterprise plan with code execution enabled (Setti
 
 1. Open **Customize → Plugins** and click **+ → Add marketplace**.
 2. Sync from this GitHub repo: `noticedso/skills`.
-3. From the synced marketplace, install **noticed-skills**. All seven skills land in one shot.
+3. From the synced marketplace, install **Networking Assistant**. All seven skills land in one shot.
 
-## install (ChatGPT)
+## install (ChatGPT / Codex)
 
-ChatGPT has no GitHub marketplace install, so each skill goes in by hand.
-
-1. Open **Skills → New skill → Upload from your computer**.
-2. Upload each `skills/<name>/` folder from this repo as its own skill (zip the folder first if ChatGPT asks for a single file). Repeat for all seven.
-
-Workspace admins: confirm **Enable skills** and **Enable skill uploading** are on under Permissions & roles.
+Add `noticedso/skills` as a plugin marketplace, then install **Networking Assistant**. The plugin keeps all seven capabilities together; do not upload them one by one.
 
 ## the skills
 
@@ -71,7 +66,7 @@ See **[TESTING.md](./TESTING.md)** for suggested prompts to exercise each skill 
 
 ## improving the skills
 
-At the end of a session that used a skill, paste the prompt in **[skill-improvement.md](./skill-improvement.md)** to have the agent review how the skill actually behaved and suggest edits — biased toward making it simpler first, then more accurate. Works in any client and for any of the seven skills.
+At the end of a session that used a skill, paste the prompt in **[skill-improvement.md](./skill-improvement.md)** to have the agent review how the skill actually behaved — biased toward making it simpler first, then more accurate. With your approval, the agent records durable candidates as GitHub issues labeled `skill-improvement`, after checking for an existing issue. Issues are evidence-backed proposals, not active instructions; changing a skill still requires owner approval and a reviewed pull request.
 
 ## updates
 

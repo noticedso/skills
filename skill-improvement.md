@@ -71,11 +71,13 @@ OUTPUT:
   - Why it's better — what behaves differently next time.
   - Confidence — high / medium / low, and whether it's a recurring pattern or a
     one-off (flag one-offs so we don't overfit a single transcript).
-- The single highest-leverage change.
 - Underlying product gaps, if any, as a short separate list.
 
-If you can open the SKILL.md, re-read it before proposing edits and offer to apply
-the high-confidence ones. If not, work from the skill text already in your context
-and give the edits as paste-ready text. If nothing in this session justifies a
-change, say so plainly rather than inventing suggestions.
+If you can open the SKILL.md, re-read it before proposing edits. Check for an
+existing GitHub issue labeled `skill-improvement`, then offer to create or update
+an issue with the compact evidence and proposed change. Never mutate GitHub
+without explicit approval, and never include private messages, personal notes,
+credentials, or other sensitive source material. If you cannot open the skill or
+repository, give the candidate as paste-ready text. If nothing in this session
+justifies a change, say so plainly rather than inventing suggestions.
 ```
