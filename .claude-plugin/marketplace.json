@@ -9,12 +9,12 @@
   },
   "metadata": {
     "description": "Networking Assistant capabilities for noticed users",
-    "version": "1.4.2"
+    "version": "1.4.3"
   },
   "plugins": [
     {
       "name": "noticed-skills",
-      "version": "1.4.2",
+      "version": "1.4.3",
       "description": "Maintain relationships, prepare for meetings, follow up, make introductions, and search your noticed network.",
       "source": "./",
       "strict": false,
