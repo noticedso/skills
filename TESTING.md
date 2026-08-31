@@ -5,7 +5,7 @@ Run each prompt in a chat with the noticed MCP connected. Prompts are ordered ea
 ## add-person
 
 1. `add https://linkedin.com/in/<someone> — met at the fintech dinner, working on btc payments`
-   *(clean new contact from a URL + context; should preview, then save on confirm, then read back what landed)*
+   *(clean new contact from a URL + context; should save immediately, log the meeting date when supplied, then read back what landed)*
 2. `add a few from tonight: <name> wants to advise, <name> from <company> on payments, and some sarah doing consumer ai i should follow up with`
    *(batch with mixed cases; watch that it asks about the ambiguous "sarah" in a single "need from you" zone and saves the rest)*
 3. `remember sarah from the ai dinner`
@@ -18,7 +18,7 @@ Run each prompt in a chat with the noticed MCP connected. Prompts are ordered ea
 2. `i'm going to a founders dinner tonight, here's the guest list: [paste names]. i'm raising a seed — who matters?`
    *(goal stated up front; check it tiers against "investors / people who can intro to investors" and flags in-network people prominently)*
 3. After a shortlist: `save the tier 1 and 2 people, tag them nytw-2026`
-   *(should hand the batch to add-person — one preview, one confirm — and not log any "met" interaction)*
+   *(should hand the clear request to add-person, save immediately, read back the result, and not log any "met" interaction)*
 
 ## event-debrief
 
