@@ -50,17 +50,20 @@ Run each prompt in a chat with the noticed MCP connected. Prompts are ordered ea
 ## search-network
 
 1. `do i know anyone at <company>?`
-   *(specific query, runs directly, returns a table)*
+   *(specific query, runs directly, returns compact person cards)*
 2. `any ai engineers?`
    *(vague — one broad dimension; should ask one clarifying question like "where, or any company in mind?" before running)*
-3. `how many investors are in my network?` then, after any table, `more on #2`
-   *(network_summary count for the first; drill-down by number into a dossier for the second)*
+3. `how many investors are in my network?`
+   *(filtered search_people query; report its authoritative total, not network_summary or the visible page length)*
+4. After a people result: `more on #2`
+   *(drill down by number into that person's dossier)*
 
 ## what to watch for
 
 The behaviors the NYTW revisions were built to get right — confirm they hold across the tests above:
 
-- **Nothing is saved before you confirm.** Every write-capable skill previews first.
+- **A clear reversible save or update happens without another confirmation.**
+  Ambiguous identity or missing essential context still triggers one question.
 - **No bare-name guessing.** A name with no URL/handle triggers a question, not a silent new record.
 - **The readback always appears** after a save, and reads like a person talking, not a field dump.
 - **Provenance tags never leak into chat** — you should never see `[from user]` or `[research, unverified]` in a message, only in the stored note.
