@@ -4,8 +4,8 @@ Run each prompt in a chat with the noticed MCP connected. Prompts are ordered ea
 
 ## add-person
 
-1. `add https://linkedin.com/in/<someone> — met at the fintech dinner, working on btc payments`
-   *(clean new contact from a URL + context; should save immediately, log the meeting date when supplied, then read back what landed)*
+1. `add https://linkedin.com/in/<someone>. met yesterday at the fintech dinner, working on btc payments`
+   *(clean new contact from a URL + context; should save immediately, resolve "yesterday" to a non-null ISO interaction date, then read back what landed)*
 2. `add a few from tonight: <name> wants to advise, <name> from <company> on payments, and some sarah doing consumer ai i should follow up with`
    *(batch with mixed cases; watch that it asks about the ambiguous "sarah" in a single "need from you" zone and saves the rest)*
 3. `remember sarah from the ai dinner`
