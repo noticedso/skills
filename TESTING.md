@@ -4,8 +4,8 @@ Run each prompt in a chat with the noticed MCP connected. Prompts are ordered ea
 
 ## add-person
 
-1. `add https://linkedin.com/in/<someone> — met at the fintech dinner, working on btc payments`
-   *(clean new contact from a URL + context; should preview, then save on confirm, then read back what landed)*
+1. `add https://linkedin.com/in/<someone>. met yesterday at the fintech dinner, working on btc payments`
+   *(clean new contact from a URL + context; should save immediately, resolve "yesterday" to a non-null ISO interaction date, then read back what landed)*
 2. `add a few from tonight: <name> wants to advise, <name> from <company> on payments, and some sarah doing consumer ai i should follow up with`
    *(batch with mixed cases; watch that it asks about the ambiguous "sarah" in a single "need from you" zone and saves the rest)*
 3. `remember sarah from the ai dinner`
@@ -18,7 +18,7 @@ Run each prompt in a chat with the noticed MCP connected. Prompts are ordered ea
 2. `i'm going to a founders dinner tonight, here's the guest list: [paste names]. i'm raising a seed — who matters?`
    *(goal stated up front; check it tiers against "investors / people who can intro to investors" and flags in-network people prominently)*
 3. After a shortlist: `save the tier 1 and 2 people, tag them nytw-2026`
-   *(should hand the batch to add-person — one preview, one confirm — and not log any "met" interaction)*
+   *(should hand the clear request to add-person, save immediately, read back the result, and not log any "met" interaction)*
 
 ## event-debrief
 
@@ -50,17 +50,20 @@ Run each prompt in a chat with the noticed MCP connected. Prompts are ordered ea
 ## search-network
 
 1. `do i know anyone at <company>?`
-   *(specific query, runs directly, returns a table)*
+   *(specific query, runs directly, returns compact person cards)*
 2. `any ai engineers?`
    *(vague — one broad dimension; should ask one clarifying question like "where, or any company in mind?" before running)*
-3. `how many investors are in my network?` then, after any table, `more on #2`
-   *(network_summary count for the first; drill-down by number into a dossier for the second)*
+3. `how many investors are in my network?`
+   *(filtered search_people query; report its authoritative total, not network_summary or the visible page length)*
+4. After a people result: `more on #2`
+   *(drill down by number into that person's dossier)*
 
 ## what to watch for
 
 The behaviors the NYTW revisions were built to get right — confirm they hold across the tests above:
 
-- **Nothing is saved before you confirm.** Every write-capable skill previews first.
+- **A clear reversible save or update happens without another confirmation.**
+  Ambiguous identity or missing essential context still triggers one question.
 - **No bare-name guessing.** A name with no URL/handle triggers a question, not a silent new record.
 - **The readback always appears** after a save, and reads like a person talking, not a field dump.
 - **Provenance tags never leak into chat** — you should never see `[from user]` or `[research, unverified]` in a message, only in the stored note.

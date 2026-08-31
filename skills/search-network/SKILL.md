@@ -15,8 +15,10 @@ when the request is specific enough, then return a small, readable result.
 
 ## Search
 
-Use `search_people` for people and `network_summary` for exact count or
-network-shape questions.
+Use `search_people` for people and for counts within a filtered group. Use
+`network_summary` only for the whole network, source totals, and network-shape
+questions because it cannot apply role, company, location, skill, or tag
+filters.
 
 - Default to `scope: "own"` and `limit: 25`.
 - Use `scope: "public"` only when the person explicitly asks to look beyond
@@ -30,6 +32,9 @@ network-shape questions.
 - When several dimensions must all match, join the important free-text terms
   with `AND`.
 - Do not invent a filter that the person did not provide.
+- For a filtered count such as `how many founders do I know?`, call
+  `search_people` with the relevant filters and report its authoritative
+  `total` or `strong_total`. Do not count only the visible page of people.
 
 Ask one short question before searching only when the request has one very
 broad dimension, such as `any designers?`. Make it easy to answer by giving
