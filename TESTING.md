@@ -116,3 +116,14 @@ regressions against seeded synthetic lists. Use `--mismatch-only` for the blocke
 batch check. Each scenario loads its named skill and shared rules, and records
 that active source hash. Outreach assertions also reject writes to opportunity
 metrics and existing draft fields, even when their values happen to match.
+
+Run the deterministic harness regressions without model credentials:
+
+```sh
+node --test scripts/manual-routine-fixture-checks.test.mjs
+```
+
+Resume reuses only consecutive passing scenarios with saved state checkpoints;
+failed, missing or legacy results without checkpoints rerun from the last valid
+state. Learning requires every review page and matching answers/reasons before
+a completed profile is written, not just aggregate counts.
