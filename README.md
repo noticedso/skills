@@ -86,3 +86,7 @@ cached copy and will *not* see new commits:
 Then update the plugin (the Update button activates once the refreshed marketplace reports a
 higher version). On claude.ai / ChatGPT, re-sync the marketplace from the repo rather than
 reinstalling the plugin.
+
+## Manual opportunity and outreach routines
+
+`daily-opportunities` prepares fixed 25-person review lists for three customer-defined profiles. `daily-outreach` turns current human Yeses into Notion drafts and reconciles confirmed sends, replies and bookings. Run one requested step through Codex with noticed MCP and Notion. These skills do not schedule work or send messages. Customer context and iteration history remain in the private customer workspace. See [testing scenarios](TESTING.md#daily-routines).

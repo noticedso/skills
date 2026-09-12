@@ -1,0 +1,37 @@
+# Copy outside the public repository. Fill from the customer's approved setup.
+# Null means unknown/unconfigured, never authorization or a default customer.
+customer_key: null
+customer_name: null
+timezone: null # IANA timezone for actual event dates; no schedule.
+phase: Setup # Read the live dashboard too; configuration can be stale.
+context_source: null # Customer workspace/Knowledge; contains ICP, offer and preferences.
+meeting_plan_source: null # Meeting target and qualification criteria; objective is always booking meetings.
+engagement_start: null # Confirmed start/payment date; do not infer payment.
+noticed:
+  team_id: null
+  search_scope: team
+  reviewer_identity: null # Must match the connected user; get_list_reviews returns only their answers.
+notion:
+  customer_page: null
+  target_profiles_data_source: null
+  outreach_data_source: null
+  property_mapping: {} # Only needed for renamed fields.
+profiles:
+  - key: icp-1
+    name: "ICP #1" # Replace with the customer's exact display name.
+    definition_source: null
+  - key: icp-2
+    name: "ICP #2"
+    definition_source: null
+  - key: connectors
+    name: Connectors
+    definition_source: null
+run_state: null # Durable private store available to both routines and future runs.
+activity_evidence_source: null # Confirmed sends, replies, invites and corrections.
+sender_guidance_source: null
+weekly_review:
+  current_week: null # Agreed date range/section; omit weekly writes if unset.
+delivery:
+  channel: null # Slack or Telegram; unset means prepare the digest only.
+  destination: null
+  authorization_source: null # Explicit user authorization, not an inferred grant.

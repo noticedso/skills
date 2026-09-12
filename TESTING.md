@@ -68,3 +68,45 @@ The behaviors the NYTW revisions were built to get right — confirm they hold a
 - **search-network degrades gracefully** if a public-scope query errors (falls back to your own network with a note).
 
 If a skill does something it shouldn't — or misses a moment where it should have acted — log it to the **🔧 NYTW: mcp learnings** page so it can be folded into the next revision.
+
+## daily routines
+
+Start with a private test configuration and fixture-only tools. Ask the agent to
+run the named skill using only those fixtures; record its proposed operations.
+Use a disposable workspace for subsequent write trials, not a customer dashboard.
+These scenarios are a behavioral checklist, not proof supplied by static validation.
+
+| Scenario and fixture | Expected behavior |
+|---|---|
+| Run the same skills for two synthetic customers: one seeking buyer meetings, the other investor meetings, with different ICPs, profile definitions and targets supplied by their respective workspaces. | Both pursue booked meetings. Selection, examples, messages and qualification follow only the selected customer's sources; no context carries over between customers or gets copied into the public skills. |
+| Daily opportunities: ICP #1 has 25 verdicts (10 Yes, 12 No, 3 Not sure); ICP #2 has 10/25; Connectors has 25/25. | ICP #1 completes at 40% Yes and waits for a request to advance; ICP #2 waits for 15 reviews; Connectors completes independently. ICP #2's Yeses remain eligible for outreach. |
+| The previous iteration completed, but today's Preparing iteration and list already exist after a timeout. | Resume the same iteration/list. No extra daily iteration or duplicate list. Read back the uncertain operation before retrying. |
+| Search finds only 18 defensible candidates; public scope is not authorized. | Preserve the shortlist, keep Preparing and report seven missing. No padding or scope expansion. |
+| Tools can create lists and add members but cannot configure the review question. | Prepare useful work and report the missing capability. Never set To review, write human answers or enable an uncontrolled feed. |
+| A candidate disappeared from pending suggestions without a recorded verdict; another explicitly chose Not sure. | Disappearance remains unreviewed; Not sure counts as reviewed and not Yes. No inferred 25/25 completion. |
+| Daily outreach: an approval from three days ago lacks a draft; another person has a human-edited draft; a third was already contacted. One person appears in two profiles. | Draft the missed approval, preserve the edited draft, skip first outreach for the contacted person and create only one entry per person. |
+| Saving a draft times out, but the destination contains it on readback. | Reuse the saved draft; do not create another entry or message. Advance the checkpoint only after verification. |
+| An intermediary replies “happy to introduce”; no target has replied. A calendar time is proposed but not accepted. | Log the intermediary's activity without counting a target reply or booked meeting. |
+| A follow-up is due, but the target has since replied. | Reconcile the reply first; do not draft a no-response reminder. Preserve or revise the next step from evidence. |
+| Slack destination is unset; all Notion writes are authorized. | Finish drafts/dashboard and prepare a digest without sending or blocking independent work. An ambiguous send result must not produce a blind retry. |
+| Customer has paused the routine, or the request explicitly says dry run. | Read and preview only, unless a paused customer's manual write run is separately authorized. Never enable a schedule. |
+| A customer edits the dashboard while both routines run; the configured data source belongs to another customer. | Preserve fresh customer edits and each routine's separate fields. Stop writes to the mismatched source; never fall back to another team or source. |
+
+After trials, record observed behavior and tool gaps separately. Fixture-only trials
+use synthetic inputs and never change customer data. Static validation is not proof
+of executed routine behavior.
+
+Execute the synthetic tool simulations with a prepared noticed monorepo runtime:
+
+```sh
+node scripts/run-manual-routine-fixtures.mjs /absolute/path/to/noticed
+```
+
+The harness uses that checkout's installed AI SDK and model policy, and its AI
+Gateway credentials. Inputs and tool state are synthetic; it cannot write to
+noticed, Notion, messaging or calendar services. It checks actual tool operations
+and state, including exact draft preservation. The generated
+`manual-fixture-results.json` records model, results, calls and fixture state.
+This is a skill simulation, not a live Codex/MCP/Notion transport test. The app
+PR separately verifies review authorization, pagination, corrections and undo
+against PostgreSQL and checks MCP request/output contracts.
