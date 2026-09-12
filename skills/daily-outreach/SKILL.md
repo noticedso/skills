@@ -62,7 +62,9 @@ Booked or Dropped status. Conflicting evidence needs reconciliation, not guessin
 If approval was withdrawn (No, Not sure, undo, or no remaining current Yes across
 its valid approval sources), stop pending outreach. Mark an unsent To contact entry
 Dropped with a dated withdrawal reason and Next step explaining the hold. Preserve
-its draft, human edits and history. Do not reopen a Dropped entry after a renewed
+its draft, human edits and history by omitting Message draft from this update.
+The withdrawal patch contains only Status, Next step and appended Activity;
+never include the preserved draft text in that patch. Do not reopen a Dropped entry after a renewed
 Yes without an explicit request. For contacted/replied/booked entries, preserve
 confirmed history/status and put the hold in Next step; do not prepare follow-ups.
 Recheck approval immediately before saving a new draft. A reply can require a different next step; do not
@@ -96,7 +98,12 @@ identity in the private run record so a retry catches up instead of duplicating.
 ## Report what is happening
 
 Update the Outreach row in What’s happening and the Outreach and Meetings metrics
-from confirmed events. Keep the original baseline intact. Maintain the relevant
+from confirmed events. Patch only outreach fields: contacted, replied, booked,
+reply rate and booking conversion, plus their confirmed event dates. Never write
+Reviewed, Yes rate, opportunity counts, profile results or learning during Daily
+outreach, even when those values appear in a saved dashboard snapshot. Those
+fields belong to Daily opportunities and may have changed since that snapshot.
+Keep the original baseline intact. Maintain the relevant
 weekly review with material activity and results, preserving human decisions.
 
 Prepare one concise daily digest: current opportunity lists and review counts,

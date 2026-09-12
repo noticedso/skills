@@ -110,3 +110,9 @@ and state, including exact draft preservation. The generated
 This is a skill simulation, not a live Codex/MCP/Notion transport test. The app
 PR separately verifies review authorization, pagination, corrections and undo
 against PostgreSQL and checks MCP request/output contracts.
+
+Use `--outreach-only` as the final argument to rerun drafting, retry and activity
+regressions against seeded synthetic lists. Use `--mismatch-only` for the blocked
+batch check. Each scenario loads its named skill and shared rules, and records
+that active source hash. Outreach assertions also reject writes to opportunity
+metrics and existing draft fields, even when their values happen to match.
