@@ -82,8 +82,11 @@ Use the configured durable private state plus readback from the destination:
 
 Reuse existing records before creating new ones. After a timeout, inspect whether
 the write landed before retrying. If the result remains ambiguous, stop only that
-operation and continue independent work. Do not advance a success checkpoint on
-an unverified write. Use the runtime's lock or single-run facility when available;
+operation and continue independent work. After every write, fetch the affected destination again and compare the changed
+fields before reporting them as saved. A write response alone is not readback.
+This also applies to the final checkpoint or blocked-reconciliation note; make
+that fetch your last operation when the requested step ends with a write. Do not
+advance a success checkpoint on an unverified write. Use the runtime's lock or single-run facility when available;
 otherwise avoid overlapping writers and reconcile existing work before resuming.
 
 Each routine owns its dashboard row(s)

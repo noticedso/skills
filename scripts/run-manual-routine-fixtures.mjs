@@ -23,7 +23,7 @@ const mismatchOnly=process.argv.includes('--mismatch-only');
 const resumePath=mismatchOnly?null:process.argv[3];
 const previous=resumePath?JSON.parse(readFileSync(resumePath,'utf8')):null;
 const retained=new Set(['prepare-three-batches','retry-preparation','independent-learning']);
-if(previous) state=previous.state;
+if(previous){assert.equal(previous.sourceHash,sourceHash,'Cannot retain traces from different skill sources');state=previous.state;}
 const trace=previous?previous.trace.filter(t=>retained.has(t.scenario)):[];
 let scenario='';
 const record=(name,args,result)=>{trace.push({scenario,name,args,result:structuredClone(result)});return result;};
@@ -41,13 +41,13 @@ const tools={
  notion_save_outreach:mk('notion_save_outreach',{person_id:z.string(),status:z.enum(['To contact','Contacted','Replied','Booked','Dropped']).optional(),draft:z.string().optional(),approach:z.string().optional(),sender:z.string().optional(),channel:z.string().optional(),next_step:z.string().optional(),activity:z.array(z.string()).describe('Replaces the entire Activity block if supplied. Include every existing entry unchanged before appending new activity. Omit to preserve it.').optional()},a=>{state.outreach[a.person_id]={...state.outreach[a.person_id],...a};return structuredClone(state.outreach[a.person_id]);}),
  notion_update_dashboard:mk('notion_update_dashboard',{reviewed:z.number().optional(),yes_rate:z.number().nullable().optional(),contacted:z.number().optional(),replied:z.number().optional(),booked:z.number().optional(),reply_rate:z.number().nullable().optional(),conversion:z.number().nullable().optional()},a=>{Object.assign(state.metrics,a);return structuredClone(state.metrics);}),
 };
-const results=previous?previous.results.filter(r=>retained.has(r.id)):[];
+const results=previous?previous.results.filter(r=>retained.has(r.id)).map(r=>({...r,retainedFrom:resumePath,sourceHash:previous.sourceHash})):[];
 async function run(id,prompt,check){
  if(previous&&retained.has(id))return;
  scenario=id; const start=trace.length;
  const result=await generateText({model:gateway(modelId),system:`You are executing the attached manual skills against synthetic tools only. These fixture adapters implement noticed list/review operations and a simplified Notion schema. Customer identity and reviewer are verified by read_workspace. All fixture writes for the requested step are authorized; no real messages or schedules exist. Do not run a maintenance loop. You must actually use tools and read back writes. Do not merely propose operations. Rates are decimals.\n${source}`,prompt,tools,stopWhen:stepCountIs(35),abortSignal:AbortSignal.timeout(300000),onStepFinish:step=>console.log(JSON.stringify({id,stepTools:step.toolCalls?.length??0})),maxOutputTokens:8000});
  let passed=true,error=null;try{check(trace.slice(start));}catch(e){passed=false;error=e.message;}
- results.push({id,passed,error,toolCalls:trace.length-start,text:result.text});
+ results.push({id,passed,error,sourceHash,executedAt:new Date().toISOString(),toolCalls:trace.length-start,text:result.text});
  console.log(JSON.stringify({id,passed,error,toolCalls:trace.length-start}));
  writeFileSync(mismatchOnly?'manual-mismatch-results.json':'manual-fixture-results.json',JSON.stringify({modelId,sourceHash,limitation:'Synthetic tool adapters; no live Notion, MCP transport or Codex-client execution. PostgreSQL and MCP contracts are tested separately in the app PR.',results,trace,state},null,2));
  if(!passed) throw new Error(`${id}: ${error}`);
@@ -55,7 +55,7 @@ async function run(id,prompt,check){
 if(mismatchOnly){
  const ids=candidates.alpha.map(c=>c.id);
  state={customer:'synthetic-buyer',reviewer:'synthetic-reviewer',team:'synthetic-team',goal:'Book logistics buyer meetings',target:5,profiles:['alpha'],candidates:{alpha:candidates.alpha},iterations:{'alpha:1':{profile:'alpha',iteration:1,status:'To review',list_id:'list-mismatch',candidate_ids:ids,candidates:candidates.alpha}},lists:{'list-mismatch':{id:'list-mismatch',name:'Alpha iteration 1',description:'Fixed batch',ai_enabled:false,members:ids.slice(1),config:{question:'Fit?',description:'Confirmed criteria'},answers:ids.slice(1).map(id=>({relationshipId:id,answer:'yes',notes:'Human approval'}))}},outreach:{},metrics:{}};
- await run('membership-mismatch','Run only learning/reconciliation for the saved iteration. Compare its original batch to the current list; do not assume counters prove membership.',calls=>{assert.equal(state.iterations['alpha:1'].status,'To review');assert.ok(!state.iterations['alpha:1'].learning);assert.equal(Object.keys(state.iterations).length,1);assert.equal(state.lists['list-mismatch'].members.length,24);assert.ok(!calls.some(c=>['create_list','add_to_list','configure_list_review'].includes(c.name)));});
+ await run('membership-mismatch','Run only learning/reconciliation for the saved iteration. Compare its original batch to the current list; do not assume counters prove membership.',calls=>{assert.notEqual(state.iterations['alpha:1'].status,'Complete');assert.equal(state.iterations['alpha:1'].yes_rate??null,null);assert.deepEqual(state.iterations['alpha:1'].candidate_ids,ids);assert.ok(calls.some(c=>c.name==='get_list'));const lastWrite=calls.findLastIndex(c=>c.name.startsWith('notion_'));assert.ok(lastWrite<0||calls.slice(lastWrite+1).some(c=>c.name==='read_workspace'),'Final reconciliation write must be read back');assert.equal(Object.keys(state.iterations).length,1);assert.equal(state.lists['list-mismatch'].members.length,24);assert.ok(!calls.some(c=>['create_list','add_to_list','configure_list_review'].includes(c.name)));});
  process.exit(0);
 }
 await run('prepare-three-batches','Run daily-opportunities: prepare the first iteration for all three profiles using the ranked candidates in the fixture. Profile definitions and meeting target are confirmed in the fixture. The candidates are already researched and defensible; use their IDs and ranking. Each list must contain exactly its 25 candidates, reviews configured, and its private iteration saved. Stop when all three are ready for review.',()=>{assert.equal(Object.keys(state.lists).length,3);assert.equal(Object.keys(state.iterations).length,3);for(const p of profiles){const i=state.iterations[`${p}:1`];assert.equal(i.status,'To review');assert.equal(i.candidate_ids.length,25);assert.deepEqual(i.candidates,candidates[p]);const l=state.lists[i.list_id];assert.equal(l.ai_enabled,false);assert.deepEqual([...l.members].sort(),candidates[p].map(c=>c.id).sort());assert.ok(l.config.question);}});
