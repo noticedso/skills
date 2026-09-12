@@ -19,7 +19,8 @@ const profiles = ['alpha','beta','connectors'];
 const candidates = Object.fromEntries(profiles.map((p,i)=>[p,Array.from({length:25},(_,n)=>({id:`${p}-${n+1}`,rank:n+1,reason:`Synthetic evidence ${i+1}/${n+1}`}))]));
 let state = {customer:'synthetic-buyer', reviewer:'synthetic-reviewer', team:'synthetic-team', goal:'Book meetings with logistics software buyers', target:5, profiles, candidates, iterations:{}, lists:{}, outreach:{}, metrics:{}};
 const sourceHash=createHash('sha256').update(source).digest('hex');
-const resumePath=process.argv[3];
+const mismatchOnly=process.argv.includes('--mismatch-only');
+const resumePath=mismatchOnly?null:process.argv[3];
 const previous=resumePath?JSON.parse(readFileSync(resumePath,'utf8')):null;
 const retained=new Set(['prepare-three-batches','retry-preparation','independent-learning']);
 if(previous) state=previous.state;
@@ -48,8 +49,14 @@ async function run(id,prompt,check){
  let passed=true,error=null;try{check(trace.slice(start));}catch(e){passed=false;error=e.message;}
  results.push({id,passed,error,toolCalls:trace.length-start,text:result.text});
  console.log(JSON.stringify({id,passed,error,toolCalls:trace.length-start}));
- writeFileSync('manual-fixture-results.json',JSON.stringify({modelId,sourceHash,limitation:'Synthetic tool adapters; no live Notion, MCP transport or Codex-client execution. PostgreSQL and MCP contracts are tested separately in the app PR.',results,trace,state},null,2));
+ writeFileSync(mismatchOnly?'manual-mismatch-results.json':'manual-fixture-results.json',JSON.stringify({modelId,sourceHash,limitation:'Synthetic tool adapters; no live Notion, MCP transport or Codex-client execution. PostgreSQL and MCP contracts are tested separately in the app PR.',results,trace,state},null,2));
  if(!passed) throw new Error(`${id}: ${error}`);
+}
+if(mismatchOnly){
+ const ids=candidates.alpha.map(c=>c.id);
+ state={customer:'synthetic-buyer',reviewer:'synthetic-reviewer',team:'synthetic-team',goal:'Book logistics buyer meetings',target:5,profiles:['alpha'],candidates:{alpha:candidates.alpha},iterations:{'alpha:1':{profile:'alpha',iteration:1,status:'To review',list_id:'list-mismatch',candidate_ids:ids,candidates:candidates.alpha}},lists:{'list-mismatch':{id:'list-mismatch',name:'Alpha iteration 1',description:'Fixed batch',ai_enabled:false,members:ids.slice(1),config:{question:'Fit?',description:'Confirmed criteria'},answers:ids.slice(1).map(id=>({relationshipId:id,answer:'yes',notes:'Human approval'}))}},outreach:{},metrics:{}};
+ await run('membership-mismatch','Run only learning/reconciliation for the saved iteration. Compare its original batch to the current list; do not assume counters prove membership.',calls=>{assert.equal(state.iterations['alpha:1'].status,'To review');assert.ok(!state.iterations['alpha:1'].learning);assert.equal(Object.keys(state.iterations).length,1);assert.equal(state.lists['list-mismatch'].members.length,24);assert.ok(!calls.some(c=>['create_list','add_to_list','configure_list_review'].includes(c.name)));});
+ process.exit(0);
 }
 await run('prepare-three-batches','Run daily-opportunities: prepare the first iteration for all three profiles using the ranked candidates in the fixture. Profile definitions and meeting target are confirmed in the fixture. The candidates are already researched and defensible; use their IDs and ranking. Each list must contain exactly its 25 candidates, reviews configured, and its private iteration saved. Stop when all three are ready for review.',()=>{assert.equal(Object.keys(state.lists).length,3);assert.equal(Object.keys(state.iterations).length,3);for(const p of profiles){const i=state.iterations[`${p}:1`];assert.equal(i.status,'To review');assert.equal(i.candidate_ids.length,25);assert.deepEqual(i.candidates,candidates[p]);const l=state.lists[i.list_id];assert.equal(l.ai_enabled,false);assert.deepEqual([...l.members].sort(),candidates[p].map(c=>c.id).sort());assert.ok(l.config.question);}});
 await run('retry-preparation','Retry the same preparation step after a lost final response. Reconcile the existing saved iterations and lists; preserve them.',()=>{assert.equal(Object.keys(state.lists).length,3);assert.equal(Object.keys(state.iterations).length,3);});
