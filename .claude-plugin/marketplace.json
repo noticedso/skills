@@ -32,7 +32,8 @@
         "./skills/match-identities",
         "./skills/intro",
         "./skills/daily-opportunities",
-        "./skills/daily-outreach"
+        "./skills/daily-outreach",
+        "./skills/collect-company-context"
       ]
     }
   ]
