@@ -30,7 +30,10 @@
         "./skills/follow-up",
         "./skills/search-network",
         "./skills/match-identities",
-        "./skills/intro"
+        "./skills/intro",
+        "./skills/daily-opportunities",
+        "./skills/daily-outreach",
+        "./skills/collect-company-context"
       ]
     }
   ]

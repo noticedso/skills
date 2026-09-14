@@ -38,6 +38,7 @@ Add `noticedso/skills` as a plugin marketplace, then install **Networking Assist
 | **search-network** | Natural-language search across your network; returns a tight table; drills into anyone. | read-only |
 | **match-identities** | Triage the cross-source identity matches noticed proposes — confirm real matches, clear false positives, merge duplicates — and fill profile gaps by searching your network first. | yes |
 | **intro** | Find the warm path to a target, draft an intro between two people, write an intro request with a forwardable blurb, or write a backchannel vouch — all copy/paste. | only on confirmed intro tracking |
+| **collect-company-context** | Gather onboarding context, propose goal-aligned target profiles and fill the Notion Company context template. | company context and Library updates |
 
 ## how they fit together
 
@@ -86,3 +87,7 @@ cached copy and will *not* see new commits:
 Then update the plugin (the Update button activates once the refreshed marketplace reports a
 higher version). On claude.ai / ChatGPT, re-sync the marketplace from the repo rather than
 reinstalling the plugin.
+
+## Manual opportunity and outreach routines
+
+`daily-opportunities` prepares or refines a fixed 25-person review list for one selected target profile. `daily-outreach` turns current human Yeses into Notion drafts and reconciles confirmed sends, replies and bookings. Run one requested step through Codex with noticed MCP and Notion. These skills do not schedule work or send messages. Customer context and iteration history remain in the private customer workspace.
