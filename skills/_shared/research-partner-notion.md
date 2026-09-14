@@ -86,8 +86,9 @@ Do not use today's changed network size as the historical pre-noticed baseline.
 
 What’s happening has Work stream, Iteration, Current status and Next step. Use
 the customer's exact profile names and bold **Customer** / **noticed** in next
-steps. Daily opportunities owns its three rows, opportunity/network metrics and
-profile learning. Daily outreach owns its row and outreach/meeting metrics.
+steps. Each Daily opportunities run updates its selected profile's row and
+learning, plus opportunity/network metrics without discarding other profiles'
+data. Daily outreach owns its row and outreach/meeting metrics.
 
 Weekly review is a dated synthesis for the customer call: results, what noticed
 did and learned, decisions and next week. Update only the relevant current week

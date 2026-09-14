@@ -1,131 +1,67 @@
 ---
 name: daily-opportunities
-description: >-
-  Find meeting opportunities for a customer using their own ICP in noticed and
-  update their Notion dashboard. Use for the Daily opportunities routine, reviewing a
-  completed batch, or preparing the next ranked batch for each target profile.
-  For a one-off network lookup, use search-network instead.
+description: Prepare or refine 25 sales meeting opportunities for one target profile, using a concrete hypothesis and human review feedback.
 ---
 
 # Daily opportunities
 
-Help the customer book meetings with people who fit their ICP. Improve the share
-of suggestions receiving a human Yes as the discovery-quality measure, while
-keeping booked meetings as the outcome. For each of three stable profiles, learn
-from a completed iteration and prepare the next hypothesis with 25 ranked people.
-Each profile advances independently; their definitions come from the customer.
-Run through Codex with noticed MCP and Notion, one requested step at a time.
-A request to learn from a completed batch does not authorize preparing another.
+The goal is to book sales meetings. Find opportunities for one target profile by testing which characteristics and signals identify people who fit. Improve the share receiving a human **Yes**, with booked meetings as the outcome.
 
-Read [shared rules](../_shared/research-partner-routines.md) and the customer's
-private configuration first. For Notion writes, read the
-[workspace contract](../_shared/research-partner-notion.md). If configuration is
-missing, use the [configuration example](../_shared/customer-config.example.yaml)
-to identify only the inputs needed for this run. Writing or installing this skill
-does not enable a schedule.
+## Inputs and terms
 
-## Decide what can advance
+Use the **customer page** and **selected target profile** supplied in the request or established in the conversation. The customer has three target profiles; each run focuses on one. If the selection is unclear, ask.
 
-Read the customer's confirmed ICP, exclusions, examples, meeting target,
-qualification criteria and previous approach from Knowledge and their dashboard.
-Then reconcile each profile's latest iteration, saved
-list, review evidence and run record before creating anything.
+- **Target profile:** the broad audience selected for this run.
+- **Hypothesis:** the specific characteristics and signals being tested to identify that audience.
+- **Iteration:** one hypothesis, 25 suggested people, their reviews and recorded learning.
 
-| Latest iteration | Action |
-|---|---|
-| None | Prepare the first hypothesis from the agreed context. |
-| Preparing | Resume the same hypothesis and list; repair incomplete work. |
-| To review, fewer than 25 explicit verdicts | Keep this profile waiting. Show the remaining review count; continue other profiles. |
-| All 25 explicitly reviewed | Record results and learning, mark Complete, stop after the requested learning step. Prepare another only when requested. |
-| Missing or conflicting evidence | Investigate that profile; do not infer completion from counters or missing suggestions. |
+Use noticed MCP to search relationships, create or resume the iteration’s list, and retrieve human reviews.
 
-A rerun resumes the saved iteration and list, even on another day. Never infer
-a request for a new iteration from the date or from completion alone. A human Yes
-can become eligible for outreach before the other 24 reviews are complete.
+## Determine the next step
 
-## Learn, then select
+Read **Knowledge → Company context**. In **Hypothesis iterations** (formerly Target Profiles), find entries whose **Target profile** (formerly Profile) matches the selected target profile. Open the entry with the highest **Iteration** number.
 
-1. **Summarize the completed batch.** Count explicit Yes / No / Not sure verdicts
-   against its original 25 people. Calculate Yes rate only when all are reviewed.
-   Identify the strongest reasons for fit and rejection, including uncertainty.
-   Compare with prior completed iterations of this profile; keep conclusions
-   proportional to the evidence. A small change in rate is not proof of a trend.
-2. **Write a specific hypothesis.** Describe who fits, their situation and why
-   they could advance the goal. Explain the meaningful change from the previous
-   iteration. Prefer an interpretable change over changing every criterion at
-   once. Keep confirmed ICP boundaries intact; put proposed boundary changes in
-   the customer's next step. For connectors, assess access to the ICP and a
-   plausible reason to introduce, without assuming willingness.
-3. **Find and rank people.** Use the configured team and scope with the available
-   noticed search and person tools. Rank by evidence of fit, relevance now and a
-   credible relationship path. Missing data is uncertainty, not a negative fact.
-   Exclude confirmed non-fits and people already approved, contacted or dropped
-   for this engagement. Deduplicate within and across new batches. Do not repeat
-   a previously reviewed person without a documented reason and an agreed
-   re-review policy; preserve their earlier verdict.
-4. **Prepare review context.** Use the question “Does this person genuinely fit
-   the goal and ICP?” Include concise criteria, one good-fit example and one
-   plausible near-miss with reasons when evidence exists. Do not invent examples
-   to fill the template. Each suggested person needs a short fit rationale and
-   supporting evidence accessible to the reviewer.
+- **No entry exists:** define and save the first hypothesis before selecting people.
+- **The candidate list is unfinished:** continue building the same list to 25 people; preserve the hypothesis and work already saved.
+- **Some of the 25 people lack reviews:** update the selected target profile’s **What’s happening** row with the reviewed count, remaining count and review link. Stop this run. **Not sure** counts as reviewed.
+- **All 25 are reviewed:** record the feedback and learning before defining the next hypothesis.
 
-If fewer than 25 defensible people remain, keep the iteration Preparing and
-report the shortfall. Do not pad it with weak matches or silently broaden scope.
-Offer the smallest useful adjustment to the customer or FDE.
+A new day does not start a new iteration. Continue only the step requested by the user.
 
-## Publish and verify
+## Define the hypothesis
 
-Create or reuse exactly one noticed target list per hypothesis. Keep its purpose
-specific. Record the iteration's original candidate IDs, ranks, evidence and list
-ID in the private run record before publishing. Once review starts, preserve
-that membership and wording so results remain interpretable.
+Using company context and recorded learning, write a concrete hypothesis: which characteristics and observable signals identify people who fit the selected target profile, and why.
 
-Use the current tool schemas. `create_list` creates the saved list with
-`ai_enabled=false`; `add_to_list` includes selected people for review.
-`configure_list_review` sets the question and description before anyone answers.
-`get_list` reads members; `get_list_reviews` reads configuration, counts and the
-connected user's current answers in pages of 10 (`page`, optional `answer`).
-Read every page while `hasMore` is true. Do not submit answers for the customer.
-The connected noticed identity must be the designated reviewer; an empty result
-from another identity is not the customer's feedback. Never request another
-user's private answers or use membership acceptance as a review answer.
+Prefer signals relevant to fit that can be observed in noticed. Distinguish direct evidence from proxies, and treat missing information as unknown.
 
-Save the iteration identity and a deterministic unique list name before creation.
-Immediately persist the returned list ID in the same private iteration record.
-Before a retry, read the saved link and list; if creation had an uncertain outcome,
-use `list_lists` and reconcile the exact saved name, scope and description. Reuse
-one verified match. Multiple matches or unresolved creation are a blocker for that
-profile, never a reason to create another list. Resume missing member additions
-only while no review has started. Membership must match the saved 25 IDs exactly;
-extra, missing or merged identities block this iteration until reconciled with the
-customer. No and Not sure remain members. After any answer, preserve the original
-batch and question, including after an undo leaves zero current answers.
+Save the hypothesis in the iteration’s **Hypothesis** section. In **Basis**, summarize the supporting evidence. For subsequent iterations, use **What changed** to explain the refinement and which previous learning motivated it.
 
-Read back all 25 members, their saved ranking/rationales in the private iteration,
-and the configured question/context and review availability. Use the existing
-`/goals/<list_id>/reviews` screen. Membership means included for review. It is not
-an approval. If a required tool is absent, keep Preparing and report the exact
-missing step; an empty list or local shortlist is not ready for review.
+## Select 25 people
 
-When reading results, reconcile current answer relationship IDs against the saved
-batch, not just aggregate counts. Corrections replace the earlier answer; undo
-makes that person unreviewed. Re-read all pages and counts after a change; retry a
-read if they disagree. Only all 25 current answers permit Yes rate and learning.
-Keep earlier snapshots and dated corrections as history. If a completed batch
-becomes incomplete after undo, clear its current Yes rate and mark it To review;
-do not erase prior learning or create a new iteration automatically.
+Search within noticed only. Rank people by the strength of the evidence that they match the hypothesis. For each person, record a short fit rationale, supporting evidence and relevant unknowns. Avoid duplicates and people already being pursued for this engagement.
 
-Only then set To review and link the list from the profile iteration. Update this
-profile's What’s happening row, opportunity metrics and available network
-snapshot. Add substantive learning to the iteration and the relevant weekly
-review, preserving call decisions. Do not repeat routine instructions in entries.
+Save the 25 people in the iteration’s noticed list. On the hypothesis page, briefly record the selection approach and limitations that could affect interpretation of the feedback.
 
-Finish with the iteration and review count per profile, what changed, and the
-customer's next action. Report partial success by profile. Customer delivery of
-the daily digest belongs to Daily outreach, avoiding duplicate notifications.
+If fewer than 25 credible matches are available, explain the shortfall and keep the iteration **Preparing**. Do not silently weaken the criteria or fill the list with poor matches.
 
-## Record the run
+## Make the list ready for review
 
-Save the last verified step, partial results, uncertainties and next requested
-step in the private iteration record. Record supported instruction improvements
-as candidates; broader skill maintenance is separate from this manual run.
+Set the review question to **“Does this person genuinely fit the target profile?”** Add concise context from the hypothesis so the customer understands the proposed fit criteria.
+
+Verify that the saved list contains the intended 25 people and is ready for review. Link it from the Notion iteration and set its status to **To review**. Keep the hypothesis and candidate list stable during review. List membership means included for review, not human approval.
+
+Update the selected target profile’s **What’s happening** row with the review link and next action. Stop and wait for human feedback.
+
+## Record feedback and learning
+
+Once all 25 people have current human reviews, record the Yes / No / Not sure counts and **Yes rate = Yes ÷ 25** on the Notion iteration.
+
+In **What we learned**, compare the hypothesis, the people selected and the customer’s feedback. Explain which signals helped identify fit, where matches fell short, and whether the issue was the hypothesis or its application during selection. Keep uncertainties explicit.
+
+Mark the iteration **Complete**. Use the recorded learning to inform the next hypothesis when starting another iteration.
+
+## Close the run
+
+Update the selected target profile’s **What’s happening** row with the iteration number, current state and next action.
+
+Briefly tell the user what was saved, link to the iteration and identify anything awaiting their input.
