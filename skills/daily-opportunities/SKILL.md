@@ -11,6 +11,8 @@ The goal is to book sales meetings. Find opportunities for one target profile by
 
 Use the **customer page** and **selected target profile** supplied in the request or established in the conversation. The customer has three target profiles; each run focuses on one. If the selection is unclear, ask.
 
+If starting from a research-partner directory linked in the conversation or workspace instructions, open the selected partner’s page and follow its links for setup and context. Confirm the customer and connected noticed team. Inspect the live Notion pages, fields and templates before writing; follow renamed fields by their meaning, preserve human edits and leave computed properties to Notion. Ask only for missing information needed for this step.
+
 - **Target profile:** the broad audience selected for this run.
 - **Hypothesis:** the specific characteristics and signals being tested to identify that audience.
 - **Iteration:** one hypothesis, 25 suggested people, their reviews and recorded learning.
@@ -54,7 +56,7 @@ Update the selected target profile’s **What’s happening** row with the revie
 
 ## Record feedback and learning
 
-Once all 25 people have current human reviews, record the Yes / No / Not sure counts and **Yes rate = Yes ÷ 25** on the Notion iteration.
+Read all pages of current human reviews in noticed, including reasons; silence or removal from a list is not a verdict. Once all 25 people have current human reviews, record the Yes / No / Not sure counts and **Yes rate = Yes ÷ 25** on the Notion iteration. **Not sure** is reviewed but not Yes; verify formula results rather than overwriting computed fields.
 
 In **What we learned**, compare the hypothesis, the people selected and the customer’s feedback. Explain which signals helped identify fit, where matches fell short, and whether the issue was the hypothesis or its application during selection. Keep uncertainties explicit.
 
@@ -64,4 +66,4 @@ Mark the iteration **Complete**. Use the recorded learning to inform the next hy
 
 Update the selected target profile’s **What’s happening** row with the iteration number, current state and next action.
 
-Briefly tell the user what was saved, link to the iteration and identify anything awaiting their input.
+Read back the saved list and changed Notion records before reporting success. After an uncertain write, check whether it landed before retrying. Briefly tell the user what was saved, link to the iteration and identify anything awaiting their input.

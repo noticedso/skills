@@ -13,6 +13,8 @@ Work on one relationship at a time. Ask **one focused question at a time**, pref
 
 Use the customer page and any relationship selected by the user. If none is selected, suggest one approved relationship that needs outreach or a follow-up, explain why, and ask whether to work on it.
 
+If starting from a research-partner directory linked in the conversation or workspace instructions, open the selected partner’s page and follow its links for setup and context. Confirm the customer and connected noticed team. Inspect the live Notion pages, fields and templates before writing; follow renamed fields by their meaning and leave computed properties to Notion. Ask only for missing information needed now.
+
 Use noticed MCP to read the relationship context and the customer's current approval. Read **Knowledge → Company context**, saved **Outreach preferences**, and the existing Notion Outreach entry, including drafts and confirmed activity. An individual Yes can move to outreach before the rest of its opportunity iteration is reviewed.
 
 If approval is missing, withdrawn or unclear, resolve that before proceeding. Resume existing work; keep one Outreach entry per customer and relationship across target profiles.
@@ -53,6 +55,6 @@ The user sends the message. Ask what happened:
 1. **Sent** — record the confirmed send, asking for any missing sender, date or channel.
 2. **Not sent yet** — keep the initial draft as **To contact**. An unsent follow-up does not reset an existing outreach status.
 
-A saved draft never counts as contact. Record replies and accepted calendar invitations when the user confirms them. Preserve earlier activity; keep an agreed follow-up date and next action when relevant.
+A saved draft never counts as contact. Record target replies and accepted calendar invitations when the user confirms them; an intermediary’s reply is not a target reply, and a proposed time is not a booking. Preserve earlier activity; keep an agreed follow-up date and next action when relevant.
 
-Read back the saved entry and any context or preference updates. Close with a short recap, the next action and a link to the outreach entry.
+Read back the saved entry and any context or preference updates. After an uncertain write, check whether it landed before retrying. Close with a short recap, the next action and a link to the outreach entry.
