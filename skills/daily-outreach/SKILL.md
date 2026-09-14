@@ -16,9 +16,10 @@ messages. A draft never counts as contact. Run one requested step through Codex 
 noticed MCP and Notion; do not schedule or advance another routine automatically.
 
 Read [shared rules](../_shared/research-partner-routines.md) and the customer's
-private configuration first. For Notion writes, read the
-[workspace contract](../_shared/research-partner-notion.md). If configuration is
-missing, use the [configuration example](../_shared/customer-config.example.yaml)
+private configuration first. Before Notion writes, inspect the customer's current
+pages, schemas and templates; follow their actual fields and avoid writing to
+computed properties. If configuration is missing, use the
+[configuration example](../_shared/customer-config.example.yaml)
 to identify only the inputs needed for this run. Writing or installing this skill
 does not enable a schedule.
 
