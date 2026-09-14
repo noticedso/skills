@@ -90,4 +90,4 @@ reinstalling the plugin.
 
 ## Manual opportunity and outreach routines
 
-`daily-opportunities` prepares fixed 25-person review lists for three customer-defined profiles. `daily-outreach` turns current human Yeses into Notion drafts and reconciles confirmed sends, replies and bookings. Run one requested step through Codex with noticed MCP and Notion. These skills do not schedule work or send messages. Customer context and iteration history remain in the private customer workspace. See [testing scenarios](TESTING.md#daily-routines).
+`daily-opportunities` prepares or refines a fixed 25-person review list for one selected target profile. `daily-outreach` turns current human Yeses into Notion drafts and reconciles confirmed sends, replies and bookings. Run one requested step through Codex with noticed MCP and Notion. These skills do not schedule work or send messages. Customer context and iteration history remain in the private customer workspace.
