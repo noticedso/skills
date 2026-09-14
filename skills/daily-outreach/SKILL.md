@@ -34,7 +34,7 @@ Explain the recommendation briefly. Ask about the uncertainty that most affects 
 
 Give the user **three short, direct message options**, each with a meaningfully different approach or style. Label them **1, 2 and 3**, with a brief description of the difference.
 
-Write for someone the sender already knows. Match the relationship's familiarity, use relevant shared context, give a clear reason to talk and make the next step easy. Avoid generic cold-outreach introductions, forced personalization and unnecessary sales language. For an introduction, make clear who the message is addressed to.
+Adapt to the actual relationship: established, dormant, through a mutual contact, or no prior relationship. Use familiarity only when supported by context; being recorded in noticed does not mean the sender knows the person. For cold outreach, briefly establish who the sender is and why the conversation is relevant. Use relevant shared context, give a clear reason to talk and make the next step easy. Keep messages short and direct; avoid forced personalization and unnecessary sales language. For an introduction, make clear who the message is addressed to.
 
 Ask which option feels right; let the user choose, combine or edit. Refine using their feedback. Preserve existing human edits unless the user is revising that draft.
 
