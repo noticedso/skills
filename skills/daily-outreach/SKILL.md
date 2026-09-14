@@ -1,130 +1,58 @@
 ---
 name: daily-outreach
-description: >-
-  Run a customer's Daily outreach routine to book meetings: prepare Notion message drafts
-  for human-approved opportunities, reconcile confirmed outreach activity, and
-  prepare the customer's daily update. Catch up on missed approvals without
-  duplicating drafts. This is batch outreach preparation, not automatic sending
-  or the one-person post-meeting follow-up skill.
+description: Develop outreach interactively for human-approved relationships, using noticed context and learning the user's messaging preferences.
 ---
 
 # Daily outreach
 
-Help the customer book meetings by turning human-approved opportunities into
-usable outreach drafts and an accurate account of what happened. Humans send
-messages. A draft never counts as contact. Run one requested step through Codex with
-noticed MCP and Notion; do not schedule or advance another routine automatically.
+Help the customer book sales meetings by developing outreach together for relationships they approved with a **Yes**. Use the company's offer and all relevant context in noticed to recommend the approach and message. The user is the expert and may have additional context.
 
-Read [shared rules](../_shared/research-partner-routines.md) and the customer's
-private configuration first. Before Notion writes, inspect the customer's current
-pages, schemas and templates; follow their actual fields and avoid writing to
-computed properties. If configuration is missing, use the
-[configuration example](../_shared/customer-config.example.yaml)
-to identify only the inputs needed for this run. Writing or installing this skill
-does not enable a schedule.
+Work on one relationship at a time. Ask **one focused question at a time**, preferably with **numbered or lettered choices**. Recommend an option when the context supports it, use relevant examples when helpful, and allow free-text answers. Avoid asking about decisions already supported by the available context.
 
-## Reconcile before drafting
+## Choose the relationship
 
-Read `get_list_reviews` for every saved iteration list, including older lists.
-Follow every page while `hasMore` is true and use the designated reviewer’s
-connected identity. Read current Yeses and reconcile corrected or undone answers
-against existing entries before drafting. Do not substitute a copied approval
-snapshot for the current review. If any relevant answer source is inaccessible or
-inconsistent, hold affected outreach and report the missing source.
+Use the customer page and any relationship selected by the user. If none is selected, suggest one approved relationship that needs outreach or a follow-up, explain why, and ask whether to work on it.
 
-Read explicit approvals, existing Outreach entries, drafts and confirmed activity
-through a recorded cutoff. Include approvals from earlier days, not just
-yesterday. An incomplete profile review does not hold up its individual Yeses.
+Use noticed MCP to read the relationship context and the customer's current approval. Read **Knowledge → Company context**, saved **Outreach preferences**, and the existing Notion Outreach entry, including drafts and confirmed activity. An individual Yes can move to outreach before the rest of its opportunity iteration is reviewed.
 
-Match by customer and canonical noticed person/relationship ID, including known
-identity merges. One person has one Outreach entry across profiles. Preserve all
-approval sources in the private run record and useful profile context in the page.
-List membership alone is not proof of human approval. Do not create an entry for
-a guessed approval, unresolved identity or example used only for calibration.
+If approval is missing, withdrawn or unclear, resolve that before proceeding. Resume existing work; keep one Outreach entry per customer and relationship across target profiles.
 
-When an entry already has a draft, omit Message draft from property/content
-writes entirely unless this step explicitly requests a revision. Do not copy it
-back while changing status, activity or metrics: even punctuation normalization
-can overwrite human edits. Append dated activity and patch only changed fields.
+## Agree on the approach
 
-Process confirmed sends, target replies, bookings and explicit drops before
-deciding what needs a draft. Preserve their actual event dates, source and channel;
-missing dates remain unknown. A late-arriving older event must not regress a
-Booked or Dropped status. Conflicting evidence needs reconciliation, not guessing.
+Use the offer, relationship history, shared connections and saved preferences to propose:
 
-| Person's current state | Action |
-|---|---|
-| Explicit Yes, no entry | Create from the customer's Outreach entry template at To contact. |
-| To contact, no usable draft | Prepare the first draft, including missed approvals from earlier days. |
-| Draft already exists | Preserve it, especially human edits; revise only when requested or new evidence makes it inaccurate. |
-| Already contacted, replied, booked or dropped | Do not create a first draft or another entry. |
-| Due follow-up with an agreed next step | Prepare that follow-up if still appropriate; reuse an existing unsent follow-up draft. |
+- **Route:** direct outreach or an introduction.
+- **Sender:** who is best placed to send it.
+- **Channel:** where the conversation should happen.
+- **Message approach:** what to lead with and why it fits the relationship and what we are selling.
 
-If approval was withdrawn (No, Not sure, undo, or no remaining current Yes across
-its valid approval sources), stop pending outreach. Mark an unsent To contact entry
-Dropped with a dated withdrawal reason and Next step explaining the hold. Preserve
-its draft, human edits and history by omitting Message draft from this update.
-The withdrawal patch contains only Status, Next step and appended Activity;
-never include the preserved draft text in that patch. Do not reopen a Dropped entry after a renewed
-Yes without an explicit request. For contacted/replied/booked entries, preserve
-confirmed history/status and put the hold in Next step; do not prepare follow-ups.
-Recheck approval immediately before saving a new draft. A reply can require a different next step; do not
-blindly prepare a “no response” follow-up after one arrives.
+Explain the recommendation briefly. Ask about the uncertainty that most affects it, using numbered choices where possible. Refine the approach with the user's answers.
 
-## Prepare a message someone can send
+## Draft and refine
 
-Read the customer's ICP, meeting qualification criteria, offer and sender guidance
-from their workspace, alongside the relationship context and profile hypothesis.
-Choose a direct approach or an introduction through a
-named, evidenced connection. Recommend a sender and usable channel from the
-available facts. Where an essential sender, route or offer detail is missing,
-save what is useful and make the missing decision the Next step; do not invent it.
+Give the user **three short, direct message options**, each with a meaningfully different approach or style. Label them **1, 2 and 3**, with a brief description of the difference.
 
-- Make the message specific to the person, honest about the relationship, and
-  easy to answer with one clear next step toward a relevant meeting. This can be
-  a fit check or introduction first, rather than forcing a calendar request into
-  every message. Fit the channel and verified limits.
-- For email, include a subject. For an introduction, identify the intermediary
-  and distinguish the request to them from any forwardable message for the target.
-- Put copyable text in Message draft; fit rationale, route and profile context in
-  Context. Sender, Channel, Status, Next step and noticed relationship belong in
-  properties. Activity contains dated facts, not another copy of the current plan.
-- Keep Follow-up date if already agreed. It is the next planned follow-up date,
-  often a second message if there is no reply. Do not invent a universal interval
-  or mark a follow-up sent because its date has passed.
+Write for someone the sender already knows. Match the relationship's familiarity, use relevant shared context, give a clear reason to talk and make the next step easy. Avoid generic cold-outreach introductions, forced personalization and unnecessary sales language. For an introduction, make clear who the message is addressed to.
 
-Read back each saved draft and entry before counting it as prepared. Record its
-identity in the private run record so a retry catches up instead of duplicating.
+Ask which option feels right; let the user choose, combine or edit. Refine using their feedback. Preserve existing human edits unless the user is revising that draft.
 
-## Report what is happening
+## Preserve context and preferences
 
-Update the Outreach row in What’s happening and the Outreach and Meetings metrics
-from confirmed events. Patch only outreach fields: contacted, replied, booked,
-reply rate and booking conversion, plus their confirmed event dates. Never write
-Reviewed, Yes rate, opportunity counts, profile results or learning during Daily
-outreach, even when those values appear in a saved dashboard snapshot. Those
-fields belong to Daily opportunities and may have changed since that snapshot.
-Keep the original baseline intact. Maintain the relevant
-weekly review with material activity and results, preserving human decisions.
+Save new **target-specific facts and context on the noticed relationship page**, preserving existing notes.
 
-Prepare one concise daily digest: current opportunity lists and review counts,
-drafts needing attention, confirmed outreach results, and the customer's next
-action. Read the latest verified opportunity state; the two routines may run at
-the same time. Do not claim today's lists are ready while their run is pending.
+Save **reusable outreach and messaging preferences** in an **Outreach preferences** toggle inside the customer's **Knowledge → Company context**. Create the toggle if missing. Attribute preferences to the relevant user or sender; distinguish a choice for this message from a general preference, and clarify when uncertain.
 
-Deliver to Slack or Telegram only when the user has explicitly authorized that
-destination and delivery. A configured channel by itself is not authorization.
-When delivery is unset or unavailable, return/save the digest and complete the
-Notion work. After an uncertain send result, check for the existing message before
-retrying; if delivery cannot be resolved, report uncertainty rather than resending.
+Update these records as the user supplies context or expresses preferences. Keep customer information outside this skill.
 
-Ask the customer to confirm which messages they sent, the sender, channel and
-date, then capture replies and accepted calendar invites as evidence arrives.
-Do not send prospect messages, contact intermediaries, book meetings or change
-sharing settings as part of this routine.
+## Save the outcome
 
-## Record the run
+Save the chosen message in the Notion Outreach entry's **Message draft**, the approach and brief rationale in **Context**, and the sender, channel and noticed relationship link in their properties. Preserve dated activity and update only the relevant fields.
 
-Save entry IDs, current approval sources, verified operation checkpoints and
-activity fingerprints privately. Record supported instruction improvements as
-candidates; broader skill maintenance is separate from this manual run.
+The user sends the message. Ask what happened:
+
+1. **Sent** — record the confirmed send, asking for any missing sender, date or channel.
+2. **Not sent yet** — keep the initial draft as **To contact**. An unsent follow-up does not reset an existing outreach status.
+
+A saved draft never counts as contact. Record replies and accepted calendar invitations when the user confirms them. Preserve earlier activity; keep an agreed follow-up date and next action when relevant.
+
+Read back the saved entry and any context or preference updates. Close with a short recap, the next action and a link to the outreach entry.
