@@ -2,7 +2,7 @@
 
 **Last reviewed:** [Date the user validated this reference, or “Not yet validated.” Mark subsequent unvalidated revisions as drafts.]
 
-Use these sections in the completed reference. In Notion, render each section as a toggle. Keep evidence links and dated sources beside the relevant facts; place unresolved questions in a local **To clarify** toggle. Omit unsupported detail rather than filling gaps with guesses.
+Use these sections in the completed reference. In Notion, keep them as toggles inside **Knowledge → Company context** and store sources in **Library**. Date time-sensitive facts. Resolve material questions before validation; label any unknowns the user explicitly accepts. Omit unsupported detail and workspace setup.
 
 ## Company
 
@@ -12,7 +12,7 @@ Use these sections in the completed reference. In Notion, render each section as
 ## Product & offer
 
 - Problem solved, current offer, customer value and business model.
-- Pricing and delivery capabilities when relevant; distinguish available features from plans.
+- Current customer-facing pricing and delivery capabilities when relevant; distinguish available features from plans. Exclude obsolete offers and internal pricing options.
 
 ## Market & positioning
 
@@ -41,7 +41,7 @@ Label unconfirmed choices as proposed. Keep the final reference focused on the w
 
 ## Business goals & baseline
 
-- Priority outcome, timeframe and success measure.
+- Priority outcome, meeting target and deadline, with a clear success measure.
 - Dated starting point, current results and material constraints.
 - Distinguish the company’s business goal from the engagement’s contribution to it.
 
@@ -49,7 +49,7 @@ Label unconfirmed choices as proposed. Keep the final reference focused on the w
 
 - How the team currently pursues the goal: channels, tactics and process.
 - What works, what does not, and known bottlenecks.
-- For other goals, describe the relevant fundraising, hiring or partnership approach. Capture the team’s existing approach separately from any proposed noticed activity.
+- For other goals, describe the relevant fundraising, hiring or partnership approach. Record existing practices and preferences; leave proposed outreach tactics and network selection to later routines.
 
 ## Team & responsibilities
 
