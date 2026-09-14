@@ -40,11 +40,11 @@ Save the hypothesis in the iteration’s **Hypothesis** section. In **Basis**, s
 
 ## Select 25 people
 
-Search within noticed only. Rank people by the strength of the evidence that they match the hypothesis. For each person, record a short fit rationale, supporting evidence and relevant unknowns. Avoid duplicates and people already being pursued for this engagement.
+Search within noticed only for around 50 candidates matching the hypothesis. Enrich all eligible candidates with `enrich_person`, then select and rank the best 25. Exclude people already being pursued for this engagement.
 
-Save the 25 people in the iteration’s noticed list. On the hypothesis page, briefly record the selection approach and limitations that could affect interpretation of the feedback.
+Create a noticed list containing only the selected 25 people, then save its link on the Notion iteration page. Reuse the existing list when resuming an unfinished iteration. Record their ranking, fit rationale and remaining uncertainties on that page.
 
-If fewer than 25 credible matches are available, explain the shortfall and keep the iteration **Preparing**. Do not silently weaken the criteria or fill the list with poor matches.
+If fewer than 25 credible matches are available, keep the iteration **Preparing** and explain the shortfall.
 
 ## Make the list ready for review
 
