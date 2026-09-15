@@ -50,13 +50,13 @@ Search within the connected noticed team for around 50 candidates matching the h
 
 Enrich all eligible candidates with `enrich_person`, then select and rank the best 25. `started` and `in_progress` mean asynchronous work, not verified new facts. Read the person's record back, including enrichment state, before using refreshed evidence. Record skipped/ineligible outcomes. If selection depends on pending enrichment, use bounded checks, save the candidate IDs and remaining work, and leave the iteration **Preparing** rather than polling indefinitely or claiming completion.
 
-Create a noticed list containing only the selected 25 people with AI suggestions disabled; reuse the existing list when resuming. Save its ID on the iteration and record all 25 person IDs with rank, fit rationale, supporting observed facts versus proxies, enrichment outcome and remaining uncertainties. Preserve useful existing evidence when repairing an incomplete record. Use returned URLs; never invent routes.
+Create the list with `create_list`: put the hypothesis and fit criteria in `description`, use the selected team’s `organization_id`, and set `ai_enabled: false`. Add only the selected 25 through `add_to_list`; creation does not add members. Reuse the existing list when resuming. Save its ID on the iteration and record all 25 person IDs with rank, fit rationale, supporting observed facts versus proxies, enrichment outcome and remaining uncertainties. Preserve useful existing evidence when repairing an incomplete record. Use returned URLs; never invent routes.
 
 If fewer than 25 credible matches are available, keep the iteration **Preparing** and explain the shortfall. Do not weaken the hypothesis or fill the batch with known poor matches to reach 25.
 
 ## Make the list ready for review
 
-Use `configure_list_review` to save **“Does this person genuinely fit the target profile?”** and concise hypothesis context in noticed. Writing the question in Notion or the list description does not configure reviews. Read existing configuration first when resuming; preserve a matching question and any human edits. Identical setup is safe to retry, but a changed locked question must not be overwritten.
+Use `configure_list_review` with `question` set to **“Does this person genuinely fit the target profile?”** and concise hypothesis context in `description`. Writing the question in Notion or the list description does not configure reviews. Read existing configuration first when resuming; preserve a matching question and any human edits. Identical setup is safe to retry, but a changed locked question must not be overwritten.
 
 Read back `get_list` and `get_list_reviews`:
 
