@@ -17,18 +17,24 @@ If starting from a research-partner directory linked in the conversation or work
 - **Hypothesis:** the specific characteristics and signals being tested to identify that audience.
 - **Iteration:** one hypothesis, 25 suggested people, their reviews and recorded learning.
 
-Use noticed MCP to search relationships, create or resume the iteration’s list, and retrieve human reviews.
+Before candidate work, confirm that noticed exposes `configure_list_review` and `get_list_reviews`, and that the connected Notion account can read the customer page. Missing tools or access leave this run **Preparing**, with the exact blocker recorded; do not promise a working review flow. Once access is restored, resume the already requested step from saved evidence.
+
+Establish the intended human reviewer from the customer page or conversation. `get_list_reviews` returns only the authenticated user's answers (`reviewScope: self`, `reviewerUserId`). Team-list access does not expose teammates' answers. If the connected identity is not the intended reviewer, report that mismatch instead of treating zero visible answers as customer non-response.
 
 ## Determine the next step
 
-Read **Knowledge → Company context**. In **Hypothesis iterations** (formerly Target Profiles), find entries whose **Target profile** (formerly Profile) matches the selected target profile. Open the entry with the highest **Iteration** number.
+Read **Knowledge → Company context**, retaining the relevant page, database and data-source IDs. Use the saved track definitions rather than reconstructing them from broad company positioning. If a response is truncated, fetch the relevant linked sections or query the scoped data source; partial content is not proof that an iteration is absent.
+
+In **Hypothesis iterations** (formerly Target Profiles), query actual entries whose **Target profile** (formerly Profile) matches the selection and open the highest **Iteration**. Templates are not iteration rows. Read the saved list and review state before choosing the next step:
 
 - **No entry exists:** define and save the first hypothesis before selecting people.
 - **The candidate list is unfinished:** continue building the same list to 25 people; preserve the hypothesis and work already saved.
-- **Some of the 25 people lack reviews:** update the selected target profile’s **What’s happening** row with the reviewed count, remaining count and review link. Stop this run. **Not sure** counts as reviewed.
+- **25 people saved but reviews are not configured:** configure and verify reviews on this same list.
+- **Reviews configured but the Notion handoff is incomplete:** repair the missing review link, evidence or tracker update; preserve the batch and any answers.
+- **Some of the 25 people lack reviews, after readiness is verified:** update the selected target profile’s **What’s happening** row with the reviewed count, remaining count and review link. Stop this run. **Not sure** counts as reviewed.
 - **All 25 are reviewed:** record the feedback and learning before defining the next hypothesis.
 
-A new day does not start a new iteration. Continue only the step requested by the user.
+A new day does not start a new iteration. Continue only the step requested by the user. If list membership differs from the saved batch, report the discrepancy before changing membership, interpreting feedback or creating another iteration.
 
 ## Define the hypothesis
 
@@ -40,23 +46,31 @@ Save the hypothesis in the iteration’s **Hypothesis** section. In **Basis**, s
 
 ## Select 25 people
 
-Search within noticed only for around 50 candidates matching the hypothesis. Enrich all eligible candidates with `enrich_person`, then select and rank the best 25. Exclude people already being pursued for this engagement.
+Search within the connected noticed team for around 50 candidates matching the hypothesis. Check the engagement's outreach records and relevant noticed actions to exclude people already being pursued; list membership alone does not mean active pursuit. A title such as founder is a proxy, not proof of the required product, company stage, sales responsibility or need. Keep those unknowns explicit and exclude known contradictions.
 
-Create a noticed list containing only the selected 25 people, then save its link on the Notion iteration page. Reuse the existing list when resuming an unfinished iteration. Record their ranking, fit rationale and remaining uncertainties on that page.
+Enrich all eligible candidates with `enrich_person`, then select and rank the best 25. `started` and `in_progress` mean asynchronous work, not verified new facts. Read the person's record back, including enrichment state, before using refreshed evidence. Record skipped/ineligible outcomes. If selection depends on pending enrichment, use bounded checks, save the candidate IDs and remaining work, and leave the iteration **Preparing** rather than polling indefinitely or claiming completion.
 
-If fewer than 25 credible matches are available, keep the iteration **Preparing** and explain the shortfall.
+Create a noticed list containing only the selected 25 people with AI suggestions disabled; reuse the existing list when resuming. Save its ID on the iteration and record all 25 person IDs with rank, fit rationale, supporting observed facts versus proxies, enrichment outcome and remaining uncertainties. Preserve useful existing evidence when repairing an incomplete record. Use returned URLs; never invent routes.
+
+If fewer than 25 credible matches are available, keep the iteration **Preparing** and explain the shortfall. Do not weaken the hypothesis or fill the batch with known poor matches to reach 25.
 
 ## Make the list ready for review
 
-Set the review question to **“Does this person genuinely fit the target profile?”** Add concise context from the hypothesis so the customer understands the proposed fit criteria.
+Use `configure_list_review` to save **“Does this person genuinely fit the target profile?”** and concise hypothesis context in noticed. Writing the question in Notion or the list description does not configure reviews. Read existing configuration first when resuming; preserve a matching question and any human edits. Identical setup is safe to retry, but a changed locked question must not be overwritten.
 
-Verify that the saved list contains the intended 25 people and is ready for review. Link it from the Notion iteration and set its status to **To review**. Keep the hypothesis and candidate list stable during review. List membership means included for review, not human approval.
+Read back `get_list` and `get_list_reviews`:
 
-Update the selected target profile’s **What’s happening** row with the review link and next action. Stop and wait for human feedback.
+- Compare all saved list member IDs and eligible review `memberPersonIds` with the intended 25 IDs. Use `member_total` and review `total`, not page lengths. Continue `get_list` with `page`/`page_size` while `member_has_more`; review member pages contain 10 IDs, so continue `page` while `memberHasMore`, even if `hasMore` for answers is false.
+- Verify `setupState: configured`, the actual question/context, intended reviewer identity and list access. Caller access alone does not prove access for a different customer. Report missing/inaccessible members or reviewer mismatch; do not expand sharing to make a check pass.
+- Save the returned **`review_url`** in the iteration's Target list field and the selected profile's **What’s happening** row. `canonical_url` opens the general goal, not its review controls.
+
+Only after these checks and the candidate evidence are saved, set **To review** and read back both Notion destinations. If a write fails or its outcome is uncertain, inspect what landed and repair that step without recreating the list. Report partial completion until the handoff is consistent.
+
+Keep the hypothesis and candidate list stable during review. Membership and suggestion acceptance are not human fit approval. Link the ready review page, state the next action and wait for human feedback.
 
 ## Record feedback and learning
 
-Read all pages of current human reviews in noticed, including reasons; silence or removal from a list is not a verdict. Once all 25 people have current human reviews, record the Yes / No / Not sure counts and **Yes rate = Yes ÷ 25** on the Notion iteration. **Not sure** is reviewed but not Yes; verify formula results rather than overwriting computed fields.
+Use `get_list_reviews` without an answer filter and read every page while `hasMore`, including reasons. Match `relationshipId` on each current answer to a saved batch person ID. Verify the same intended reviewer throughout; corrections replace old answers and undone answers disappear. Silence, removal and suggestion rejection are not fit verdicts. Once all 25 distinct saved batch members have current human reviews, record the Yes / No / Not sure counts and **Yes rate = Yes ÷ 25** on the Notion iteration. **Not sure** is reviewed but not Yes; verify formula results rather than overwriting computed fields.
 
 In **What we learned**, compare the hypothesis, the people selected and the customer’s feedback. Explain which signals helped identify fit, where matches fell short, and whether the issue was the hypothesis or its application during selection. Keep uncertainties explicit.
 
