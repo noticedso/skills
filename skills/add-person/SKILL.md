@@ -36,9 +36,10 @@ but missing.
    - No match plus only a vague or partial name: ask for a last name, company,
      or LinkedIn URL. Make no writes yet.
 4. If the user says they met, spoke, called, or messaged the person, log that
-   interaction with the actual date. Convert relative dates using the verified
-   current date. Do not invent an interaction when the user is only saving a
-   contact.
+   interaction with the actual date. Resolve relative dates from the verified
+   current date before calling `log_interaction`; a known past interaction must
+   have a non-null ISO `occurred_at`. Do not invent an interaction when the user
+   is only saving a contact.
 5. Save what the user said firsthand with `add_note`. Save web research, if any,
    with `add_memory`. Keep distinct claims separate.
 6. Read back the result in a few natural lines: who was added or updated, the
