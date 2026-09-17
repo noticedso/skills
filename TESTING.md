@@ -56,7 +56,7 @@ Run each prompt in a chat with the noticed MCP connected. Prompts are ordered ea
 3. `how many investors are in my network?` then, after any table, `more on #2`
    *(network_summary count for the first; drill-down by number into a dossier for the second)*
 
-## company context and daily opportunities
+## company context, daily opportunities and outreach
 
 Use synthetic company context and fixture-only tools; inspect proposed operations without writing to a customer workspace. These are behavioral scenarios, not automated test results.
 
@@ -68,6 +68,7 @@ Use synthetic company context and fixture-only tools; inspect proposed operation
 | Run opportunities for a saved, explicitly agreed investor profile while another track is undefined and unrelated company context remains draft. | Proceed within the agreed profile and engagement goal without demanding full reference validation or treating investors as sales prospects. |
 | Choose investors and partners for the direct engagement tracks of a company whose customers are hotels. Rename the context sections. | Preserve hotels as the stable customer ICP separately from both engagement tracks; follow sections by meaning without forcing customers into ICP #1. |
 | Refine a hypothesis after a reviewed batch within an agreed track. | Use recorded learning within that track; preserve the existing batch, review-readiness and recovery safeguards. |
+| Draft outreach for approved relationships in customer, investor, partner and hiring tracks, with each goal and track saved in context. | Inherit the relevant goal and track rather than treating every recipient as a buyer. Use the offer where relevant, preserve human approval and drafts, and leave sending to the user. |
 
 ## what to watch for
 
