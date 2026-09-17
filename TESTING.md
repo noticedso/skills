@@ -56,11 +56,24 @@ Run each prompt in a chat with the noticed MCP connected. Prompts are ordered ea
 3. `how many investors are in my network?` then, after any table, `more on #2`
    *(network_summary count for the first; drill-down by number into a dossier for the second)*
 
+## company context and daily opportunities
+
+Use synthetic company context and fixture-only tools; inspect proposed operations without writing to a customer workspace. These are behavioral scenarios, not automated test results.
+
+| Scenario | Expected behavior |
+|---|---|
+| Onboard a new research partner from a supplied directory with its own default template. Repeat with a matching partner already present. | Create the canonical record from the discovered template only when absent; otherwise reuse it. Save context there, never on a standalone staging page. |
+| Save research and proposed profiles before the user validates the reference. | Saved content remains visibly draft/unvalidated; Last reviewed changes only after explicit reference validation. Profile selection alone is insufficient. |
+| Request strategic investor/industry connectors in a city while the connector definition is absent, empty, a placeholder or substantive but unagreed. | Return to company-context/profile definition using the request as input; do not create an iteration, hypothesis or candidate list yet. |
+| Run opportunities for a saved, explicitly agreed investor profile while another track is undefined and unrelated company context remains draft. | Proceed within the agreed profile and engagement goal without demanding full reference validation or treating investors as sales prospects. |
+| Choose investors and partners for the direct engagement tracks of a company whose customers are hotels. Rename the context sections. | Preserve hotels as the stable customer ICP separately from both engagement tracks; follow sections by meaning without forcing customers into ICP #1. |
+| Refine a hypothesis after a reviewed batch within an agreed track. | Use recorded learning within that track; preserve the existing batch, review-readiness and recovery safeguards. |
+
 ## what to watch for
 
 The behaviors the NYTW revisions were built to get right — confirm they hold across the tests above:
 
-- **Nothing is saved before you confirm.** Every write-capable skill previews first.
+- **Capture skills preview before saving.** Company-context drafts may be saved incrementally; saving is not validation.
 - **No bare-name guessing.** A name with no URL/handle triggers a question, not a silent new record.
 - **The readback always appears** after a save, and reads like a person talking, not a field dump.
 - **Provenance tags never leak into chat** — you should never see `[from user]` or `[research, unverified]` in a message, only in the stored note.

@@ -1,11 +1,11 @@
 ---
 name: daily-opportunities
-description: Prepare or refine 25 sales meeting opportunities for one target profile, using a concrete hypothesis and human review feedback.
+description: Prepare or refine 25 opportunities that advance the engagement goal within one agreed target profile, using a concrete hypothesis and human review feedback.
 ---
 
 # Daily opportunities
 
-The goal is to book sales meetings. Find opportunities for one target profile by testing which characteristics and signals identify people who fit. Improve the share receiving a human **Yes**, with booked meetings as the outcome.
+Advance the engagement goal through relevant opportunities and meetings. Own hypotheses within an agreed target track, candidate selection, review batches, feedback and iteration learning. Improve the share receiving a human **Yes**, with booked meetings as a measurable outcome where applicable.
 
 ## Inputs and terms
 
@@ -23,7 +23,9 @@ Establish the intended human reviewer from the customer page or conversation. `g
 
 ## Determine the next step
 
-Read **Knowledge → Company context**, retaining the relevant page, database and data-source IDs. Use the saved track definitions rather than reconstructing them from broad company positioning. If a response is truncated, fetch the relevant linked sections or query the scoped data source; partial content is not proof that an iteration is absent.
+Read **Knowledge → Company context**, retaining the relevant page, database and data-source IDs. If a response is truncated, fetch the relevant linked sections or query the scoped data source; partial content is not proof that a profile or iteration is absent.
+
+Before creating or refining a hypothesis, starting an iteration or selecting candidates, require a meaningful saved definition of the selected target profile and explicit user agreement to it. Empty, placeholder or “to define” content does not qualify; neither company positioning nor a new search instruction substitutes for that agreement. If missing or unagreed, return to `collect-company-context` to define and agree the profile first, using the new instruction as proposal input. Only the relevant profile needs agreement; unrelated context gaps or pending whole-reference validation do not block this handoff.
 
 In **Hypothesis iterations** (formerly Target Profiles), query actual entries whose **Target profile** (formerly Profile) matches the selection and open the highest **Iteration**. Templates are not iteration rows. Read the saved list and review state before choosing the next step:
 
@@ -38,7 +40,7 @@ A new day does not start a new iteration. Continue only the step requested by th
 
 ## Define the hypothesis
 
-Using company context and recorded learning, write a concrete hypothesis: which characteristics and observable signals identify people who fit the selected target profile, and why.
+Using company context and recorded learning, write a concrete hypothesis: which characteristics and observable signals identify people who fit the selected target profile, and why. A hypothesis may experimentally refine an established profile; it cannot supply a missing broad track definition.
 
 Prefer signals relevant to fit that can be observed in noticed. Distinguish direct evidence from proxies, and treat missing information as unknown.
 
