@@ -24,12 +24,12 @@ Use these sections in the completed reference. In Notion, keep them as toggles i
 
 ### Stable customer ICP
 
-- The company’s high-level best-fit customers: organization, buyer/user and core need.
+- The company’s durable best-fit customers: organization, buyer/user and core need.
 - Confirmed poor fits and actual examples, distinguishing customers from prospects or desired customers.
 
 ### Selected target profiles
 
-Record the user’s selected profiles for this engagement: **ICP track 1**, **ICP track 2**, and **Connector track**. Direct tracks can serve goals such as sales or fundraising; they do not redefine the stable customer ICP.
+Record the three audiences being tested for this engagement: **ICP track 1**, **ICP track 2**, and **Connector track**. Direct tracks can serve goals such as sales or fundraising; they do not redefine the stable customer ICP, which need not occupy ICP track 1.
 
 For each selected profile:
 

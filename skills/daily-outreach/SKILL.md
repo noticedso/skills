@@ -5,7 +5,7 @@ description: Develop outreach interactively for human-approved relationships, us
 
 # Daily outreach
 
-Help the customer book sales meetings by developing outreach together for relationships they approved with a **Yes**. Use the company's offer and all relevant context in noticed to recommend the approach and message. The user is the expert and may have additional context.
+Help the customer advance the engagement goal through relevant meetings by developing outreach together for relationships they approved with a **Yes**. Use the agreed target track and relevant company and noticed context to recommend the approach and message. The user is the expert and may have additional context.
 
 Work on one relationship at a time. Ask **one focused question at a time**, preferably with **numbered or lettered choices**. Recommend an option when the context supports it, use relevant examples when helpful, and allow free-text answers. Avoid asking about decisions already supported by the available context.
 
@@ -15,18 +15,18 @@ Use the customer page and any relationship selected by the user. If none is sele
 
 If starting from a research-partner directory linked in the conversation or workspace instructions, open the selected partner’s page and follow its links for setup and context. Confirm the customer and connected noticed team. Inspect the live Notion pages, fields and templates before writing; follow renamed fields by their meaning and leave computed properties to Notion. Ask only for missing information needed now.
 
-Use noticed MCP to read the relationship context and the customer's current approval. Read **Knowledge → Company context**, saved **Outreach preferences**, and the existing Notion Outreach entry, including drafts and confirmed activity. An individual Yes can move to outreach before the rest of its opportunity iteration is reviewed.
+Use noticed MCP to read the relationship context and the customer's current approval. Read **Knowledge → Company context**, the approved opportunity's target track and hypothesis, saved **Outreach preferences**, and the existing Notion Outreach entry, including drafts and confirmed activity. Resolve the engagement goal and relevant agreed track from this context before proposing outreach; ask only if unclear. An individual Yes can move to outreach before the rest of its opportunity iteration is reviewed.
 
 If approval is missing, withdrawn or unclear, resolve that before proceeding. Resume existing work; keep one Outreach entry per customer and relationship across target profiles.
 
 ## Agree on the approach
 
-Use the offer, relationship history, shared connections and saved preferences to propose:
+Use the engagement goal, target track, relationship history, shared connections and saved preferences, including the company's offer where relevant, to propose:
 
 - **Route:** direct outreach or an introduction.
 - **Sender:** who is best placed to send it.
 - **Channel:** where the conversation should happen.
-- **Message approach:** what to lead with and why it fits the relationship and what we are selling.
+- **Message approach:** what to lead with, why it is relevant to the recipient and how it advances the engagement goal.
 
 Explain the recommendation briefly. Ask about the uncertainty that most affects it, using numbered choices where possible. Refine the approach with the user's answers.
 
