@@ -1,39 +1,31 @@
 # Research-partner workflow
 
-Use one canonical dashboard per company. A company may have one or more goals;
-each goal has its own segments, lists, outreach, and metrics. Use the same exact
-goal name everywhere and never aggregate unrelated funnels.
-
-The operating loop is:
+Use one dashboard per company and one consistent name for each goal. Keep metrics
+separate by goal.
 
 **Goal → Segment rules → List → Review → Learning → Refinement → Outreach**
 
 ## Dashboard
 
-Keep these sections in this order:
+Keep this order:
 
 1. **Progress** — goal statements and per-goal Meetings, Outreach, and
-   Opportunities metrics; Network remains a company-level snapshot.
-2. **Next** — a short to-do list naming the goal, owner, and concrete action.
-3. **Segments** — the current observable targeting rules.
-4. **Lists** — every generated batch and its result.
-5. **Outreach** — approved people, drafts, and confirmed outcomes.
+   Opportunities; Network is a company snapshot.
+2. **Next** — short to-dos with goal, owner, and action.
+3. **Segments**
+4. **Lists**
+5. **Outreach**
 6. **Company** — link to the Company Brain.
 
-Unknown values display as “—”. Update the last-measurement date only for verified
-data. Keep goal metrics separate.
+Use “—” for unknown values. Change Last measurement only when the data is verified.
 
 ## Segments
 
-Database properties: **Segment** (title), **Goal**, **Priority**.
+Properties: **Segment**, **Goal**, **Priority**.
 
-The segment name is the short plain-language definition of who to find. There is
-no separate “Who” field and no separate hypothesis page. A connector is simply a
-segment with connector-specific rules.
-
-Every segment page uses a criteria table with **Category**, **Required**,
-**Prefer**, and **Exclude**. Keep all categories present for consistency, leaving
-unused cells empty:
+The segment name is a short definition of who to find. A connector is a segment,
+not a separate type. Each segment page has **Category**, **Required**, **Prefer**,
+and **Exclude**, with these rows even when empty:
 
 - Geography
 - Sector / industry
@@ -49,40 +41,39 @@ unused cells empty:
 - Revenue
 - Company age
 
-Write comma-separated tags or short observable rules, not profile prose. Required
-means every populated category must match; comma-separated alternatives within a
-cell mean “or.” Prefer improves ranking but is optional. Exclude disqualifies.
-Rules must be testable through public search or data enrichment. Facts discoverable
-only through contact belong in a collapsed contact-only note, not in targeting.
+Use comma-separated tags or short rules that public search or enrichment can
+validate. Required categories must match; comma-separated values within a cell
+mean “or.” Prefer affects ranking. Exclude disqualifies. Contact-only facts do not
+belong in targeting rules.
 
-Below the criteria, use **Learnings & refinements** with columns **Date**,
-**Batch**, **Focus**, **Results · Yes / No / ?**, **Learned**, and
-**Next refinement**.
+The learning log columns are **Date**, **Batch**, **Focus**,
+**Results · Yes / No / ?**, **Learned**, and **Next refinement**.
 
 ## Lists
 
-Database properties: **List** (title), **Goal**, **List link**, **Segment**
-(relation), **Generated**, **Review**, **Results**.
+Properties: **List**, **Goal**, **List link**, **Segment**, **Generated**,
+**Review**, **Results**.
 
-One row represents one generated batch. Preserve every batch so progress and rule
-changes remain traceable. The list review tests the statement: **“This looks like
-a good fit. We should reach out to them.”** Use explicit Yes, No, and Not sure.
+One row is one generated batch. Preserve every batch. Review the statement:
+**“This looks like a good fit. We should reach out to them.”** using Yes, No, or
+Not sure.
 
 ## Outreach
 
-Database properties: **Person** (title), **Source list** (relation to Lists),
-**Status**, **Sender**, **Channel**, **Sent on**.
+Properties: **Person**, **Source list**, **Status**, **Sender**, **Channel**,
+**Sent on**. Source list relates to Lists and supplies Segment and Goal.
 
-Source list is required attribution. Its List row already supplies Segment and
-Goal, so do not duplicate those properties in Outreach.
+The page body contains **Message draft**, **Why reach out**,
+**Introduction through**, and collapsed **History & source**. Outreach is an
+evidence log, not a task-management system.
 
-The entry body contains **Message draft**, **Why reach out**,
-**Introduction through**, and a collapsed **History & source** toggle. Outreach
-is an evidence log, not a sales-management system.
+Statuses require evidence: **To contact** means approved and unsent;
+**Contacted** means sent; **Replied** means the target replied; **Booked** means
+the target accepted a meeting; **Dropped** means an explicit decision to stop.
 
 ## Company Brain
 
-Use exactly these headings:
+Use these headings:
 
 1. Company & product
 2. Pricing & business model
@@ -92,23 +83,13 @@ Use exactly these headings:
 6. Sales process & channels
 7. Team & responsibilities
 
-Keep original source links in a collapsed **Library** toggle. Mark facts that
-need human confirmation in red. The Brain describes the company; targeting rules
-and batch learning live in Segments and Lists.
+Keep original sources in collapsed **Library**. Mark unconfirmed facts red.
+Company facts live here; targeting and learning do not.
 
-## Counting and write safety
+## Invariants
 
-Yes rate measures suggestion quality. Reply rate measures target responses.
-Meetings are accepted meetings. Deduplicate people within each goal. A connector's
-reply does not count as the target's reply unless the connector is itself the
-target of that goal.
+Yes rate measures human-approved suggestions. Reply rate measures target replies.
+Meetings require acceptance. Deduplicate within each goal.
 
-Verify the selected company and destination data sources before writing. Reuse
-existing rows before creating new ones and read back every write. After a timeout,
-check whether the write landed before retrying. Preserve human edits, sources,
-historic lists, verdicts, and results.
-
-Customer context, IDs, credentials, and run history stay outside this public
-plugin. Existing authorization covers the agreed dashboard/list/draft updates;
-it does not authorize sending messages, enabling schedules, or writing to another
-company's workspace.
+Verify the company and destination before writing, reuse existing records, preserve
+human edits and history, and read writes back before claiming completion.
