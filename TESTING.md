@@ -94,6 +94,21 @@ a material workflow change, also perform one smoke test with a duplicated Notion
 dashboard and disposable noticed team; fixture evals do not prove live tool
 integration.
 
+### Live integration smoke
+
+On 19 Sep 2026, the research-partner flow was exercised with disposable artifacts:
+
+- [Notion dashboard](https://app.notion.com/p/3e0efbd6e46b818dbe6bcc9af74cafd8)
+- noticed team: `Research partner skill eval — 2026-09-19`
+- [noticed list](https://www.noticed.so/goals/850d8452-899a-47f8-8cfd-0014674fb64c)
+
+The default template created the Company Brain and embedded Segments, Lists, and
+Outreach databases. The smoke test saved confirmed and unconfirmed company facts,
+observable segment rules, a team-owned list with the canonical review question,
+and an unsent outreach entry attributed through Source list. Every write was read
+back. No message was sent, no meeting was recorded, and no customer workspace was
+changed.
+
 ## what to watch for
 
 The behaviors the NYTW revisions were built to get right — confirm they hold across the tests above:
