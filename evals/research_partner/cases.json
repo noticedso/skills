@@ -1,0 +1,124 @@
+[
+  {
+    "id": "company_context_updates_canonical_brain",
+    "skill": "skills/collect-company-context/SKILL.md",
+    "request": "Update the company context from these new notes.",
+    "fixture": {
+      "dashboard": {"id": "company-1", "exists": true},
+      "facts": [
+        {"id": "current-price", "text": "Implementation currently costs €3,000.", "confirmed": true},
+        {"id": "planned-subscription", "text": "A subscription may be introduced later.", "confirmed": false}
+      ],
+      "sources": ["call-2026-09-18", "pricing-page"],
+      "targeting_idea": "Prefer companies with active hiring."
+    },
+    "assertions": [
+      {"path": "action", "op": "eq", "value": "update_company_brain"},
+      {"path": "creates_new_dashboard", "op": "eq", "value": false},
+      {"path": "company_brain_sections", "op": "contains_all", "value": ["Company & product", "Pricing & business model", "Market & positioning", "Customer needs & examples", "Business goals & baseline", "Sales process & channels", "Team & responsibilities"]},
+      {"path": "unconfirmed_facts", "op": "contains_all", "value": ["planned-subscription"]},
+      {"path": "writes_targeting_rules_to_brain", "op": "eq", "value": false},
+      {"path": "preserves_history", "op": "eq", "value": true}
+    ]
+  },
+  {
+    "id": "partial_review_resumes_existing_batch",
+    "skill": "skills/daily-opportunities/SKILL.md",
+    "request": "Run daily opportunities for the Partners goal and the founder-led sales segment.",
+    "fixture": {
+      "goal": "Partners",
+      "segment": "Founder-led B2B software sales",
+      "list": {"id": "list-partners-1", "review_state": "To review", "member_count": 25},
+      "reviews": {
+        "yes": ["p1", "p2", "p3"],
+        "no": ["p4", "p5", "p6", "p7", "p8"],
+        "not_sure": ["p9", "p10"]
+      }
+    },
+    "assertions": [
+      {"path": "action", "op": "eq", "value": "wait_for_reviews"},
+      {"path": "creates_new_list", "op": "eq", "value": false},
+      {"path": "list_id", "op": "eq", "value": "list-partners-1"},
+      {"path": "reviewed_count", "op": "eq", "value": 10},
+      {"path": "remaining_reviews", "op": "eq", "value": 15},
+      {"path": "approved_for_outreach", "op": "contains_all", "value": ["p1", "p2", "p3"]},
+      {"path": "rule_changes", "op": "len_eq", "value": 0},
+      {"path": "preserves_history", "op": "eq", "value": true}
+    ]
+  },
+  {
+    "id": "completed_review_records_one_refinement",
+    "skill": "skills/daily-opportunities/SKILL.md",
+    "request": "Process the completed review for this Partners list.",
+    "fixture": {
+      "goal": "Partners",
+      "segment": "Founder-led B2B software sales",
+      "rules": {"required": ["B2B software", "Founder or CEO"], "prefer": ["15-50 employees"], "exclude": []},
+      "list": {"id": "list-partners-2", "review_state": "To review", "member_count": 25},
+      "reviews": {
+        "yes_count": 10,
+        "no_count": 12,
+        "not_sure_count": 3,
+        "repeated_reason": "Companies under 10 employees were consistently rejected as too early."
+      }
+    },
+    "assertions": [
+      {"path": "action", "op": "eq", "value": "record_learning"},
+      {"path": "creates_new_list", "op": "eq", "value": false},
+      {"path": "list_id", "op": "eq", "value": "list-partners-2"},
+      {"path": "reviewed_count", "op": "eq", "value": 25},
+      {"path": "remaining_reviews", "op": "eq", "value": 0},
+      {"path": "rule_changes", "op": "len_lte", "value": 1},
+      {"path": "metric_goal", "op": "eq", "value": "Partners"},
+      {"path": "preserves_history", "op": "eq", "value": true}
+    ]
+  },
+  {
+    "id": "outreach_uses_motivating_source_list",
+    "skill": "skills/daily-outreach/SKILL.md",
+    "request": "Prepare outreach for Ana. Her review verdict is Yes.",
+    "fixture": {
+      "person": {"id": "ana", "name": "Ana Silva"},
+      "goal": "Partners",
+      "lists": [
+        {"id": "list-partners-1", "contains_person": true, "motivated_outreach": false},
+        {"id": "list-partners-2", "contains_person": true, "motivated_outreach": true}
+      ],
+      "existing_outreach": null,
+      "send_confirmation": null
+    },
+    "assertions": [
+      {"path": "action", "op": "eq", "value": "create_outreach"},
+      {"path": "outreach_person_id", "op": "eq", "value": "ana"},
+      {"path": "source_list", "op": "eq", "value": "list-partners-2"},
+      {"path": "outreach_status", "op": "eq", "value": "To contact"},
+      {"path": "sent_on", "op": "is_null", "value": null},
+      {"path": "metric_goal", "op": "eq", "value": "Partners"},
+      {"path": "preserves_history", "op": "eq", "value": true}
+    ]
+  },
+  {
+    "id": "connector_reply_does_not_count_as_target_reply",
+    "skill": "skills/daily-outreach/SKILL.md",
+    "request": "Record the latest outreach outcome.",
+    "fixture": {
+      "person": {"id": "target-1", "name": "Target Person"},
+      "goal": "Investors",
+      "source_list": "list-investors-1",
+      "existing_outreach": {"status": "Contacted", "sent_on": "2026-09-18"},
+      "events": [
+        {"actor": "connector-1", "type": "reply", "text": "Happy to introduce you."},
+        {"actor": "target-1", "type": "reply", "present": false},
+        {"actor": "target-1", "type": "accepted_meeting", "present": false}
+      ]
+    },
+    "assertions": [
+      {"path": "action", "op": "eq", "value": "record_outcome"},
+      {"path": "source_list", "op": "eq", "value": "list-investors-1"},
+      {"path": "outreach_status", "op": "eq", "value": "Contacted"},
+      {"path": "sent_on", "op": "eq", "value": "2026-09-18"},
+      {"path": "metric_goal", "op": "eq", "value": "Investors"},
+      {"path": "preserves_history", "op": "eq", "value": true}
+    ]
+  }
+]

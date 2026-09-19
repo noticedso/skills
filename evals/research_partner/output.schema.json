@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "case_id",
+    "action",
+    "creates_new_dashboard",
+    "creates_new_list",
+    "list_id",
+    "review_state",
+    "reviewed_count",
+    "remaining_reviews",
+    "approved_for_outreach",
+    "results_summary",
+    "rule_changes",
+    "outreach_person_id",
+    "source_list",
+    "outreach_status",
+    "sent_on",
+    "metric_goal",
+    "company_brain_sections",
+    "unconfirmed_facts",
+    "writes_targeting_rules_to_brain",
+    "preserves_history",
+    "notes"
+  ],
+  "properties": {
+    "case_id": {"type": "string"},
+    "action": {
+      "type": "string",
+      "enum": [
+        "update_company_brain",
+        "create_list",
+        "wait_for_reviews",
+        "record_learning",
+        "create_outreach",
+        "update_outreach",
+        "record_outcome",
+        "blocked"
+      ]
+    },
+    "creates_new_dashboard": {"type": "boolean"},
+    "creates_new_list": {"type": "boolean"},
+    "list_id": {"type": ["string", "null"]},
+    "review_state": {"type": ["string", "null"]},
+    "reviewed_count": {"type": ["integer", "null"]},
+    "remaining_reviews": {"type": ["integer", "null"]},
+    "approved_for_outreach": {
+      "description": "All fixture person IDs with an explicit Yes that remain eligible for outreach after this action, even when outreach is not created now.",
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "results_summary": {"type": ["string", "null"]},
+    "rule_changes": {"type": "array", "items": {"type": "string"}},
+    "outreach_person_id": {"type": ["string", "null"]},
+    "source_list": {"type": ["string", "null"]},
+    "outreach_status": {"type": ["string", "null"]},
+    "sent_on": {"type": ["string", "null"]},
+    "metric_goal": {
+      "description": "The exact goal whose metrics this decision affects or will update; null only when the action has no goal-level metric effect.",
+      "type": ["string", "null"]
+    },
+    "company_brain_sections": {
+      "description": "Every canonical Company Brain section present after this action, not only sections edited by the action.",
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "unconfirmed_facts": {
+      "description": "Fixture fact IDs that remain unconfirmed after this action; use IDs rather than fact text.",
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "writes_targeting_rules_to_brain": {"type": "boolean"},
+    "preserves_history": {
+      "description": "True when existing lists, reviews, human edits, activity, and relevant evidence from other lists are preserved.",
+      "type": "boolean"
+    },
+    "notes": {"type": "array", "items": {"type": "string"}}
+  }
+}

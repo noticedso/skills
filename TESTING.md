@@ -72,6 +72,28 @@ Use synthetic company context and fixture-only tools; inspect proposed operation
 | A draft exists but no send is confirmed; later the user confirms a LinkedIn message was sent. | Keep To contact and Sent on empty before confirmation; then record Contacted, the channel and actual send date. Do not add follow-up-management fields. |
 | A connector replies and offers an introduction, but the target has not replied and no meeting is accepted. | Preserve the evidence without counting a target reply or booked meeting. Attribute the activity through Source list → Goal. |
 
+### Run the research-partner evals
+
+Contract checks run in CI and need no model:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+Behavioral decision evals use synthetic fixtures and the checked-out skill text.
+They require an authenticated Codex CLI but do not connect to noticed, Notion or
+the web:
+
+```bash
+python scripts/run_research_partner_evals.py --repeats 3
+```
+
+The runner scores state transitions and forbidden behavior deterministically.
+Run it several times because model behavior is nondeterministic. Before releasing
+a material workflow change, also perform one smoke test with a duplicated Notion
+dashboard and disposable noticed team; fixture evals do not prove live tool
+integration.
+
 ## what to watch for
 
 The behaviors the NYTW revisions were built to get right — confirm they hold across the tests above:
