@@ -63,18 +63,58 @@ Use synthetic company context and fixture-only tools; inspect proposed operation
 | Scenario | Expected behavior |
 |---|---|
 | Onboard a new research partner from a supplied directory with its own default template. Repeat with a matching partner already present. | Create the canonical record from the discovered template only when absent; otherwise reuse it. Save context there, never on a standalone staging page. |
-| Save research and proposed profiles before the user validates the reference. | Saved content remains visibly draft/unvalidated; Last reviewed changes only after explicit reference validation. Profile selection alone is insufficient. |
-| Request strategic investor/industry connectors in a city while the connector definition is absent, empty, a placeholder or substantive but unagreed. | Return to company-context/profile definition using the request as input; do not create an iteration, hypothesis or candidate list yet. |
-| Run opportunities for a saved, explicitly agreed investor profile while another track is undefined and unrelated company context remains draft. | Proceed within the agreed profile and engagement goal without demanding full reference validation or treating investors as sales prospects. |
-| Choose investors and partners for the direct engagement tracks of a company whose customers are hotels. Rename the context sections. | Preserve hotels as the stable customer ICP separately from both engagement tracks; follow sections by meaning without forcing customers into ICP #1. |
-| Refine a hypothesis after a reviewed batch within an agreed track. | Use recorded learning within that track; preserve the existing batch, review-readiness and recovery safeguards. |
-| Draft outreach for approved relationships in customer, investor, partner and hiring tracks, with each goal and track saved in context. | Inherit the relevant goal and track rather than treating every recipient as a buyer. Use the offer where relevant, preserve human approval and drafts, and leave sending to the user. |
+| Save company research with two facts still needing confirmation. | Use the exact seven Company Brain headings, keep sources in Library, and mark only the unconfirmed facts red. Do not add target-profile prose to the Brain. |
+| The company has buyer and investor goals with different names across old content. | Reuse one dashboard, choose one exact name for each goal, and use it consistently in Progress, Segments and Lists. Never combine their metrics. |
+| Prepare a first list for a broad investor segment with Required, Prefer and Exclude rules. | Evaluate only public/enrichment signals, create one 25-person batch, configure the exact “This looks like a good fit…” review statement, and preserve the rules and evidence. |
+| A list has 10 Yes, 12 No and 3 Not sure reviews with useful reasons. | Record the result, add one learning-log row, make the smallest supported rule refinement, and preserve the historic list and verdicts. |
+| A list has only 10/25 reviews, including three Yeses. | Keep the list open for 15 reviews and allow those three approved people to move to Outreach without replacing the batch. |
+| Create outreach for an approved person found in two lists for the same goal. | Reuse one Outreach entry, set the list that motivated the message as Source list, and keep other evidence in History & source. |
+| A draft exists but no send is confirmed; later the user confirms a LinkedIn message was sent. | Keep To contact and Sent on empty before confirmation; then record Contacted, the channel and actual send date. Do not add follow-up-management fields. |
+| A connector replies and offers an introduction, but the target has not replied and no meeting is accepted. | Preserve the evidence without counting a target reply or booked meeting. Attribute the activity through Source list → Goal. |
+
+### Run the research-partner evals
+
+Contract checks run in CI and need no model:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+Behavioral decision evals use synthetic fixtures and the checked-out skill text.
+They require an authenticated Codex CLI but do not connect to noticed, Notion or
+the web:
+
+```bash
+python scripts/run_research_partner_evals.py --repeats 3
+```
+
+The runner scores state transitions and forbidden behavior deterministically.
+Run it several times because model behavior is nondeterministic. Before releasing
+a material workflow change, also perform one smoke test with a duplicated Notion
+dashboard and disposable noticed team; fixture evals do not prove live tool
+integration.
+
+### Live integration smoke
+
+On 19 Sep 2026, the research-partner flow was exercised with disposable artifacts:
+
+- [Notion dashboard](https://app.notion.com/p/3e0efbd6e46b818dbe6bcc9af74cafd8)
+- noticed team: `Research partner skill eval — 2026-09-19`
+- [noticed list](https://www.noticed.so/goals/850d8452-899a-47f8-8cfd-0014674fb64c)
+
+The default template created the Company Brain and embedded Segments, Lists, and
+Outreach databases. The smoke test saved confirmed and unconfirmed company facts,
+observable segment rules, a team-owned list with the canonical review question,
+and an unsent outreach entry attributed through Source list. Every write was read
+back. No message was sent, no meeting was recorded, and no customer workspace was
+changed.
 
 ## what to watch for
 
 The behaviors the NYTW revisions were built to get right — confirm they hold across the tests above:
 
-- **Capture skills preview before saving.** Company-context drafts may be saved incrementally; saving is not validation.
+- **Company facts stay separate from targeting.** The Brain uses the seven canonical headings; observable rules and learning stay in Segments and Lists.
+- **Outreach attribution is complete.** Every Outreach entry has a Source list, which resolves its Segment and Goal.
 - **No bare-name guessing.** A name with no URL/handle triggers a question, not a silent new record.
 - **The readback always appears** after a save, and reads like a person talking, not a field dump.
 - **Provenance tags never leak into chat** — you should never see `[from user]` or `[research, unverified]` in a message, only in the stored note.
