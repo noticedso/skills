@@ -21,11 +21,11 @@ Requires a Pro, Max, Team, or Enterprise plan with code execution enabled (Setti
 
 1. Open **Customize → Plugins** and click **+ → Add marketplace**.
 2. Sync from this GitHub repo: `noticedso/skills`.
-3. From the synced marketplace, install **Networking Assistant**. All seven skills land in one shot.
+3. From the synced marketplace, install **Networking Assistant**. All skills land in one shot.
 
 ## install (ChatGPT / Codex)
 
-Add `noticedso/skills` as a plugin marketplace, then install **Networking Assistant**. The plugin keeps all seven capabilities together; do not upload them one by one.
+Add `noticedso/skills` as a plugin marketplace, then install **Networking Assistant**. The plugin keeps the capabilities together; do not upload them one by one.
 
 ## the skills
 
@@ -38,7 +38,9 @@ Add `noticedso/skills` as a plugin marketplace, then install **Networking Assist
 | **search-network** | Natural-language search across your network; returns a tight table; drills into anyone. | read-only |
 | **match-identities** | Triage the cross-source identity matches noticed proposes — confirm real matches, clear false positives, merge duplicates — and fill profile gaps by searching your network first. | yes |
 | **intro** | Find the warm path to a target, draft an intro between two people, write an intro request with a forwardable blurb, or write a backchannel vouch — all copy/paste. | only on confirmed intro tracking |
-| **collect-company-context** | Gather onboarding context, propose goal-aligned target profiles and fill the Notion Company context template. | company context and Library updates |
+| **collect-company-context** | Gather and verify the seven-section Company Brain while preserving sources in its Library. | Company Brain and Library updates |
+| **daily-opportunities** | Prepare 25-person lists from observable segment rules, learn from Yes/No/Not sure reviews, and refine the next batch. | authorized lists and dashboard updates |
+| **daily-outreach** | Develop attributed outreach for an approved person and reconcile confirmed sends, replies and meetings. | authorized drafts and dashboard updates; never sends automatically |
 
 ## how they fit together
 
@@ -50,6 +52,17 @@ add-person  →  event-debrief
 ```
 
 `research-person` and `follow-up` support any contact at any time. `search-network` is the read path over everything you've captured. `intro` turns that network into warm paths and the messages that open them.
+
+The research-partner loop is:
+
+```
+Company Brain → Goal → Segment rules → List → Review → Learning → Outreach
+```
+
+`collect-company-context` maintains the Company Brain. `daily-opportunities`
+creates and refines reviewed lists. `daily-outreach` turns explicit Yeses into
+attributed drafts and records confirmed outcomes. The routines share one workflow
+contract so the three skills use the same schema and definitions.
 
 ## shared conventions
 
@@ -90,4 +103,9 @@ reinstalling the plugin.
 
 ## Manual opportunity and outreach routines
 
-`daily-opportunities` prepares or refines a fixed 25-person review list for one selected target profile. `daily-outreach` turns current human Yeses into Notion drafts and reconciles confirmed sends, replies and bookings. Run one requested step through Codex with noticed MCP and Notion. These skills do not schedule work or send messages. Customer context and iteration history remain in the private customer workspace.
+`daily-opportunities` prepares or refines a 25-person review list for one
+selected segment. `daily-outreach` turns current human Yeses into attributed
+Notion drafts and reconciles confirmed sends, replies and bookings. Run one
+requested step through Codex with noticed MCP and Notion. These skills do not
+schedule work or send messages. Company facts, rules, lists and results remain in
+the partner's private workspace.

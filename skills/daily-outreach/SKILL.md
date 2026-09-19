@@ -1,60 +1,105 @@
 ---
 name: daily-outreach
-description: Develop outreach interactively for human-approved relationships, using noticed context and learning the user's messaging preferences.
+description: Develop attributed outreach for human-approved research-partner opportunities, save the chosen draft, and reconcile confirmed sends, replies, and meetings. Use for one relationship at a time, not automatic sending or task management.
 ---
 
 # Daily outreach
 
-Help the customer advance the engagement goal through relevant meetings by developing outreach together for relationships they approved with a **Yes**. Use the agreed target track and relevant company and noticed context to recommend the approach and message. The user is the expert and may have additional context.
+Turn an explicit human Yes into a message a human can send while keeping every
+reply and meeting attributable to the goal that produced it. A draft never counts
+as contact.
 
-Work on one relationship at a time. Ask **one focused question at a time**, preferably with **numbered or lettered choices**. Recommend an option when the context supports it, use relevant examples when helpful, and allow free-text answers. Avoid asking about decisions already supported by the available context.
+Read the [research-partner workflow](../_shared/research-partner-workflow.md), the
+partner dashboard, the approved opportunity, and its Lists row.
 
-## Choose the relationship
+Confirm the company and connected noticed team. Inspect the live Notion fields and
+templates before writing, preserve human edits, and follow renamed fields by
+meaning.
 
-Use the customer page and any relationship selected by the user. If none is selected, suggest one approved relationship that needs outreach or a follow-up, explain why, and ask whether to work on it.
+## Choose and reconcile the relationship
 
-If starting from a research-partner directory linked in the conversation or workspace instructions, open the selected partner’s page and follow its links for setup and context. Confirm the customer and connected noticed team. Inspect the live Notion pages, fields and templates before writing; follow renamed fields by their meaning and leave computed properties to Notion. Ask only for missing information needed now.
+Use a relationship selected by the user. If none is selected, suggest one explicit
+Yes that needs outreach, explain why, and ask whether to work on it. An individual
+Yes is eligible even while the rest of its list remains unreviewed.
 
-Use noticed MCP to read the relationship context and the customer's current approval. Read **Knowledge → Company context**, the approved opportunity's target track and hypothesis, saved **Outreach preferences**, and the existing Notion Outreach entry, including drafts and confirmed activity. Resolve the engagement goal and relevant agreed track from this context before proposing outreach; ask only if unclear. An individual Yes can move to outreach before the rest of its opportunity iteration is reviewed.
+Read the noticed relationship, Company Brain, segment rules, source list, existing
+Outreach entry, drafts, and confirmed activity. List membership alone is not
+approval. If approval is missing, withdrawn, or unclear, resolve it before
+drafting.
 
-If approval is missing, withdrawn or unclear, resolve that before proceeding. Resume existing work; keep one Outreach entry per customer and relationship across target profiles.
+Reuse an existing Outreach entry for the same person and goal. Set **Source list**
+to the list that actually motivated this outreach; this relation is the reliable
+path to Segment and Goal. If several lists contain the person, preserve other
+useful evidence in History & source rather than making attribution ambiguous.
+
+Reconcile confirmed sends, target replies, bookings, and explicit drops before
+deciding what to draft. Preserve actual dates and sources. Do not infer an event
+from a plan or a stale status.
 
 ## Agree on the approach
 
-Use the engagement goal, target track, relationship history, shared connections and saved preferences, including the company's offer where relevant, to propose:
+Work one relationship at a time. Ask one focused question at a time, preferably
+with numbered choices, only when the available context does not support a
+decision.
 
-- **Route:** direct outreach or an introduction.
-- **Sender:** who is best placed to send it.
-- **Channel:** where the conversation should happen.
-- **Message approach:** what to lead with, why it is relevant to the recipient and how it advances the engagement goal.
+Use the goal, company offer, segment evidence, relationship history, shared
+connections, and sender preferences to recommend:
 
-Explain the recommendation briefly. Ask about the uncertainty that most affects it, using numbered choices where possible. Refine the approach with the user's answers.
+- direct outreach or an introduction;
+- the sender;
+- the channel;
+- what to lead with and why it matters to the recipient.
 
-## Draft and refine
+Explain the recommendation briefly. Do not invent familiarity, a connection,
+sender, channel, or company fact.
 
-Give the user **three short, direct message options**, each with a meaningfully different approach or style. Label them **1, 2 and 3**, with a brief description of the difference.
+Give three short message options with meaningfully different approaches, labeled
+1, 2, and 3. For email, include a subject. For an introduction, identify the
+intermediary and keep the request to them distinct from forwardable text. Let the
+user choose, combine, or edit an option; preserve existing human edits.
 
-Adapt to the actual relationship: established, dormant, through a mutual contact, or no prior relationship. Use familiarity only when supported by context; being recorded in noticed does not mean the sender knows the person. For cold outreach, briefly establish who the sender is and why the conversation is relevant. Use relevant shared context, give a clear reason to talk and make the next step easy. Keep messages short and direct; avoid forced personalization and unnecessary sales language. For an introduction, make clear who the message is addressed to.
+## Save the lean entry
 
-Ask which option feels right; let the user choose, combine or edit. Refine using their feedback. Preserve existing human edits unless the user is revising that draft.
+Use only these properties:
 
-## Preserve context and preferences
+- Person
+- Source list
+- Status
+- Sender
+- Channel
+- Sent on
 
-Save new **target-specific facts and context on the noticed relationship page**, preserving existing notes.
+The page body contains **Message draft**, **Why reach out**,
+**Introduction through**, and the collapsed **History & source** toggle. Save the
+chosen copy in Message draft, the concise fit rationale in Why reach out, and the
+evidenced route in Introduction through.
 
-Save **reusable outreach and messaging preferences** in an **Outreach preferences** toggle inside the customer's **Knowledge → Company context**. Create the toggle if missing. Attribute preferences to the relevant user or sender; distinguish a choice for this message from a general preference, and clarify when uncertain.
+Do not add follow-up dates, next steps, activity-management fields, duplicate
+Goal properties, or hidden reporting properties. The dashboard's simple Next
+checklist holds current actions.
 
-Update these records as the user supplies context or expresses preferences. Keep customer information outside this skill.
+The human sends the message. If it was sent, record the confirmed sender, channel,
+and actual **Sent on** date. If it was not sent, keep the entry at **To contact**.
+Never mark a draft as contact.
 
-## Save the outcome
+## Record outcomes
 
-Save the chosen message in the Notion Outreach entry's **Message draft**, the approach and brief rationale in **Context**, and the sender, channel and noticed relationship link in their properties. Preserve dated activity and update only the relevant fields.
+| Status | Evidence |
+|---|---|
+| To contact | Explicit Yes; no confirmed send. |
+| Contacted | A direct message or introduction request was sent. |
+| Replied | The target replied, regardless of sentiment. |
+| Booked | The target accepted a meeting. |
+| Dropped | There is an explicit decision to stop. |
 
-The user sends the message. Ask what happened:
+Record reply and meeting evidence in History & source or the configured activity
+source. An intermediary's reply is not the target's reply. A proposed time is not
+a booked meeting.
 
-1. **Sent** — record the confirmed send, asking for any missing sender, date or channel.
-2. **Not sent yet** — keep the initial draft as **To contact**. An unsent follow-up does not reset an existing outreach status.
+Use Source list → Goal to update Outreach and Meetings metrics for the correct
+goal. Never combine unrelated goal funnels. Read back every saved entry and metric
+change. Close with what was saved, what happened, the next responsible person,
+and a link to the entry.
 
-A saved draft never counts as contact. Record target replies and accepted calendar invitations when the user confirms them; an intermediary’s reply is not a target reply, and a proposed time is not a booking. Preserve earlier activity; keep an agreed follow-up date and next action when relevant.
-
-Read back the saved entry and any context or preference updates. After an uncertain write, check whether it landed before retrying. Close with a short recap, the next action and a link to the outreach entry.
+Humans send messages. Do not contact prospects or intermediaries, book meetings,
+or change sharing settings unless the user separately authorizes it.
