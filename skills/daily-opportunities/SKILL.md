@@ -20,7 +20,7 @@ historic Lists rows, noticed list, review evidence, and learning log.
 
 - No list: prepare the first batch.
 - Preparing: resume the same batch.
-- Awaiting reviews: preserve the batch and report the remaining count.
+- Awaiting review: preserve the batch and report the remaining count.
 - Reviewed: record learning before changing rules or starting another batch.
 - Conflicting evidence: reconcile it rather than inferring a result.
 
@@ -52,7 +52,7 @@ Keep membership stable once review starts.
 Configure the review statement from the workflow contract. Read back the full
 list and review setup, including all pages. Verify the intended people, reviewer,
 question, access, and review URL. List membership is not human approval. Only then
-mark the row To review and save the review URL.
+mark the row Awaiting review and save the review URL.
 
 When a Yes moves to Outreach, connect it to this exact Lists row through Source
 list.
@@ -63,9 +63,15 @@ Use explicit Yes, No, and Not sure verdicts. Not sure is reviewed but not Yes;
 silence or disappearance is unreviewed. Preserve valid verdicts without requiring
 a reason.
 
-After enough feedback, update Results, add one learning row, and make the smallest
-supported rule change. Preserve the historic list, membership, verdicts, and
-previous rules. Avoid conclusions from a single example or a small rate change.
+Before applying learning, read every review page and reconcile each current answer
+with a member of the saved batch. If any batch member remains unanswered, keep the
+row Awaiting review and report the remaining count.
+
+When every batch member has a current answer, update Results, mark the row Reviewed,
+add one learning row, and make the smallest supported rule change. Preserve the
+historic list, membership, verdicts, and previous rules. Read the row back before
+starting another batch. Avoid conclusions from a single example or a small rate
+change.
 
 Update opportunity metrics for the correct goal and report the review count,
 learning, refinement, and next responsible person.

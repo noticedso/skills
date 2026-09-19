@@ -28,7 +28,7 @@
     "fixture": {
       "goal": "Partners",
       "segment": "Founder-led B2B software sales",
-      "list": {"id": "list-partners-1", "review_state": "To review", "member_count": 25},
+      "list": {"id": "list-partners-1", "review_state": "Awaiting review", "member_count": 25},
       "reviews": {
         "yes": ["p1", "p2", "p3"],
         "no": ["p4", "p5", "p6", "p7", "p8"],
@@ -39,6 +39,7 @@
       {"path": "action", "op": "eq", "value": "wait_for_reviews"},
       {"path": "creates_new_list", "op": "eq", "value": false},
       {"path": "list_id", "op": "eq", "value": "list-partners-1"},
+      {"path": "review_state", "op": "eq", "value": "Awaiting review"},
       {"path": "reviewed_count", "op": "eq", "value": 10},
       {"path": "remaining_reviews", "op": "eq", "value": 15},
       {"path": "approved_for_outreach", "op": "contains_all", "value": ["p1", "p2", "p3"]},
@@ -54,11 +55,12 @@
       "goal": "Partners",
       "segment": "Founder-led B2B software sales",
       "rules": {"required": ["B2B software", "Founder or CEO"], "prefer": ["15-50 employees"], "exclude": []},
-      "list": {"id": "list-partners-2", "review_state": "To review", "member_count": 25},
+      "list": {"id": "list-partners-2", "review_state": "Awaiting review", "member_count": 25},
       "reviews": {
-        "yes_count": 10,
-        "no_count": 12,
-        "not_sure_count": 3,
+        "pages": [
+          {"yes_count": 7, "no_count": 3, "not_sure_count": 0, "has_more": true},
+          {"yes_count": 3, "no_count": 9, "not_sure_count": 3, "has_more": false}
+        ],
         "repeated_reason": "Companies under 10 employees were consistently rejected as too early."
       }
     },
@@ -66,6 +68,7 @@
       {"path": "action", "op": "eq", "value": "record_learning"},
       {"path": "creates_new_list", "op": "eq", "value": false},
       {"path": "list_id", "op": "eq", "value": "list-partners-2"},
+      {"path": "review_state", "op": "eq", "value": "Reviewed"},
       {"path": "reviewed_count", "op": "eq", "value": 25},
       {"path": "remaining_reviews", "op": "eq", "value": 0},
       {"path": "rule_changes", "op": "len_lte", "value": 1},

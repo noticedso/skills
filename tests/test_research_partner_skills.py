@@ -67,6 +67,20 @@ class ResearchPartnerSkillTests(unittest.TestCase):
             self.assertTrue((ROOT / case["skill"]).exists())
             self.assertTrue(case["assertions"])
 
+    def test_completed_reviews_are_paginated_and_closed(self) -> None:
+        opportunities = re.sub(
+            r"\s+",
+            " ",
+            (ROOT / "skills/daily-opportunities/SKILL.md").read_text(),
+        )
+        for instruction in [
+            "read every review page",
+            "reconcile each current answer",
+            "keep the row Awaiting review",
+            "mark the row Reviewed",
+        ]:
+            self.assertIn(instruction, opportunities)
+
 
 if __name__ == "__main__":
     unittest.main()
