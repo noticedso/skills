@@ -25,7 +25,8 @@ Recommend a direct message or introduction, sender, channel, and angle from the
 goal, company offer, segment evidence, relationship history, and real connections.
 Ask one focused question only when a material choice cannot be inferred.
 
-Draft one short recommended message. Offer alternatives when there is a real
+Follow the outreach voice and first-message rules in the Company Brain's Sales
+process & channels section. Draft one short recommended message. Offer alternatives when there is a real
 decision to compare. For email, include a subject. For an introduction, separate
 the request to the intermediary from any forwardable text. Never invent
 familiarity, relationships, or company facts.

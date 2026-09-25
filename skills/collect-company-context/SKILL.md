@@ -13,7 +13,8 @@ template only when none exists.
 Read the existing Company Brain, Library, call notes, and approved public sources
 before asking questions. Capture the current offer and pricing, market position,
 customer needs and examples, goals and baseline, sales process, and responsible
-team members. Ask only about gaps or conflicts that materially affect research,
+team members. Save the team's outreach voice and first-message rules under Sales
+process & channels. Ask only about gaps or conflicts that materially affect research,
 outreach, or measurement.
 
 Use the seven Company Brain headings defined in the workflow contract. Record
