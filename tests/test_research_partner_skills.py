@@ -67,6 +67,21 @@ class ResearchPartnerSkillTests(unittest.TestCase):
             self.assertTrue((ROOT / case["skill"]).exists())
             self.assertTrue(case["assertions"])
 
+    def test_outreach_follows_saved_voice_rules(self) -> None:
+        def text(name: str) -> str:
+            return re.sub(
+                r"\s+", " ", (ROOT / f"skills/{name}/SKILL.md").read_text()
+            )
+
+        self.assertIn(
+            "outreach voice and first-message rules under Sales process & channels",
+            text("collect-company-context"),
+        )
+        self.assertIn(
+            "Follow the outreach voice and first-message rules in the Company Brain's Sales process & channels section",
+            text("daily-outreach"),
+        )
+
     def test_completed_reviews_are_paginated_and_closed(self) -> None:
         opportunities = re.sub(
             r"\s+",
