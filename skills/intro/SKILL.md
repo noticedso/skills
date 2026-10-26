@@ -44,11 +44,19 @@ Ask only for missing essentials: who is the target, who is the connector (if kno
 
 ## mode 1 — find an intro path
 
-Map realistic paths, not theoretical mutuals. This is the one mode that may escalate to `scope: "public"` — do so when the user asks for warm-intro paths or people they don't know yet, with `limit: 10`. Fall back to `scope: "own"` silently if the public path errors.
+Map realistic paths, not theoretical mutuals. Start with `find_intro_paths`: pass the resolved target's `person_id` as `target`, or, when they are outside the user's network, their full name as `target` plus `company`. It returns two lanes:
+
+- **Teammates on the user's noticed Team who know the target**, with their strength.
+- **People the user actually interacts with at the target's employer**, current colleagues first, with the user's notes on each.
+
+Lead with those two lanes. Read the notes: anyone whose notes say the user already tried them (asked, no reply, declined) is **already tried**, never a fresh path. Mention them only as already tried.
+
+Mode 1 is the one mode that may also escalate to `scope: "public"` search, when the user asks for warm-intro paths or people they don't know yet, with `limit: 10`. Fall back to `scope: "own"` silently if the public path errors. Never suggest a connector only because they share a title, skill or city with the target.
 
 Prioritize:
 - A direct relationship with the target.
-- Portfolio founders, co-investors, former colleagues, trusted peers of the target.
+- A teammate who knows the target, or someone the user interacts with at the target's employer.
+- Portfolio founders, co-investors, former colleagues, trusted peers of the target, when the record shows the relationship.
 - A strong user↔connector relationship.
 - A recent interaction or a clear reason for the connector to help.
 
@@ -64,7 +72,7 @@ Backup paths:
 - [connector/path] — [why it might work]
 ```
 
-No warm path on record? Say so plainly and suggest the best cold or semi-warm approach and why. Don't manufacture a connector who isn't there.
+No warm path on record (both `find_intro_paths` lanes empty and nothing else on record)? Say so plainly, note that noticed cannot see who the target knows beyond those lanes, and suggest the best cold or semi-warm approach and why. Don't manufacture a connector who isn't there.
 
 ## mode 2 — draft an intro email
 
@@ -150,6 +158,7 @@ No pressure at all — just wanted to give you context in case they ask.
 
 - One mode per run; ask which if it isn't obvious.
 - Resolve every named person against the network before drafting.
+- Mode 1 starts with `find_intro_paths`; already-tried connectors are never fresh paths; similar title, skill or city is never a reason to suggest a connector.
 - Public scope only in Mode 1, and only on an explicit reachability/warm-path ask.
 - Copy/paste only — produce the text (subject included for email); never send.
 - `track_intro` writes only after the user confirms an ask went out, or to capture an offer — never silently.
@@ -165,7 +174,7 @@ No pressure at all — just wanted to give you context in case they ask.
 
 ## tool needs
 
-- `noticed`: `resolve_person`, `search_people` (own; `public` only in Mode 1), `get_person`, `track_intro` and `list_intros` (Mode 3 tracking).
+- `noticed`: `find_intro_paths` (Mode 1), `resolve_person`, `search_people` (own; `public` only in Mode 1), `get_person`, `track_intro` and `list_intros` (Mode 3 tracking).
 - Web research for target context (Mode 1 and 3).
 - No Gmail — every output is copy/paste, subject included.
 
