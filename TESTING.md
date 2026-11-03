@@ -54,7 +54,9 @@ Run each prompt in a chat with the noticed MCP connected. Prompts are ordered ea
 2. `any ai engineers?`
    *(vague — one broad dimension; should ask one clarifying question like "where, or any company in mind?" before running)*
 3. `how many investors are in my network?` then, after any table, `more on #2`
-   *(network_summary count for the first; drill-down by number into a dossier for the second)*
+   *(a `search_people` count with `role: "investor"`, reported from its `total`; drill-down by number into a dossier for the second)*
+4. `does anyone on my team know someone at <company>?`
+   *(`scope: "team"` with no `team_id`, so every team is searched; each person shows which teammates know them)*
 
 ## company context, daily opportunities and outreach
 
